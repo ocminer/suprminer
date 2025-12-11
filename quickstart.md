@@ -1,0 +1,185 @@
+suprminer Quick Start Guide
+Version: 1.3.34 (12/11/25)
+Supported Algorithms: Neptune (NPT/XNT) and Xelis (XEL)
+by ocminer (admin@suprnova.cc)
+
+suprminer is a miner for CPU and NVIDIA on Linux, Hive OS and Windows. 
+
+It's main design was initially for Neptune Cash (NPT) and later for XNT (Neptune Privacy) but since both of 
+those coins have "mining pauses" when a new block template is generated, it was build with the initial
+though that during thoses pauses it should switch to some other profitable coin and once mining is possible
+again on NPT or XNT switch seamlessly back. This works as intented and pretty well but the miner can also
+mine other coins without mining xel/npt at all.
+
+Tests were made on different NVIDIA Cards, everything starting from the 30XX series up until 5090 works fine.
+XNT has lower memory usage (about 12 GB) versus NPT which uses upto 28 GB VRAM (Video-RAM !). That alone
+implies that only certain cards work with certain coins. CPU of course works everywhere but is rather
+slow for NPT/XNT.
+
+Xelis mining works with cards >= 6GB VRAM and was tested on CMP 170HX, 30xx, 40xx and 50xx series.
+
+The miner has no fees on suprnova pools and 2% dev-fee on other pools.
+
+
+System Requirements
+
+OS: Linux (Ubuntu 22.04/24.04 recommended)
+CUDA: 12.0 or newer (12.6+ recommended)
+Driver: 525+ (550+ recommended for Blackwell)
+
+CPU Mining (Background)
+The miner can run Xelis on CPU in the background while GPU mines another algorithm.
+
+Supported: x86_64 with AVX2 (Intel Haswell+, AMD Zen+)
+Optimized for: AVX2 + FMA (most modern CPUs)
+SIMD: Automatic detection and optimization
+
+
+
+Usage:
+======
+
+Single Algorithm Mining
+=======================
+
+Neptune Cash  (NPT)
+suprminer-neptune \
+    -a npt \
+    -o npt.suprnova.cc:3933 \
+    -u username.worker \
+    -p x
+    
+Neptune Privacy (XNT)
+suprminer-neptune \
+    -a xnt \
+    -o xnt.suprnova.cc:3833 \
+    -u username.worker \
+    -p x
+    
+Xelis (XEL)
+suprminer-neptune \
+    -a xelis \
+    -o xelis.suprnova.cc:3333 \
+    -u wallet_address_OR_username \
+    -p x
+
+
+
+
+Dual Algorithm Mining (GPU + CPU)
+=================================
+
+Mine one algorithm on GPU while CPU mines another in the background.
+GPU: Neptune XNT + CPU: Xelis
+suprminer-neptune \
+    --gpu-pool xnt.suprnova.cc:3833 \
+    --gpu-user username.worker \
+    --gpu-algo xnt \
+    --cpu-pool xel.suprnova.cc:3333 \
+    --cpu-user wallet_address_OR_username \
+    --cpu-algo xelis \
+    --cpu-threads 8
+    
+GPU: Xelis + CPU: Xelis (different pools)
+suprminer-neptune \
+    --gpu-pool xel.suprnova.cc:3333 \
+    --gpu-user wallet1 \
+    --gpu-algo xelis \
+    --cpu-pool xel.suprnova.cc:3333 \
+    --cpu-user wallet2 \
+    --cpu-algo xelis \
+    --cpu-threads 16
+    
+GPU: Neptune NPT + CPU: Xelis
+suprminer-neptune \
+    --gpu-pool npt.suprnova.cc:3933 \
+    --gpu-user npt_user.worker \
+    --gpu-algo npt \
+    --cpu-pool xel.suprnova.cc:3333 \
+    --cpu-user xelis_wallet \
+    --cpu-algo xelis
+
+
+
+GPU Fallback (Auto-Switch)
+==========================
+
+When the primary GPU pool has no work (e.g., block found, node syncing), automatically switch to a fallback algorithm:
+Primary: Neptune XNT, Fallback: Xelis
+suprminer-neptune \
+    --gpu-pool xnt.suprnova.cc:3833 \
+    --gpu-user username.worker \
+    --gpu-algo xnt \
+    --gpu-fallback-pool xel.suprnova.cc:3333 \
+    --gpu-fallback-user xelis_wallet \
+    --gpu-fallback-algo xelis
+    
+When XNT pool sends "no work available", the miner automatically switches to mining Xelis until XNT work resumes.
+
+
+
+Multi-GPU Selection
+===================
+
+By default, the miner uses all available GPUs. To select specific GPUs:
+bash# Use only GPU 0
+suprminer-neptune -a xelis -o pool:3333 -u user -p x -d 0
+
+# Use GPUs 0 and 2
+suprminer-neptune -a xelis -o pool:3333 -u user -p x -d 0,2
+
+# Use GPUs 1, 2, 3
+suprminer-neptune -a xelis -o pool:3333 -u user -p x -d 1,2,3
+
+
+Intensity / Batch Size
+======================
+
+Adjust mining intensity (affects VRAM usage and hashrate):
+Set intensity (18-28, higher = more VRAM, potentially higher hashrate)
+uprminer-neptune -a xelis -o pool:3333 -u user -p x -i 24
+
+# Or set batch size directly
+suprminer-neptune -a xelis -o pool:3333 -u user -p x --batch-size 5000000
+Recommended intensity by GPU VRAM:
+
+8 GB: -i 22
+12 GB: -i 23
+16 GB: -i 24
+24 GB: -i 25
+32 GB+: -i 26
+
+
+# CPU-only mining (no GPU)
+==========================
+suprminer-neptune -a xelis -o xel.suprnova.cc:3333 -u user -p x --no-gpu
+
+# GPU-only mining (no background CPU mining)
+============================================
+suprminer-neptune -a xelis -o xel.suprnova.cc:3333 -u user -p x --no-cpu
+
+
+Troubleshooting
+===============
+
+"No work available" message
+
+This is normal when pool mining XNT or NPT is processing a new block
+Miner will automatically resume when work is available
+Consider setting up a fallback pool
+
+
+Out of memory
+
+Reduce intensity: -i 22
+Or use --xelis-batch-size for Xelis-specific tuning
+
+
+Connection issues
+
+Check firewall settings
+Verify pool address and port
+
+We have a community discord for suprnova as well, join our discord and ask users for help.
+
+
