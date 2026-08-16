@@ -1,6 +1,7 @@
 suprminer Quick Start Guide
-Version: 1.3.34 (12/11/25)
-Supported Algorithms: Neptune (NPT/XNT) and Xelis (XEL)
+Version: 1.9.12 (08/16/26)
+Supported Algorithms: Neptune (NPT/XNT), Xelis (XEL), sha3t (BitcoinIII), PearlHash/PRL,
+    QHash, Gapcoin, Qubit, NeoScrypt, Verthash, Decred (BLAKE3), YescryptR32, Groestl
 by ocminer (admin@suprnova.cc)
 
 suprminer is a miner for CPU and NVIDIA on Linux, Hive OS and Windows. 
@@ -61,6 +62,25 @@ suprminer-neptune \
     -a xelis \
     -o xelis.suprnova.cc:3333 \
     -u wallet_address_OR_username \
+    -p x
+
+sha3t (BitcoinIII / BC3)
+suprminer-neptune \
+    -a sha3t \
+    -o stratum+tcp://bc3.suprnova.cc:7700 \
+    -u BitcoinIII_address.worker \
+    -p x
+
+    (sha3t = triple SHA3-256. Standard Bitcoin-style header/stratum. Runs on all NVIDIA
+     cards sm_75-sm_120. Verify a build with:  suprminer-neptune --sha3t-test)
+
+Other algorithms
+Use  -a <algo>  with the matching pool. Supported algo names:
+    prl (PearlHash), qhash, gapcoin, qubit, neoscrypt, verthash, decred, yescrypt, groestl
+suprminer-neptune \
+    -a <algo> \
+    -o <pool_host:port> \
+    -u <wallet_or_username>.worker \
     -p x
 
 
