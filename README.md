@@ -7,6 +7,15 @@ datacenter A100/H100/B200), AMD/OpenCL for selected algorithms, CPU for the memo
 Binary name: `suprminer-neptune` (historical). Releases:
 https://github.com/ocminer/suprminer/releases
 
+## Version 1.9.24
+
+This release improves PRL throughput on several GPU families and NOID hashing
+on RTX 3070 and RTX 5090. GPU profiles are selected automatically.
+
+[Downloads](https://github.com/ocminer/suprminer/releases/tag/v1.9.24) ·
+[PRL and NOID setup](docs/PRL_NOID_RELEASE_GUIDE.md) ·
+[Docker, Octa.Space and Vast.ai](docker/README.md).
+
 ## Quick start
 
 ```bash
@@ -179,7 +188,7 @@ docker run -d --gpus all --restart unless-stopped \
   ocminersupr/suprminer-base:latest
 ```
 
-`COIN=PRL|BC3|QUANTUS` selects algo + suprnova pool automatically; the username is
+`COIN=PRL|NOID|BC3|QUANTUS` selects algo + suprnova pool automatically; the username is
 `USERNAME=<wallet/address>` and `WORKER=<name>` (do not use a plain account name — the
 pool authorizes on the wallet). Everything else is configurable via env (`ALGO`, `POOL_URL`,
 `DEVICES`, `POWER_LIMIT`, `EXTRA_ARGS`, …), or point `STARTUP_SCRIPT_URL` at your own launcher.

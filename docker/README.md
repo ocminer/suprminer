@@ -6,9 +6,10 @@ container starts. Use it on Octa.Space, Vast.ai, or a Docker host with the NVIDI
 Container Toolkit.
 
 - Image: [`ocminersupr/suprminer-base`](https://hub.docker.com/r/ocminersupr/suprminer-base)
-- Current release: [`1.9.23`](https://github.com/ocminer/suprminer/releases/tag/v1.9.23)
-- Tags: `1.9.23` selects this miner version; `latest` follows new releases.
+- Current release: [`1.9.24`](https://github.com/ocminer/suprminer/releases/tag/v1.9.24)
+- Tags: `1.9.24` selects this miner version; `latest` follows new releases.
 - [Quantus setup guide](https://github.com/ocminer/suprminer/blob/main/docker/QUANTUS.md)
+- [PRL and NOID setup guide](https://github.com/ocminer/suprminer/blob/main/docs/PRL_NOID_RELEASE_GUIDE.md)
 - [Public copy of this guide](https://github.com/ocminer/suprminer/blob/main/docker/README.md)
 
 The image requires an x86_64 Linux host, a CUDA 13 compatible NVIDIA driver, and
@@ -25,7 +26,7 @@ docker run -d --name suprminer-quantus \
   -e COIN=QUANTUS \
   -e USERNAME=YOUR_QUANTUS_WALLET_ADDRESS \
   -e WORKER=rig1 \
-  ocminersupr/suprminer-base:1.9.23
+  ocminersupr/suprminer-base:1.9.24
 ```
 
 This selects `quantus.suprnova.cc:7071`. For TLS, also set
@@ -42,7 +43,7 @@ Configure your custom app or container with these settings:
 
 | Setting | Value |
 |---|---|
-| Container image | `ocminersupr/suprminer-base:1.9.23` |
+| Container image | `ocminersupr/suprminer-base:1.9.24` |
 | GPU | Allocate the NVIDIA GPU or GPUs to the container |
 | Startup command | Use the image default, `/entrypoint.sh` |
 | `COIN` | `QUANTUS` |
@@ -116,7 +117,7 @@ app using this field for its User Guide link.
 
 ## Vast.ai
 
-Set the image to `ocminersupr/suprminer-base:1.9.23`. Choose the
+Set the image to `ocminersupr/suprminer-base:1.9.24`. Choose the
 **docker ENTRYPOINT** launch mode and use `/entrypoint.sh` as the command if an
 explicit command is required. In API templates, use `runtype: "args"` with
 `args_str: "/entrypoint.sh"`. Add these Docker options, replacing the address:
@@ -158,6 +159,7 @@ and [template API](https://docs.vast.ai/api-reference/creating-and-using-templat
 | `COIN` preset | Algorithm | Default pool |
 |---|---|---|
 | `PRL` | `pearl` | `stratum+tcp://prl.suprnova.cc:3373` |
+| `NOID` | `noid` | `stratum+tcp://noid.suprnova.cc:3337` |
 | `BC3` | `sha3t` | `stratum+tcp://bc3.suprnova.cc:7700` |
 | `QUANTUS` | `quantus` | `stratum+tcp://quantus.suprnova.cc:7071` |
 
@@ -188,7 +190,7 @@ Read the README without starting the miner:
 
 ```bash
 docker run --rm --runtime=runc -e NVIDIA_VISIBLE_DEVICES=void \
-  --entrypoint cat ocminersupr/suprminer-base:1.9.23 /app/README.md
+  --entrypoint cat ocminersupr/suprminer-base:1.9.24 /app/README.md
 ```
 
 Stop cleanly with:
@@ -206,8 +208,8 @@ The build context must contain `Dockerfile`, `entrypoint.sh`, `README.md`,
 `QUANTUS.md`, and the release binary named `suprminer-neptune`.
 
 ```bash
-docker build -t ocminersupr/suprminer-base:1.9.23 docker/octa
-docker push ocminersupr/suprminer-base:1.9.23
+docker build -t ocminersupr/suprminer-base:1.9.24 docker/octa
+docker push ocminersupr/suprminer-base:1.9.24
 ```
 
 The Docker Hub overview is maintained separately from the files inside the
