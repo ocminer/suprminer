@@ -1,32 +1,60 @@
-# suprminer
+# Suprminer
 
-Multi-algorithm GPU/CPU miner for Suprnova pools and beyond. One binary, many algorithms —
-NVIDIA CUDA first (RTX 20xx "Turing" sm_75 through RTX 50xx "Blackwell" sm_120, plus
-datacenter A100/H100/B200), AMD/OpenCL for selected algorithms, CPU for the memory-hard ones.
+A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL and Vulkan
+packages for supported AMD and NVIDIA devices.
 
-Binary name: `suprminer-neptune` (historical). Releases:
-https://github.com/ocminer/suprminer/releases
+## Suprminer 1.9.25
 
-## Version 1.9.24
+This release adds PRL + NOCK merged mining to the Linux NVIDIA packages.
+The matching proof helper is included; enable it with `--nock-merge` on a
+compatible pool. Ordinary PRL mining continues while auxiliary proofs are prepared.
 
-This release improves PRL throughput on several GPU families and NOID hashing
-on RTX 3070 and RTX 5090. GPU profiles are selected automatically.
+[Download 1.9.25](https://github.com/ocminer/suprminer/releases/tag/v1.9.25) ·
+[Merged mining](MERGED_MINING.md) · [PRL and NOID](docs/PRL_NOID_RELEASE_GUIDE.md) ·
+[Quantus](docs/QUANTUS_RELEASE_GUIDE.md) · [Docker and cloud hosting](docker/README.md)
 
-[Downloads](https://github.com/ocminer/suprminer/releases/tag/v1.9.24) ·
-[PRL and NOID setup](docs/PRL_NOID_RELEASE_GUIDE.md) ·
-[Docker, Octa.Space and Vast.ai](docker/README.md).
+## Choose a download
+
+| Platform | Package |
+|---|---|
+| Linux NVIDIA, Ubuntu 24.04+ | Complete `suprminer-1.9.25-linux-x86_64.tar.gz` bundle |
+| Linux NVIDIA, Ubuntu 20.04 / 22.04 | Matching `linux-x86_64-u2004` / `u2204` executable; helper is also available separately |
+| Windows NVIDIA | Native `windows-x86_64-nvidia.zip` |
+| Windows AMD / Pascal Quantus | Native `windows-x86_64-quantus-opencl.zip` |
+| HiveOS | NVIDIA or OpenCL `_u2004.tar.gz` / `_u2204.tar.gz` custom package |
+| mmPOS | NVIDIA or OpenCL `mmpos_1.9.25` external-miner package |
+| SMOS | NVIDIA or OpenCL `smos-…-u2004.zip` / `u2204.zip` custom package |
+| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.25` |
+
+Verify the SHA-256 checksum before installation. Extract complete archives and
+keep their supporting files beside the executable. Install the appropriate GPU
+driver and choose a package compatible with the rig's OS.
+
+PRL + NOCK requires a Linux NVIDIA package, a compatible pool, CPU capacity and
+at least **24 GiB available system RAM**. The Windows miner is native and supports
+ordinary PRL; the auxiliary NOCK helper is Linux-only in this release. NOCK
+accounting and payouts depend on the pool. OpenCL and Vulkan packages support Quantus.
 
 ## Quick start
 
-```bash
-./suprminer-neptune -a pearl -o stratum+tcp://prl.suprnova.cc:3373 -u <wallet>.<worker> -p x
-./suprminer-neptune -a sha3t -o stratum+tcp://bc3.suprnova.cc:7700 -u <wallet>.<worker> -p x
-./suprminer-neptune -a noid  -o stratum+tcp://noid.suprnova.cc:3337 -u <NOID_ADDRESS>.<worker>
+Replace each placeholder with your own payout address and worker name:
+
+```sh
+# PRL
+./suprminer-neptune -a pearl -o stratum+tcp://prl.suprnova.cc:3373 -u YOUR_PRL_ADDRESS.rig1 -p x --no-cpu
+
+# PRL + NOCK, Linux NVIDIA with the bundled helper
+./suprminer-neptune -a pearl --nock-merge -o stratum+tcp://prl.suprnova.cc:3373 -u 'YOUR_PRL_ADDRESS+YOUR_NOCK_ADDRESS.rig1' -p x --no-cpu
+
+# NOID
+./suprminer-neptune -a noid -o stratum+tcp://noid.suprnova.cc:3337 -u YOUR_NOID_ADDRESS.rig1 -p x
+
+# Quantus
+./suprminer-neptune -a quantus -o stratum+ssl://quantus.suprnova.cc:7074 -u YOUR_QUANTUS_ADDRESS.rig1 -p x
 ```
 
-Run as root if you want the miner to manage power limits / clocks (`--power-limit`,
-`--core-clock`, `--mem-clock`, `--fan-speed` — all reset to defaults on exit).
-Stop with SIGINT (Ctrl-C) for a clean shutdown; PearlHash requires it.
+On Windows, use `.\suprminer-neptune.exe` in PowerShell. Add `-d 0,1` to select
+GPUs. Stop with Ctrl+C. Use `--help` for all supported options.
 
 ## Supported algorithms
 
@@ -49,151 +77,39 @@ Stop with SIGINT (Ctrl-C) for a clean shutdown; PearlHash requires it.
 | `noid` | `parano1d`, `poseidon2b` | NOID / Parano1d — Poseidon2b over GF(2¹²⁸) | NVIDIA sm_80 / sm_86 / sm_120 (RTX 30xx, CMP 170HX, RTX 50xx) |
 | `npt` / `xnt` | `neptune` | Neptune — **deprecated**, opt-in `-with-neptune` builds only | — |
 
-`./suprminer-neptune --help` prints the full flag reference and a per-algorithm footer.
+Algorithm support depends on the selected backend and GPU. The PRL/NOID guide
+lists their requirements. Saved GPU profiles are selected automatically.
 
-## Quantus
+## Mining operating systems
 
-Quantus uses CryptoNote-style TCP Stratum (`login`, `job`, `submit`, `keepalived`).
-It is a separate algorithm from QuBitcoin/QHash and NOID/Poseidon2b.
+Use the NVIDIA HiveOS, mmPOS or SMOS package for PRL/NOID. Configure the algorithm,
+pool and your own wallet address in the platform's custom miner settings.
+For PRL + NOCK, use the combined wallet format and add `--nock-merge` to extra
+arguments. The helper is bundled in the NVIDIA packages.
 
-```bash
-# Suprnova pool
-./suprminer-neptune -a quantus -o stratum+tcp://quantus.suprnova.cc:7071 -u <ADDRESS>.<WORKER> -d 0
+SMOS packages use its CUSTOM ZIP format. These are custom packages, not a claim
+that Suprminer is included in a platform's managed miner list. Package checks and
+Linux GPU testing do not replace validation of a particular mining OS installation.
 
-# TLS
-./suprminer-neptune -a quantus -o stratum+ssl://quantus.suprnova.cc:7074 -u <ADDRESS>.<WORKER> -d 0
+## Docker
 
-# CPU mining
-./suprminer-neptune -a quantus -o quantus.suprnova.cc:7071 -u <ADDRESS>.<WORKER> --no-gpu --cpu-threads 4
-
-# Offline GPU/CPU correctness check, no pool required
-./suprminer-neptune --quantus-test -d 0
+```sh
+docker run -d --name suprminer --gpus all --restart unless-stopped \
+  -e COIN=PRL -e USERNAME=YOUR_PRL_ADDRESS -e WORKER=rig1 \
+  ocminersupr/suprminer-base:1.9.25
 ```
 
-Use your Quantus payout address, optionally followed by `.worker`.
+For merged mining, use `USERNAME=YOUR_PRL_ADDRESS+YOUR_NOCK_ADDRESS` and add
+`-e EXTRA_ARGS=--nock-merge`. See the Docker guide for all environment settings.
 
-GPU batches adapt to a 50 ms budget. The automatically selected RTX PRO 6000
-Blackwell Server Edition and H100 80GB HBM3 profiles allow up to 67,108,864 nonces;
-other profiles retain the 16,777,216-nonce ceiling. A100 SXM4 80 GB and CMP 170HX each
-select their own measured kernel schedule. Selection uses the exact model, CUDA architecture and SM count.
-`QUANTUS_BATCH` sets a lower ceiling when needed. `QUANTUS_SUBMIT_RESULT=1` adds the 64-byte hash
-for gateways that require it; the default submits the full nonce without a result field.
-Normal production and HiveOS builds include `quantus-gpu`; CPU-only development builds
-can enable `quantus`. AMD and GTX 1080 Ti/Pascal use the Quantus OpenCL variant,
-built with `./build.sh -prod -quantus-opencl-only`. It uses the installed vendor
-OpenCL driver and requires no CUDA libraries. Device indices in that variant are
-OpenCL indices; it selects OpenCL automatically, with `--opencl` available explicitly.
-The same `--quantus-test -d 0` check works on both variants. Both embed encrypted
-device code.
+## Status and support
 
-## NOID (Parano1d) on noid.suprnova.cc
+Enable the local statistics API with `--api --api-port 4068`; read
+`http://localhost:4068/summary`. Confirm accepted shares after changing a package
+or pool. Use the GitHub issue tracker for problems and include the version, OS,
+GPU model and relevant log excerpt. Do not post passwords, access tokens or
+private configuration files.
 
-NOID uses the Poseidon2b proof-of-work over GF(2¹²⁸). suprminer mines it with native
-Ampere and Blackwell kernels and needs **no developer fee**.
-
-```bash
-# plain stratum (ports 3337-3340)
-./suprminer-neptune -a noid \
-  -o stratum+tcp://noid.suprnova.cc:3337 \
-  -u o1yournoidaddress....rig01
-
-# TLS (port 3341)
-./suprminer-neptune -a noid \
-  -o stratum+ssl://noid.suprnova.cc:3341 \
-  -u o1yournoidaddress....rig01
-
-# pick specific GPUs
-./suprminer-neptune -a noid -o stratum+tcp://noid.suprnova.cc:3337 \
-  -u o1yournoidaddress....rig01 --devices 0,1
-```
-
-The username is your **bech32m NOID address** (`o1...`), optionally followed by `.workername`.
-No password is required — leave `-p` unset. A static difficulty can be requested with
-`-p d=<number>`; otherwise the pool applies VarDiff automatically.
-
-**Requirements**
-
-| | |
-|---|---|
-| GPU | NVIDIA `sm_120` (RTX 50xx), `sm_86` (RTX 30xx) and `sm_80` (A100 / CMP 170HX) |
-| Driver | 610.x or newer |
-| CUDA (build only) | 13.3 or newer — earlier `ptxas` cannot assemble the `clmad` instruction |
-
-The kernel is built on the native carry-less multiply (`clmad`), which CUDA 13.3 assembles for
-`sm_80` and later. GA100 uses a 160 KiB shared-memory table; GA10x and Blackwell use a 96 KiB one.
-Turing (`sm_75`) is **not** supported — it caps at 64 KiB of opt-in shared memory and cannot host
-the table, so those cards report an initialisation error rather than silently running slowly.
-
-Measured at stock clocks, no core/memory offsets or voltage changes:
-
-| GPU | hashrate | power |
-|---|---:|---:|
-| RTX 5090 | 213-223 MH/s | 600 W |
-| RTX 5080 | 108-111 MH/s | 300-325 W |
-| RTX 5070 Ti | 90 MH/s | 237 W |
-| RTX 3070 | 39-40 MH/s | 224-231 W |
-| CMP 170HX | 27.6 MH/s | 123 W |
-
-Pool endpoints: `noid.suprnova.cc:3337` … `:3340` (plain), `:3341` (TLS).
-
-## Common flags
-
-```
--a, --algo <ALGO>          algorithm (table above)
--o, --url <URL>            pool, stratum+tcp://host:port
--u, --user <USER>          wallet or account (append .worker for a worker name)
--p, --pass <PASS>          pool password (default: x)
--d, --devices <LIST>       GPU selection, comma-separated (0,1,2); default = all
--i, --intensity <18-28>    batch size = 2^intensity
-    --core-clock <MHZ,..>  lock core clocks, per device index
-    --mem-clock <MHZ,..>   lock memory clocks, per device index
-    --power-limit <W,..>   set power limits (needs root; restored on exit)
-    --fan-speed <PCT,..>   set fan speeds (0 = leave untouched; restored on exit)
-    --api-port <PORT>      HTTP stats API, HiveOS-compatible (default 4068)
-    --sha3t-test           sha3t GPU-vs-CPU byte-exact self-test, then exit
-    --test-vectors         verify hashes against pool implementations
-```
-
-Device numbering follows CUDA's "fastest first" order by default — export
-`CUDA_DEVICE_ORDER=PCI_BUS_ID` to make `-d` match `nvidia-smi` indices.
-
-Algorithm tuning is available through environment variables (e.g. `PEARL_*` for PearlHash);
-run `./suprminer-neptune --help` for the full per-algorithm flag and env-var reference.
-
-PRL proof submissions use gzip before base64 whenever compression reduces the payload size.
-The pool must support automatic gzip detection in `plain_proof`. Set `PEARL_PROOF_GZIP=0`
-to send raw base64 proofs to older pools. Submission logs show the encoding and byte savings.
-
-## Building
-
-Always build through the script (never raw cargo):
-
-```bash
-./build.sh -prod -sha3t        # release build: all archs, packed, PearlHash + sha3t
-./build.sh -no-pearl -sha3t    # sha3t-only, faster build
-./build-hiveos.sh              # HiveOS/mmpOS packages (Docker cross-compile, glibc 2.31)
-```
-
-Requires CUDA 12.9+ (13.x preferred); Pascal support requires a CUDA 12.x toolchain plus the
-opt-in `SUPRMINER_SHA3T_PASCAL=1` (sha3t only).
-
-## Docker (octa.space / any NVIDIA docker host)
-
-An env-driven image is published as
-[`ocminersupr/suprminer-base`](https://hub.docker.com/r/ocminersupr/suprminer-base):
-
-```bash
-docker run -d --gpus all --restart unless-stopped \
-  -e COIN=PRL -e USERNAME=<wallet> -e WORKER=rig1 \
-  ocminersupr/suprminer-base:latest
-```
-
-`COIN=PRL|NOID|BC3|QUANTUS` selects algo + suprnova pool automatically; the username is
-`USERNAME=<wallet/address>` and `WORKER=<name>` (do not use a plain account name — the
-pool authorizes on the wallet). Everything else is configurable via env (`ALGO`, `POOL_URL`,
-`DEVICES`, `POWER_LIMIT`, `EXTRA_ARGS`, …), or point `STARTUP_SCRIPT_URL` at your own launcher.
-
-## HiveOS / mmpOS
-
-Release tarballs include HiveOS custom-miner packages (`_u2004`/`_u2204`) and an mmpOS
-package — see the release assets and `hiveos/` in this repo. Stats API on `:4068`.
+Windows packages are compiled natively in GitHub CI and checked with command-line
+and CPU protocol tests. Windows GPU mining has not been tested on hardware.
+Third-party license notices are included in the downloads.

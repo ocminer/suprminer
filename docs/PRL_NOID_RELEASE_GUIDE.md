@@ -1,7 +1,7 @@
-# PRL and NOID with Suprminer 1.9.24
+# PRL and NOID with Suprminer 1.9.25
 
 Download the NVIDIA package for your operating system from the
-[1.9.24 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.24).
+[1.9.25 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.25).
 The Quantus-only OpenCL and Vulkan packages do not include PRL or NOID.
 Both full NVIDIA Linux packages (`u2004` and `u2204`) include PRL and NOID,
 as do the NVIDIA Windows and Docker packages.
@@ -63,7 +63,7 @@ telemetry. For standalone mining, enable it with `--api --api-port 4068` and rea
 
 ## Docker, Octa.Space and Vast.ai
 
-Use `ocminersupr/suprminer-base:1.9.24` to pin this version. The `latest` tag follows
+Use `ocminersupr/suprminer-base:1.9.25` to pin this version. The `latest` tag follows
 new releases.
 Docker requires NVIDIA GPU access on the host.
 
@@ -71,7 +71,7 @@ Docker requires NVIDIA GPU access on the host.
 docker run -d --name suprminer-prl --gpus all --restart unless-stopped \
   -e COIN=PRL -e USERNAME=YOUR_PRL_ADDRESS -e WORKER=rig01 \
   -e PASSWORD=x -e STARTUP_SCRIPT_URL= \
-  ocminersupr/suprminer-base:1.9.24
+  ocminersupr/suprminer-base:1.9.25
 ```
 
 For NOID, change `COIN=PRL` to `COIN=NOID`, use your NOID address, and choose a
