@@ -73,9 +73,7 @@ GPUs. Stop with Ctrl+C. Use `--help` for all supported options.
 | `groestl` | `grs`, `groestlcoin` | GroestlCoin — double Groestl-512 | NVIDIA |
 | `yescrypt` | `yescryptr32`, `lpepe` | YescryptR32 memory-hard | CPU |
 | `sha256mem` | `fairchain`, `fair` | Fairchain — memory-hard sha256mem | NVIDIA |
-| `nock` | `nockchain` | Nockchain — TIP5 ZK-STARK | NVIDIA |
 | `noid` | `parano1d`, `poseidon2b` | NOID / Parano1d — Poseidon2b over GF(2¹²⁸) | NVIDIA sm_80 / sm_86 / sm_120 (RTX 30xx, CMP 170HX, RTX 50xx) |
-| `npt` / `xnt` | `neptune` | Neptune — **deprecated**, opt-in `-with-neptune` builds only | — |
 
 Algorithm support depends on the selected backend and GPU. The PRL/NOID guide
 lists their requirements. Saved GPU profiles are selected automatically.
