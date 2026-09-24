@@ -1,7 +1,7 @@
 # Suprminer
 
-A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL and Vulkan
-packages for supported AMD and NVIDIA devices.
+A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL packages
+for AMD and NVIDIA devices, plus an AMD Vulkan package.
 
 ## Suprminer 1.9.25
 
@@ -19,6 +19,7 @@ compatible pool. Ordinary PRL mining continues while auxiliary proofs are prepar
 |---|---|
 | Linux NVIDIA, Ubuntu 24.04+ | Complete `suprminer-1.9.25-linux-x86_64.tar.gz` bundle |
 | Linux NVIDIA, Ubuntu 20.04 / 22.04 | Matching `linux-x86_64-u2004` / `u2204` executable; helper is also available separately |
+| Linux AMD, Ubuntu 24.04+, Quantus | Optional `quantus-vulkan-linux-x86_64` executable; add `--vulkan` |
 | Windows NVIDIA | Native `windows-x86_64-nvidia.zip` |
 | Windows AMD / Pascal Quantus | Native `windows-x86_64-quantus-opencl.zip` |
 | HiveOS | NVIDIA or OpenCL `_u2004.tar.gz` / `_u2204.tar.gz` custom package |
