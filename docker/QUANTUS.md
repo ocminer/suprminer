@@ -2,7 +2,7 @@
 
 Use `ocminersupr/suprminer-base` on a host with an NVIDIA GPU, a working NVIDIA
 driver, and the NVIDIA Container Toolkit. The examples below pin the
-`1.9.26` image so a new deployment selects this miner version. See the
+`1.9.27` image so a new deployment selects this miner version. See the
 [Docker user guide](https://github.com/ocminer/suprminer/blob/main/docker/README.md)
 for Octa app guide links, Vast.ai launch modes, and all supported environment
 variables. Both guides are bundled at `/app/README.md` and `/app/QUANTUS.md` in
@@ -31,7 +31,7 @@ docker run -d \
   --gpus all \
   --restart unless-stopped \
   --env-file quantus.env \
-  ocminersupr/suprminer-base:1.9.26
+  ocminersupr/suprminer-base:1.9.27
 ```
 
 The miner connects with `YOUR_QUANTUS_WALLET_ADDRESS.octa-rig-01`. Put the address
@@ -48,7 +48,7 @@ POOL_URL=stratum+ssl://quantus.suprnova.cc:7074
 
 ## Octa.Space and other container hosting panels
 
-Select `ocminersupr/suprminer-base:1.9.26` as the container image and allocate the
+Select `ocminersupr/suprminer-base:1.9.27` as the container image and allocate the
 NVIDIA GPU or GPUs to the container. Enter each row below as a separate environment
 variable. Enter the value directly, without a shell `-e` prefix or surrounding
 quotes.
