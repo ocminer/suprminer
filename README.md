@@ -3,14 +3,15 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL packages
 for AMD and NVIDIA devices, plus an AMD Vulkan package.
 
-## Suprminer 1.9.27
+## Suprminer 1.9.28
 
-This release speeds up Quantus on NVIDIA RTX 40-series (Ada) GPUs with a rescheduled
-protected Ada kernel. All other kernels, PRL, NOID and PRL + NOCK merged mining are
-unchanged from 1.9.26; the bundled helper is unchanged.
+This release adds Neptune Cash (NPT) mining: `-a npt` mines the HardforkDelta proof of work with
+negotiated suffix search on NVIDIA Ampere and newer GPUs, with one pool session per GPU and no
+CPU core spent per GPU. All other kernels — Quantus, PRL, NOID and PRL + NOCK merged mining — are
+unchanged from 1.9.28; the bundled helper is unchanged. The pre-fork `neptune`/`xnt` code was removed.
 
-[Download 1.9.27](https://github.com/ocminer/suprminer/releases/tag/v1.9.27) ·
-[Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.27) ·
+[Download 1.9.28](https://github.com/ocminer/suprminer/releases/tag/v1.9.28) ·
+[Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.28) ·
 [Merged mining](MERGED_MINING.md) · [PRL and NOID](docs/PRL_NOID_RELEASE_GUIDE.md) ·
 [Quantus](docs/QUANTUS_RELEASE_GUIDE.md) · [Docker and cloud hosting](docker/README.md)
 
@@ -18,15 +19,15 @@ unchanged from 1.9.26; the bundled helper is unchanged.
 
 | Platform | Package |
 |---|---|
-| Linux NVIDIA, Ubuntu 24.04+ | Complete `suprminer-1.9.27-linux-x86_64.tar.gz` bundle |
+| Linux NVIDIA, Ubuntu 24.04+ | Complete `suprminer-1.9.28-linux-x86_64.tar.gz` bundle |
 | Linux NVIDIA, Ubuntu 20.04 / 22.04 | Matching `linux-x86_64-u2004` / `u2204` executable; helper is also available separately |
 | Linux AMD, Ubuntu 24.04+, Quantus | Optional `quantus-vulkan-linux-x86_64` executable; add `--vulkan` |
 | Windows NVIDIA | Native `windows-x86_64-nvidia.zip` |
 | Windows AMD / Pascal Quantus | Native `windows-x86_64-quantus-opencl.zip` |
 | HiveOS | NVIDIA or OpenCL `_u2004.tar.gz` / `_u2204.tar.gz` custom package |
-| mmPOS | NVIDIA or OpenCL `mmpos_1.9.27` external-miner package |
+| mmPOS | NVIDIA or OpenCL `mmpos_1.9.28` external-miner package |
 | SMOS | NVIDIA or OpenCL `smos-…-u2004.zip` / `u2204.zip` custom package |
-| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.27` |
+| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.28` |
 
 Verify the SHA-256 checksum before installation. Extract complete archives and
 keep their supporting files beside the executable. Install the appropriate GPU
@@ -53,6 +54,9 @@ Replace each placeholder with your own payout address and worker name:
 
 # Quantus
 ./suprminer-neptune -a quantus -o stratum+ssl://quantus.suprnova.cc:7074 -u YOUR_QUANTUS_ADDRESS.rig1 -p x
+
+# NPT (Neptune Cash) — plain TCP; the username is your pool account
+./suprminer-neptune -a npt -o stratum+tcp://npt.suprnova.cc:6453 -u YOUR_POOL_ACCOUNT.rig1 -p x
 ```
 
 On Windows, use `.\suprminer-neptune.exe` in PowerShell. Add `-d 0,1` to select
@@ -76,13 +80,14 @@ GPUs. Stop with Ctrl+C. Use `--help` for all supported options.
 | `yescrypt` | `yescryptr32`, `lpepe` | YescryptR32 memory-hard | CPU |
 | `sha256mem` | `fairchain`, `fair` | Fairchain — memory-hard sha256mem | NVIDIA |
 | `noid` | `parano1d`, `poseidon2b` | NOID / Parano1d — Poseidon2b over GF(2¹²⁸) | NVIDIA sm_80 / sm_86 / sm_120 (RTX 30xx, CMP 170HX, RTX 50xx) |
+| `npt` | `neptune`, `neptune-cash` | Neptune Cash — HardforkDelta PoW, negotiated suffix search | NVIDIA sm_80+ (RTX 30xx, CMP 170HX, RTX 40xx/50xx, A100/H100, RTX PRO 6000) |
 
 Algorithm support depends on the selected backend and GPU. The PRL/NOID guide
 lists their requirements. Saved GPU profiles are selected automatically.
 
 ## Mining operating systems
 
-Use the NVIDIA HiveOS, mmPOS or SMOS package for PRL/NOID. Configure the algorithm,
+Use the NVIDIA HiveOS, mmPOS or SMOS package for PRL/NOID/NPT. Configure the algorithm,
 pool and your own wallet address in the platform's custom miner settings.
 For PRL + NOCK, use the combined wallet format and add `--nock-merge` to extra
 arguments. The helper is bundled in the NVIDIA packages.
@@ -96,7 +101,7 @@ Linux GPU testing do not replace validation of a particular mining OS installati
 ```sh
 docker run -d --name suprminer --gpus all --restart unless-stopped \
   -e COIN=PRL -e USERNAME=YOUR_PRL_ADDRESS -e WORKER=rig1 \
-  ocminersupr/suprminer-base:1.9.27
+  ocminersupr/suprminer-base:1.9.28
 ```
 
 For merged mining, use `USERNAME=YOUR_PRL_ADDRESS+YOUR_NOCK_ADDRESS` and add

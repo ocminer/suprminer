@@ -1,5 +1,12 @@
 # Neptune Stratum Protocol Specification
 
+> **Historical (HardforkAlpha).** This document describes the pre-fork Neptune/XNT stratum used by
+> suprminer releases up to 1.9.27. Since 1.9.28, `-a npt` speaks the Neptune Cash HardforkDelta
+> protocol: standard stratum `mining.subscribe` / `mining.authorize` / `mining.notify` / `mining.submit`
+> plus a negotiated suffix-search extension (`{"npt_suffix_v1": true}` in the subscribe parameters,
+> `search_mode` on jobs, `mining.submit_suffix`), `no_work_available` pause notifications and 30 s
+> heartbeats. Pool operators: contact the pool for the HardforkDelta specification.
+
 **Version:** 2.0  
 **Date:** 2025-12-11  
 **Consensus:** HardforkAlpha  
