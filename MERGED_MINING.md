@@ -1,4 +1,4 @@
-# PRL + NOCK merged mining — Suprminer 1.9.28
+# PRL + NOCK merged mining — Suprminer 1.9.29
 
 On a compatible pool, Suprminer can mine PRL and also submit NOCK proofs from
 the same GPU work. Ordinary PRL share submission continues while an auxiliary
@@ -41,7 +41,7 @@ NVIDIA packages; retain all extracted files.
 
 ## Docker, Octa.Space and Vast.ai
 
-Use `ocminersupr/suprminer-base:1.9.28` with NVIDIA GPU access:
+Use `ocminersupr/suprminer-base:1.9.29` with NVIDIA GPU access:
 
 ```sh
 docker run --rm --gpus all \
@@ -49,7 +49,7 @@ docker run --rm --gpus all \
   -e POOL_URL=stratum+tcp://prl.suprnova.cc:3373 \
   -e USERNAME='YOUR_PRL_ADDRESS+YOUR_NOCK_ADDRESS' \
   -e WORKER=rig1 -e PASSWORD=x -e EXTRA_ARGS=--nock-merge \
-  ocminersupr/suprminer-base:1.9.28
+  ocminersupr/suprminer-base:1.9.29
 ```
 
 Cloud templates use the same environment variables. Allocate enough container
