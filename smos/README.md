@@ -5,7 +5,7 @@ Miner OPTIONS, followed by the usual Suprminer arguments. For Quantus, after
 the release is published:
 
 ```text
-https://github.com/ocminer/suprminer/releases/download/v1.9.29/suprminer-neptune-1.9.29-smos-nvidia-u2204.zip -a quantus -o stratum+tcp://quantus.suprnova.cc:7071 -u YOUR_QUANTUS_ADDRESS.rig1 -p x
+https://github.com/ocminer/suprminer/releases/download/v1.9.30/suprminer-neptune-1.9.30-smos-nvidia-u2204.zip -a quantus -o stratum+tcp://quantus.suprnova.cc:7071 -u YOUR_QUANTUS_ADDRESS.rig1 -p x
 ```
 
 Use the `opencl` ZIP for AMD or Pascal Quantus mining. Each backend has Ubuntu
