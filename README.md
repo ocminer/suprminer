@@ -3,16 +3,17 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL packages
 for AMD and NVIDIA devices, plus an AMD Vulkan package.
 
-## Suprminer 1.9.30
+## Suprminer 1.9.31
 
-NOID is faster on RTX 50-, 40- and 30-series GPUs: RTX 5090 at a 420 W cap 182.4 -> 187.6 MH/s
-(+2.9 %), RTX 4070 Ti SUPER 88.1 -> 91.4 MH/s (+3.7 %), RTX 3070 40.5 -> 42.6 MH/s (+5.3 %). An
-opt-in sm_120 kernel for uncapped cards (`NOID_SM120_LAYOUT=1`) takes an RTX 5090 at 600 W from
-228.2 to 234.1 MH/s (+2.6 %). GA100 NOID, Quantus, PRL, PRL + NOCK merged mining and NPT are
-unchanged from 1.9.29.
+New algorithm `-a xnt` (Neptune Privacy): a commitment-seeded 2²⁷-leaf Tip5 memory tree is
+built once per puzzle in VRAM, then searched. It needs a 12 GB-or-larger NVIDIA card (Ampere, Ada,
+Hopper or Blackwell; GA100 cards such as the CMP 170HX work) and runs about 37 MH/s on an RTX 5090
+at 600 W, 26 MH/s at a 420 W cap and 4.6 MH/s on a CMP 170HX. Like NOID and Quantus, the XNT device
+code ships only as an encrypted image that is decrypted and loaded at run time. Quantus, PRL, NOID,
+PRL + NOCK merged mining and NPT are unchanged from 1.9.30 (device images byte-for-byte identical).
 
-[Download 1.9.30](https://github.com/ocminer/suprminer/releases/tag/v1.9.30) ·
-[Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.30) ·
+[Download 1.9.31](https://github.com/ocminer/suprminer/releases/tag/v1.9.31) ·
+[Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.31) ·
 [Merged mining](MERGED_MINING.md) · [PRL and NOID](docs/PRL_NOID_RELEASE_GUIDE.md) ·
 [Quantus](docs/QUANTUS_RELEASE_GUIDE.md) · [Docker and cloud hosting](docker/README.md)
 
@@ -20,15 +21,15 @@ unchanged from 1.9.29.
 
 | Platform | Package |
 |---|---|
-| Linux NVIDIA, Ubuntu 24.04+ | Complete `suprminer-1.9.30-linux-x86_64.tar.gz` bundle |
+| Linux NVIDIA, Ubuntu 24.04+ | Complete `suprminer-1.9.31-linux-x86_64.tar.gz` bundle |
 | Linux NVIDIA, Ubuntu 20.04 / 22.04 | Matching `linux-x86_64-u2004` / `u2204` executable; helper is also available separately |
 | Linux AMD, Ubuntu 24.04+, Quantus | Optional `quantus-vulkan-linux-x86_64` executable; add `--vulkan` |
 | Windows NVIDIA | Native `windows-x86_64-nvidia.zip` |
 | Windows AMD / Pascal Quantus | Native `windows-x86_64-quantus-opencl.zip` |
 | HiveOS | NVIDIA or OpenCL `_u2004.tar.gz` / `_u2204.tar.gz` custom package |
-| mmPOS | NVIDIA or OpenCL `mmpos_1.9.30` external-miner package |
+| mmPOS | NVIDIA or OpenCL `mmpos_1.9.31` external-miner package |
 | SMOS | NVIDIA or OpenCL `smos-…-u2004.zip` / `u2204.zip` custom package |
-| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.30` |
+| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.31` |
 
 Verify the SHA-256 checksum before installation. Extract complete archives and
 keep their supporting files beside the executable. Install the appropriate GPU
@@ -102,7 +103,7 @@ Linux GPU testing do not replace validation of a particular mining OS installati
 ```sh
 docker run -d --name suprminer --gpus all --restart unless-stopped \
   -e COIN=PRL -e USERNAME=YOUR_PRL_ADDRESS -e WORKER=rig1 \
-  ocminersupr/suprminer-base:1.9.30
+  ocminersupr/suprminer-base:1.9.31
 ```
 
 For merged mining, use `USERNAME=YOUR_PRL_ADDRESS+YOUR_NOCK_ADDRESS` and add
