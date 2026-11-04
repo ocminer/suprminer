@@ -5,7 +5,7 @@ Miner OPTIONS, followed by the usual Suprminer arguments. For Quantus, after
 the release is published:
 
 ```text
-https://github.com/ocminer/suprminer/releases/download/v1.9.34/suprminer-neptune-1.9.34-smos-nvidia-u2204.zip -a quantus -o stratum+tcp://quantus.suprnova.cc:7071 -u YOUR_QUANTUS_ADDRESS.rig1 -p x
+https://github.com/ocminer/suprminer/releases/download/v1.9.35/suprminer-neptune-1.9.35-smos-nvidia-u2204.zip -a quantus -o stratum+tcp://quantus.suprnova.cc:7071 -u YOUR_QUANTUS_ADDRESS.rig1 -p x
 ```
 
 Use the `opencl` ZIP for AMD or Pascal Quantus mining. Each backend has Ubuntu
@@ -15,7 +15,7 @@ packages include PRL and NOID. OpenCL packages mine Quantus only.
 
 For PRL, use `-a pearl -o stratum+tcp://prl.suprnova.cc:3373 -u YOUR_PRL_ADDRESS.rig1 -p x`.
 For NOID, use `-a noid -o stratum+tcp://noid.suprnova.cc:3337 -u YOUR_NOID_ADDRESS.rig1 -p x`.
-NOID requires a supported Ampere or newer NVIDIA GPU.
+NOID supports Ampere and newer NVIDIA GPUs. GTX 16xx / RTX 20xx support is experimental and has not been tested on physical Turing hardware.
 
 TLS uses `stratum+ssl://quantus.suprnova.cc:7074`; `-d 0,1` selects devices.
 The archive contains one directory with the executable named `miner`, supporting

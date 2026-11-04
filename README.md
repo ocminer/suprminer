@@ -3,61 +3,78 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL packages
 for AMD and NVIDIA devices, plus an AMD Vulkan package.
 
-## Suprminer 1.9.34
+## Suprminer 1.9.35
 
-NOID/TAPE uses larger batches at easier share targets to reduce launch overhead,
-while retaining complete candidate recovery and CPU share validation. The benefit
-is small and depends on share difficulty; see the measured results below.
-Linux packages support Ubuntu 20.04 and newer without system C++ or OpenSSL libraries.
-The automatic Linux RTX 5090 memory-clock setting from 1.9.33 is retained;
+NOID/TAPE GPU mining now uses substantially less CPU, improving throughput on
+CPU-limited rigs while preserving CPU share verification and nonce recovery.
+Experimental GTX 16xx / RTX 20xx support is included; physical Turing hardware
+has not been tested. See the measurements and limitations below.
+Portable Linux packages support Ubuntu 20.04 and newer without system C++ or OpenSSL libraries.
+The automatic Linux RTX 5090 memory-clock setting is retained;
 `--no-auto-mem-lock` disables it.
 
-[Download 1.9.34](https://github.com/ocminer/suprminer/releases/tag/v1.9.34) ·
-[Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.34) ·
+[Download 1.9.35](https://github.com/ocminer/suprminer/releases/tag/v1.9.35) ·
+[Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.35) ·
 [Merged mining](MERGED_MINING.md) · [PRL and NOID](docs/PRL_NOID_RELEASE_GUIDE.md) ·
 [Quantus](docs/QUANTUS_RELEASE_GUIDE.md) · [Docker and cloud hosting](docker/README.md)
 
-## TAPE / NOID performance — 1.9.34
+## TAPE / NOID performance — 1.9.35
 
-Measured on Linux with the full release executables on 2026-11-02. Each version
-ran twice for 150 seconds on the same card in A/B/B/A order, with the first
-40 seconds of mining excluded. All runs used the same captured TAPE work at a
-share target corresponding to 50,000,000 hashes per share. Rates below are measured
-from nonce progress, with every submitted share checked against a CPU reference.
-Watts and clocks are GPU telemetry averages; watts do not include the rest of the rig.
+Measured on Linux with the full release executables on 2026-11-04. Each version
+ran twice on the same card in A/B/B/A order: 150 seconds per run, or 210 seconds
+for the RTX 3070. The first 40 seconds of mining are excluded. Every submitted
+share was checked against an independent CPU reference; rates are measured from
+nonce progress on identical captured TAPE work at 50,000,000 hashes per share.
+Both versions used an external 810 MHz memory lock. No core offsets or voltage
+changes were applied. Watts and clocks below are averages for 1.9.35; watts cover
+the GPU, not the whole rig. The 600 W row uses the card's maximum supported limit.
 
-| GPU | Limit W | 1.9.33 MH/s | 1.9.34 MH/s | GPU W | SM MHz | Memory MHz | MH/s/W |
+| GPU | Limit W | 1.9.34 MH/s | 1.9.35 MH/s | GPU W | SM MHz | Memory MHz | MH/s/W |
 |---|---:|---:|---:|---:|---:|---:|---:|
-| RTX 5090 | 600 | 271.04 | **270.81** | 600.0 | 2610 | 810 | 0.451 |
-| RTX 5080 | 360 | 144.77 | **144.68** | 360.0 | 2813 | 14801 | 0.402 |
-| RTX 5070 Ti | 300 | 118.69 | **118.66** | 276.7 | 2767 | 13801 | 0.429 |
-| RTX 5090 | 420 | 227.05 | **226.24** | 420.0 | 2319 | 810 | 0.539 |
+| RTX 5090 | 600 | 272.09 | **271.31** | 600.0 | 2617 | 810 | 0.452 |
+| RTX 5080 #1 | 360 | 143.67 | **143.51** | 331.7 | 2794 | 810 | 0.433 |
+| RTX 5080 #2 | 360 | 146.44 | **146.27** | 360.0 | 2849 | 810 | 0.406 |
+| RTX 5070 Ti | 300 | 119.00 | **118.63** | 265.5 | 2772 | 810 | 0.447 |
+| RTX 3070 | 240 | 50.91 | **50.85** | 238.3 | 1891 | 810 | 0.213 |
+| RTX 5090 | 420 | 232.23 | **230.48** | 419.9 | 2362 | 810 | 0.549 |
 
-RTX 5090 tests use the existing Linux 810 MHz memory profile, applied equally to
-both versions; applying it requires clock-control permissions. The other cards
-use automatic stock clocks. No core offsets or
-voltage changes were applied. The 600 W row uses the card's maximum supported
-power limit. Results depend on card cooling, power settings and pool difficulty.
+The main improvement is CPU use and performance when CPU capacity is limited.
+Normal peak GPU throughput remains close to 1.9.34; small differences include
+normal boost and thermal variation.
 
-At the easier target of 4,194,304 hashes per share, a separate matched RTX 5090
-600 W test with normal memory clocks measured **266.49 → 268.74 MH/s**
-(**+0.84%**). This is a target-dependent reduction in launch overhead;
-the normal-difficulty results above remain close to 1.9.33. Small differences
-should be read in the context of normal boost and thermal variation.
+In the unrestricted single-GPU runs, 1.9.34 used approximately 100% of one CPU core; 1.9.35 used **0.21–0.27%**.
+
+Additional matched A/B/B/A tests constrained the miner's CPU availability, with
+normal memory clocks and a target of 10,000,000 hashes per share. The 5080 used a
+360 W limit. The three-GPU test used two 3070s at 240 W each plus a 5080 at 360 W,
+with the process restricted to two physical CPU cores. Both tests used desktop
+CPUs with software limits; a physical dual-core mining motherboard was not tested.
+CPU percentages below are relative to one core, so 200% means two fully used cores.
+
+| CPU-constrained setup | 1.9.34 MH/s | 1.9.35 MH/s | Change | 1.9.34 CPU | 1.9.35 CPU | GPU W, 1.9.34 → 1.9.35 |
+|---|---:|---:|---:|---:|---:|---:|
+| RTX 5080, 25% of one core | 111.87 | **143.04** | +27.9% | 25.00% | **0.42%** | 267.3 → 345.2 |
+| Three GPUs, two cores | 245.74 | **245.39** | -0.1% | 199.98% | **0.84%** | 837.7 → 837.7 |
+
+Results depend on the CPU, GPU cooling, power settings and share difficulty.
+GTX 16xx / RTX 20xx NOID support is experimental: Turing-targeted arithmetic and
+nonce recovery passed checks on a newer GPU, but a physical GTX 1660 Super was
+unavailable. No Turing hardware hashrate or compatibility result is claimed.
+
 
 ## Choose a download
 
 | Platform | Package |
 |---|---|
-| Linux NVIDIA, Ubuntu 20.04+ | Complete `suprminer-1.9.34-linux-x86_64.tar.gz` bundle |
+| Linux NVIDIA, Ubuntu 20.04+ | Complete `suprminer-1.9.35-linux-x86_64.tar.gz` bundle |
 | Linux NVIDIA, Ubuntu 20.04 / 22.04 | Matching `linux-x86_64-u2004` / `u2204` executable; helper is also available separately |
 | Linux AMD, Ubuntu 20.04+, Quantus | Optional `quantus-vulkan-linux-x86_64` executable; add `--vulkan` |
 | Windows NVIDIA | Native `windows-x86_64-nvidia.zip` |
 | Windows AMD / Pascal Quantus | Native `windows-x86_64-quantus-opencl.zip` |
 | HiveOS | NVIDIA or OpenCL `_u2004.tar.gz` / `_u2204.tar.gz` custom package |
-| mmPOS | NVIDIA or OpenCL `mmpos_1.9.34` external-miner package |
+| mmPOS | NVIDIA or OpenCL `mmpos_1.9.35` external-miner package |
 | SMOS | NVIDIA or OpenCL `smos-…-u2004.zip` / `u2204.zip` custom package |
-| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.34` |
+| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.35` |
 
 Verify the SHA-256 checksum before installation. Extract complete archives and
 keep their supporting files beside the executable. Install the appropriate GPU
@@ -112,7 +129,7 @@ GPUs. Stop with Ctrl+C. Use `--help` for all supported options.
 | `groestl` | `grs`, `groestlcoin` | GroestlCoin — double Groestl-512 | NVIDIA |
 | `yescrypt` | `yescryptr32`, `lpepe` | YescryptR32 memory-hard | CPU |
 | `sha256mem` | `fairchain`, `fair` | Fairchain — memory-hard sha256mem | NVIDIA |
-| `noid` | `parano1d`, `poseidon2b` | NOID / Parano1d — Poseidon2b over GF(2¹²⁸) | NVIDIA sm_80 / sm_86 / sm_89 / sm_90 / sm_120 (RTX 30xx/40xx/50xx, CMP 170HX, A100/H100) |
+| `noid` | `parano1d`, `poseidon2b` | NOID / Parano1d — Poseidon2b over GF(2¹²⁸) | NVIDIA sm_80 / sm_86 / sm_89 / sm_90 / sm_120; experimental sm_75 (GTX 16xx / RTX 20xx) |
 | `npt` | `neptune`, `neptune-cash` | Neptune Cash — HardforkDelta PoW, negotiated suffix search | NVIDIA sm_80+ (RTX 30xx, CMP 170HX, RTX 40xx/50xx, A100/H100, RTX PRO 6000) |
 
 Algorithm support depends on the selected backend and GPU. The PRL/NOID guide
@@ -134,7 +151,7 @@ Linux GPU testing do not replace validation of a particular mining OS installati
 ```sh
 docker run -d --name suprminer --gpus all --restart unless-stopped \
   -e COIN=PRL -e USERNAME=YOUR_PRL_ADDRESS -e WORKER=rig1 \
-  ocminersupr/suprminer-base:1.9.34
+  ocminersupr/suprminer-base:1.9.35
 ```
 
 For merged mining, use `USERNAME=YOUR_PRL_ADDRESS+YOUR_NOCK_ADDRESS` and add

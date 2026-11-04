@@ -4,7 +4,7 @@ This folder contains the integration scripts for HiveOS.
 
 ## Quantus
 
-Install the 1.9.34 `_u2004.tar.gz` package on Ubuntu 20.04, or `_u2204.tar.gz`
+Install the 1.9.35 `_u2004.tar.gz` package on Ubuntu 20.04, or `_u2204.tar.gz`
 on Ubuntu 22.04. Select the `_opencl_` package for AMD or NVIDIA Pascal cards;
 those packages contain the Quantus miner without CUDA dependencies.
 
@@ -25,8 +25,7 @@ packages do not. Choose the package matching your rig's Ubuntu version.
 | Wallet template | `%WAL%.%WORKER_NAME%` | `%WAL%.%WORKER_NAME%` |
 | Password | `x` | `x` |
 
-Use the wallet for the selected coin. NOID requires a supported Ampere or newer
-NVIDIA GPU. The bundled `PRL_NOID.md` contains standalone and platform examples.
+Use the wallet for the selected coin. NOID supports Ampere and newer NVIDIA GPUs. GTX 16xx / RTX 20xx support is experimental and has not been tested on physical Turing hardware. The bundled `PRL_NOID.md` contains standalone and platform examples.
 
 ## Installation
 
@@ -52,7 +51,7 @@ NVIDIA GPU. The bundled `PRL_NOID.md` contains standalone and platform examples.
    ```bash
    mkdir -p /hive/miners/custom
    cd /hive/miners/custom
-   tar -xzf /path/to/suprminer-neptune-1.9.34_u2004.tar.gz
+   tar -xzf /path/to/suprminer-neptune-1.9.35_u2004.tar.gz
    ```
 3. Configure the flight sheet to use `suprminer-neptune`.
 
