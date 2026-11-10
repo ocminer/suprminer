@@ -1,4 +1,4 @@
-# NEB with Suprminer 1.9.36
+# NEB with Suprminer 1.9.37
 
 NEB (Neural Engine Byte) is proof-of-training: every mining attempt is one exact
 integer training step of a small neural network on 16 samples of the chain's
@@ -6,7 +6,7 @@ dataset. Suprminer mines NEB on NVIDIA GPUs with the algorithm name `neb`.
 NEB version 0.2.1 currently runs a test network.
 
 Download the NVIDIA package for your operating system from the
-[1.9.36 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.36).
+[1.9.37 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.37).
 The full NVIDIA Linux packages (`u2004` and `u2204`), the NVIDIA Windows package
 and the Docker image include NEB. The Quantus-only OpenCL and Vulkan packages do not.
 
@@ -85,7 +85,7 @@ user `YOUR_NEB_ADDRESS.rig01` and password `x`.
 docker run -d --name suprminer-neb --gpus all --restart unless-stopped \
   -e COIN=NEB -e USERNAME=YOUR_NEB_ADDRESS -e WORKER=rig01 \
   -e PASSWORD=x -e STARTUP_SCRIPT_URL= \
-  ocminersupr/suprminer-base:1.9.36
+  ocminersupr/suprminer-base:1.9.37
 ```
 
 `COIN=NEB` selects `neb.suprnova.cc:7804`.

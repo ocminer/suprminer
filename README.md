@@ -3,6 +3,16 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL packages
 for AMD and NVIDIA devices, plus an AMD Vulkan package.
 
+## Suprminer 1.9.37
+
+NEB: fixes the reconnect loop on Windows and on slow or remote connections with
+a new stratum client. A network thread receives complete pool messages however
+they are split, and the mining loop no longer reads from the connection. GPU code
+is unchanged from 1.9.36 for all algorithms.
+
+[Download 1.9.37](https://github.com/ocminer/suprminer/releases/tag/v1.9.37) ·
+[Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.37)
+
 ## Suprminer 1.9.36
 
 Adds NEB (Neural Engine Byte) proof-of-training mining on NVIDIA GPUs (`-a neb`).
@@ -96,15 +106,15 @@ unavailable. No Turing hardware hashrate or compatibility result is claimed.
 
 | Platform | Package |
 |---|---|
-| Linux NVIDIA, Ubuntu 20.04+ | Complete `suprminer-1.9.36-linux-x86_64.tar.gz` bundle |
+| Linux NVIDIA, Ubuntu 20.04+ | Complete `suprminer-1.9.37-linux-x86_64.tar.gz` bundle |
 | Linux NVIDIA, Ubuntu 20.04 / 22.04 | Matching `linux-x86_64-u2004` / `u2204` executable; helper is also available separately |
 | Linux AMD, Ubuntu 20.04+, Quantus | Optional `quantus-vulkan-linux-x86_64` executable; add `--vulkan` |
 | Windows NVIDIA | Native `windows-x86_64-nvidia.zip` |
 | Windows AMD / Pascal Quantus | Native `windows-x86_64-quantus-opencl.zip` |
 | HiveOS | NVIDIA or OpenCL `_u2004.tar.gz` / `_u2204.tar.gz` custom package |
-| mmPOS | NVIDIA or OpenCL `mmpos_1.9.36` external-miner package |
+| mmPOS | NVIDIA or OpenCL `mmpos_1.9.37` external-miner package |
 | SMOS | NVIDIA or OpenCL `smos-…-u2004.zip` / `u2204.zip` custom package |
-| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.36` |
+| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.37` |
 
 Verify the SHA-256 checksum before installation. Extract complete archives and
 keep their supporting files beside the executable. Install the appropriate GPU
@@ -185,7 +195,7 @@ Linux GPU testing do not replace validation of a particular mining OS installati
 ```sh
 docker run -d --name suprminer --gpus all --restart unless-stopped \
   -e COIN=PRL -e USERNAME=YOUR_PRL_ADDRESS -e WORKER=rig1 \
-  ocminersupr/suprminer-base:1.9.36
+  ocminersupr/suprminer-base:1.9.37
 ```
 
 For merged mining, use `USERNAME=YOUR_PRL_ADDRESS+YOUR_NOCK_ADDRESS` and add
