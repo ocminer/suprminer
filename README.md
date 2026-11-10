@@ -3,20 +3,50 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL packages
 for AMD and NVIDIA devices, plus an AMD Vulkan package.
 
-## Suprminer 1.9.35
+## Suprminer 1.9.36
 
-NOID/TAPE GPU mining now uses substantially less CPU, improving throughput on
-CPU-limited rigs while preserving CPU share verification and nonce recovery.
-Experimental GTX 16xx / RTX 20xx support is included; physical Turing hardware
-has not been tested. See the measurements and limitations below.
-Portable Linux packages support Ubuntu 20.04 and newer without system C++ or OpenSSL libraries.
-The automatic Linux RTX 5090 memory-clock setting is retained;
-`--no-auto-mem-lock` disables it.
+Adds NEB (Neural Engine Byte) proof-of-training mining on NVIDIA GPUs (`-a neb`).
+Each attempt is one exact integer training step of a small neural network; every
+GPU share is checked again with the NEB reference code on the CPU. The 37.6 MB
+dataset file is downloaded and hash-checked automatically. All other algorithms
+are unchanged from 1.9.35. Portable Linux packages support Ubuntu 20.04 and newer
+without system C++ or OpenSSL libraries.
 
-[Download 1.9.35](https://github.com/ocminer/suprminer/releases/tag/v1.9.35) ·
-[Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.35) ·
+```sh
+./suprminer-neptune -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u YOUR_NEB_ADDRESS.rig01 -p x
+```
+
+[Download 1.9.36](https://github.com/ocminer/suprminer/releases/tag/v1.9.36) ·
+[Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.36) ·
+[NEB](docs/NEB_RELEASE_GUIDE.md) ·
 [Merged mining](MERGED_MINING.md) · [PRL and NOID](docs/PRL_NOID_RELEASE_GUIDE.md) ·
 [Quantus](docs/QUANTUS_RELEASE_GUIDE.md) · [Docker and cloud hosting](docker/README.md)
+
+## NEB performance — 1.9.36
+
+Measured on Linux with the full release executable on 2026-11-10, stock
+clocks, no overclocking. The benchmark rows are the built-in `--neb-test`
+benchmark (30 seconds per run, A/B/B/A order, four runs per kernel). The pool
+rows are averages of the miner's own rate over live mining on
+`neb.suprnova.cc:7804` after the first 30 seconds, with every share checked by
+the CPU reference. Watts and clocks are GPU averages while hashing.
+
+| GPU | Limit W | Kernel | MH/s | GPU W | SM MHz | Pool shares |
+|---|---:|---|---:|---:|---:|---|
+| RTX 5090 | 450 | K1 (benchmark) | 31.43 | 449.4 | 1835 | |
+| RTX 5090 | 450 | K1P (benchmark) | **32.91** | 450.1 | 2172 | |
+| RTX 5090 | 450 | auto = K1P (pool, 15 min) | **32.35** | 450.0 | 2278 | 41 accepted, 0 rejected |
+| RTX 5070 Ti | 300 | auto = K1 (pool, 10 min) | **18.31** | 299.5 | 2685 | 24 accepted, 0 rejected |
+
+K1P computes two attempts per thread block and loads each weight fragment once
+for both, which cuts memory traffic. With the same 450 W limit the RTX 5090
+runs at higher clocks and reaches 4.7% more attempts per second than K1. On the
+RTX 5070 Ti, K1 is faster, so the start-up timing keeps K1 there. Both kernels
+produce bit-identical results. Other GPUs (RTX 30xx/40xx, A100/H100, CMP 170HX,
+GTX 16xx/RTX 20xx) were not measured; their kernel is chosen by the same timing.
+
+While mining, the miner uses about 0.7% of one CPU core per GPU instead of
+waiting in a busy loop.
 
 ## TAPE / NOID performance — 1.9.35
 
@@ -66,15 +96,15 @@ unavailable. No Turing hardware hashrate or compatibility result is claimed.
 
 | Platform | Package |
 |---|---|
-| Linux NVIDIA, Ubuntu 20.04+ | Complete `suprminer-1.9.35-linux-x86_64.tar.gz` bundle |
+| Linux NVIDIA, Ubuntu 20.04+ | Complete `suprminer-1.9.36-linux-x86_64.tar.gz` bundle |
 | Linux NVIDIA, Ubuntu 20.04 / 22.04 | Matching `linux-x86_64-u2004` / `u2204` executable; helper is also available separately |
 | Linux AMD, Ubuntu 20.04+, Quantus | Optional `quantus-vulkan-linux-x86_64` executable; add `--vulkan` |
 | Windows NVIDIA | Native `windows-x86_64-nvidia.zip` |
 | Windows AMD / Pascal Quantus | Native `windows-x86_64-quantus-opencl.zip` |
 | HiveOS | NVIDIA or OpenCL `_u2004.tar.gz` / `_u2204.tar.gz` custom package |
-| mmPOS | NVIDIA or OpenCL `mmpos_1.9.35` external-miner package |
+| mmPOS | NVIDIA or OpenCL `mmpos_1.9.36` external-miner package |
 | SMOS | NVIDIA or OpenCL `smos-…-u2004.zip` / `u2204.zip` custom package |
-| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.35` |
+| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.36` |
 
 Verify the SHA-256 checksum before installation. Extract complete archives and
 keep their supporting files beside the executable. Install the appropriate GPU
@@ -107,6 +137,9 @@ Replace each placeholder with your own payout address and worker name:
 
 # NPT (Neptune Cash) — plain TCP; the username is your pool account
 ./suprminer-neptune -a npt -o stratum+tcp://npt.suprnova.cc:6453 -u YOUR_POOL_ACCOUNT.rig1 -p x
+
+# NEB (proof-of-training) — the dataset file is downloaded automatically
+./suprminer-neptune -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u YOUR_NEB_ADDRESS.rig1 -p x
 ```
 
 On Windows, use `.\suprminer-neptune.exe` in PowerShell. Add `-d 0,1` to select
@@ -131,13 +164,14 @@ GPUs. Stop with Ctrl+C. Use `--help` for all supported options.
 | `sha256mem` | `fairchain`, `fair` | Fairchain — memory-hard sha256mem | NVIDIA |
 | `noid` | `parano1d`, `poseidon2b` | NOID / Parano1d — Poseidon2b over GF(2¹²⁸) | NVIDIA sm_80 / sm_86 / sm_89 / sm_90 / sm_120; experimental sm_75 (GTX 16xx / RTX 20xx) |
 | `npt` | `neptune`, `neptune-cash` | Neptune Cash — HardforkDelta PoW, negotiated suffix search | NVIDIA sm_80+ (RTX 30xx, CMP 170HX, RTX 40xx/50xx, A100/H100, RTX PRO 6000) |
+| `neb` | `nebcoin`, `pot` | NEB — proof-of-training (integer training step per attempt) | NVIDIA sm_80+ tensor cores; sm_75 (GTX 16xx / RTX 20xx) dp4a |
 
 Algorithm support depends on the selected backend and GPU. The PRL/NOID guide
-lists their requirements. Saved GPU profiles are selected automatically.
+lists their requirements; the NEB guide covers NEB. Saved GPU profiles are selected automatically.
 
 ## Mining operating systems
 
-Use the NVIDIA HiveOS, mmPOS or SMOS package for PRL/NOID/NPT. Configure the algorithm,
+Use the NVIDIA HiveOS, mmPOS or SMOS package for PRL/NOID/NPT/NEB. Configure the algorithm,
 pool and your own wallet address in the platform's custom miner settings.
 For PRL + NOCK, use the combined wallet format and add `--nock-merge` to extra
 arguments. The helper is bundled in the NVIDIA packages.
@@ -151,7 +185,7 @@ Linux GPU testing do not replace validation of a particular mining OS installati
 ```sh
 docker run -d --name suprminer --gpus all --restart unless-stopped \
   -e COIN=PRL -e USERNAME=YOUR_PRL_ADDRESS -e WORKER=rig1 \
-  ocminersupr/suprminer-base:1.9.35
+  ocminersupr/suprminer-base:1.9.36
 ```
 
 For merged mining, use `USERNAME=YOUR_PRL_ADDRESS+YOUR_NOCK_ADDRESS` and add
