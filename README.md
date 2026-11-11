@@ -3,6 +3,41 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL packages
 for AMD and NVIDIA devices, plus an AMD Vulkan package.
 
+## Suprminer 1.9.38
+
+NEB: new tensor-core kernel K1X and a fix for low NEB hashrates reported on
+Windows and WSL2. Live NEB mining: RTX 5090 at 450 W 40.01 MH/s (1.9.37: 33.73,
++18.6%), RTX 5070 Ti at 300 W 22.02 MH/s (1.9.37: 18.95, +16.2%). `auto` checks
+every tensor-core kernel against the CPU reference and keeps the fastest per
+card and job. GPU code of all other algorithms is unchanged from 1.9.37.
+
+```sh
+./suprminer-neptune -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u YOUR_NEB_ADDRESS.rig01 -p x
+```
+
+[Download 1.9.38](https://github.com/ocminer/suprminer/releases/tag/v1.9.38) ·
+[Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.38) ·
+[NEB](docs/NEB_RELEASE_GUIDE.md)
+
+## NEB performance — 1.9.38
+
+Measured on Linux with the release executable on 2026-11-10/11, stock clocks,
+no overclocking. Benchmark rows are the built-in `--neb-test` benchmark
+(30 seconds per run, A/B/B/A order, four runs per kernel). Pool rows are
+averages of the miner's own rate over live mining on `neb.suprnova.cc:7804`
+after the first 30 seconds, with every share checked by the CPU reference.
+Watts and clocks are GPU averages while hashing.
+
+| GPU | Limit W | Kernel | MH/s | GPU W | SM MHz | Pool shares |
+|---|---:|---|---:|---:|---:|---|
+| RTX 5090 | 450 | K1P (benchmark) | 33.35 | 449.9 | 2193 | |
+| RTX 5090 | 450 | K1X (benchmark) | **38.33** | 447.6 | 2014 | |
+| RTX 5090 | 450 | auto = K1X (pool, 25 min) | **40.01** | 449.5 | 2026 | 57 accepted, 0 rejected |
+| RTX 5070 Ti | 300 | auto = K1X (pool, 21 min) | **22.02** | 299.2 | 2761 | 61 accepted, 0 rejected |
+
+Other GPUs were not measured with this release; their kernel is chosen by the
+same check and timing.
+
 ## Suprminer 1.9.37
 
 NEB: fixes the reconnect loop on Windows and on slow or remote connections with
