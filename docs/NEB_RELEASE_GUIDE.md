@@ -1,4 +1,4 @@
-# NEB with Suprminer 1.9.38
+# NEB with Suprminer 1.9.39
 
 NEB (Neural Engine Byte) is proof-of-training: every mining attempt is one exact
 integer training step of a small neural network on 16 samples of the chain's
@@ -6,7 +6,7 @@ dataset. Suprminer mines NEB on NVIDIA GPUs with the algorithm name `neb`.
 NEB version 0.2.1 currently runs a test network.
 
 Download the NVIDIA package for your operating system from the
-[1.9.38 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.38).
+[1.9.39 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.39).
 The full NVIDIA Linux packages (`u2004` and `u2204`), the NVIDIA Windows package
 and the Docker image include NEB. The Quantus-only OpenCL and Vulkan packages do not.
 
@@ -14,7 +14,7 @@ and the Docker image include NEB. The Quantus-only OpenCL and Vulkan packages do
 
 | GPU | Kernel |
 |---|---|
-| RTX 30xx, 40xx, 50xx, A100/H100, CMP 170HX (compute capability 8.0 or newer) | tensor cores (K1, K1P, K1X or K2, selected automatically) |
+| RTX 30xx, 40xx, 50xx, A100/H100, CMP 170HX (compute capability 8.0 or newer) | tensor cores (K1, K1P, K1X, K2 or K3, selected automatically) |
 | GTX 16xx and RTX 20xx (compute capability 7.5) | dp4a (K0) |
 
 Use a current NVIDIA driver (610 or newer recommended). Every share the GPU finds
@@ -62,9 +62,9 @@ suprminer-neptune.exe -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u YOUR_NEB_A
 ```
 
 Extract the whole archive into one writable folder, so the dataset can be saved
-next to the executable. 1.9.38 changes how GPU work is submitted on Windows and
-WSL2 to address a much lower NEB hashrate reported there with earlier versions.
-Windows GPU mining has not been tested on hardware.
+next to the executable. Since 1.9.38, GPU work is submitted differently on
+Windows and WSL2 to address a much lower NEB hashrate reported there with
+earlier versions. Windows GPU mining has not been tested on hardware.
 
 ## HiveOS
 
@@ -92,7 +92,7 @@ user `YOUR_NEB_ADDRESS.rig01` and password `x`.
 docker run -d --name suprminer-neb --gpus all --restart unless-stopped \
   -e COIN=NEB -e USERNAME=YOUR_NEB_ADDRESS -e WORKER=rig01 \
   -e PASSWORD=x -e STARTUP_SCRIPT_URL= \
-  ocminersupr/suprminer-base:1.9.38
+  ocminersupr/suprminer-base:1.9.39
 ```
 
 `COIN=NEB` selects `neb.suprnova.cc:7804`.
@@ -101,7 +101,7 @@ docker run -d --name suprminer-neb --gpus all --restart unless-stopped \
 
 | Option | Meaning |
 |---|---|
-| `--neb-kernel auto\|k0\|k1\|k1p\|k1x\|k2` | GPU kernel; `auto` picks the fastest verified tensor-core kernel on compute capability 8.0 and newer, K0 below |
+| `--neb-kernel auto\|k0\|k1\|k1p\|k1x\|k2\|k3` | GPU kernel; `auto` picks the fastest verified tensor-core kernel on compute capability 8.0 and newer, K0 below |
 | `--neb-dataset PATH` | dataset file |
 | `--neb-test` | compares GPU results with the CPU reference on both datasets, then benchmarks and exits |
 | `--api --api-port 4068` | HiveOS/mmpOS-compatible statistics, including the current share difficulty |
