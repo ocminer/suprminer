@@ -5,6 +5,13 @@ for AMD and NVIDIA devices, plus an AMD Vulkan package.
 
 ## Suprminer 1.9.40 — NEB v0.3.0
 
+> [!IMPORTANT]
+> **For NEB, start using 1.9.40 when your pool activates the v0.3.0 fork.**
+> KEP1 starts at block **8800** and RET2 at block **8801**; activation follows
+> block height, not a fixed time. Until then, keep using **1.9.39** for NEB
+> (Docker: `ocminersupr/suprminer-base:1.9.39`). Version 1.9.40 rejects old NEB
+> jobs. Other supported algorithms can be used immediately.
+
 **Required for NEB block 8800. This version supports only the new KEP1/RET2
 algorithm. Keep 1.9.39 for pre-fork NEB jobs and switch when your pool activates
 the fork.** Old NEB jobs are refused; the product remains Suprminer and the
