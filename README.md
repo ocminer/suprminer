@@ -3,6 +3,57 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL packages
 for AMD and NVIDIA devices, plus an AMD Vulkan package.
 
+## Suprminer 1.9.40 — NEB v0.3.0
+
+**Required for NEB block 8800. This version supports only the new KEP1/RET2
+algorithm. Keep 1.9.39 for pre-fork NEB jobs and switch when your pool activates
+the fork.** Old NEB jobs are refused; the product remains Suprminer and the
+command stays `-a neb`. KEP1 begins at block 8800, RET2 at block 8801.
+For Docker NEB deployments before pool activation, pin
+`ocminersupr/suprminer-base:1.9.39`; `latest` moves to 1.9.40.
+
+The new 259.9 MB dataset downloads automatically with BLAKE3 verification.
+NVIDIA Linux, Windows, HiveOS, mmpOS, SMOS and Docker packages include new NEB.
+The Quantus OpenCL/Vulkan packages remain available for their existing algorithms.
+Every submitted NEB share is checked on the CPU; queued GPU work uses blocking
+waits to keep CPU usage low.
+
+[Download 1.9.40](https://github.com/ocminer/suprminer/releases/tag/v1.9.40) ·
+[NEB setup guide](docs/NEB_RELEASE_GUIDE.md) ·
+[Pre-fork 1.9.39](https://github.com/ocminer/suprminer/releases/tag/v1.9.39)
+
+### NEB v0.3.0 measurements — 1.9.40
+
+Measured on Linux using the final 1.9.40 CUDA executables on 2026-11-11,
+with a 60-second built-in benchmark and a fixed seeded model for each
+architecture. The existing 450 W limit and clocks were unchanged. GPU watts and clocks
+are sampled averages during the benchmark; CPU percentages refer to one core.
+Each row is one run, not a matched A/B comparison. The Docker image contains the
+same executable as the portable Linux bundle. These are initial post-fork
+algorithm measurements, not an old/new speedup comparison. Actual pool rates
+vary with the model and share difficulty.
+
+| GPU | Build | Network | kH/s | Limit W | GPU W | Core MHz | Memory MHz | CPU % of one core |
+|---|---|---|---:|---:|---:|---:|---:|---:|
+| RTX 5090 | Portable Linux / Docker | KEP1 | **75.065** | 450 | 347.2 | 2837 | 13801 | 0.74 |
+| RTX 5090 | Portable Linux / Docker | RET2 | **19.585** | 450 | 376.0 | 2806 | 13801 | 0.37 |
+| RTX 5090 | HiveOS 20.04 | KEP1 | **65.571** | 450 | 355.7 | 2839 | 13801 | 0.55 |
+| RTX 5090 | HiveOS 20.04 | RET2 | **22.808** | 450 | 450.2 | 2774 | 13801 | 0.25 |
+
+The final Linux executable was tested on an RTX 5090 against NEB v0.3.0.
+Both KEP1 and RET2 produced accepted shares and node-confirmed blocks.
+Steady pool-test CPU use was 0.94% of one core. Old NEB
+jobs were refused with a clear requirement message and zero reported mining rate.
+Quantus, NPT and XNT regression checks passed, and unrelated algorithm kernels
+were preserved. Native Windows builds and CPU protocol tests passed. Physical
+Windows GPU mining and other GPU models were not tested in this release session.
+
+The HiveOS 20.04 package also passed automatic replacement of the old cached
+dataset and live statistics checks with curl 7.58.
+
+
+New KEP1/RET2 kH/s figures are not comparable to the old NEB algorithm's MH/s figures.
+
 ## Suprminer 1.9.39
 
 NEB: new GPU kernel K3. RTX 5070 Ti at 300 W: built-in benchmark 31.42 MH/s
@@ -21,7 +72,7 @@ code of all other algorithms is unchanged from 1.9.38.
 [Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.39) ·
 [NEB](docs/NEB_RELEASE_GUIDE.md)
 
-## NEB performance — 1.9.39
+## Historical pre-fork NEB performance — 1.9.39
 
 Release executable on Linux, stock clocks. Benchmark rows are the built-in
 `--neb-test` benchmark (30 seconds per run, A/B/B/A order). The pool row is the
@@ -50,7 +101,7 @@ card and job. GPU code of all other algorithms is unchanged from 1.9.37.
 [Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.38) ·
 [NEB](docs/NEB_RELEASE_GUIDE.md)
 
-## NEB performance — 1.9.38
+## Historical pre-fork NEB performance — 1.9.38
 
 Measured on Linux with the release executable on 2026-11-10/11, stock clocks,
 no overclocking. Benchmark rows are the built-in `--neb-test` benchmark
@@ -98,7 +149,7 @@ without system C++ or OpenSSL libraries.
 [Merged mining](MERGED_MINING.md) · [PRL and NOID](docs/PRL_NOID_RELEASE_GUIDE.md) ·
 [Quantus](docs/QUANTUS_RELEASE_GUIDE.md) · [Docker and cloud hosting](docker/README.md)
 
-## NEB performance — 1.9.36
+## Historical pre-fork NEB performance — 1.9.36
 
 Measured on Linux with the full release executable on 2026-11-10, stock
 clocks, no overclocking. The benchmark rows are the built-in `--neb-test`
@@ -172,15 +223,15 @@ unavailable. No Turing hardware hashrate or compatibility result is claimed.
 
 | Platform | Package |
 |---|---|
-| Linux NVIDIA, Ubuntu 20.04+ | Complete `suprminer-1.9.37-linux-x86_64.tar.gz` bundle |
+| Linux NVIDIA, Ubuntu 20.04+ | Complete `suprminer-1.9.40-linux-x86_64.tar.gz` bundle |
 | Linux NVIDIA, Ubuntu 20.04 / 22.04 | Matching `linux-x86_64-u2004` / `u2204` executable; helper is also available separately |
 | Linux AMD, Ubuntu 20.04+, Quantus | Optional `quantus-vulkan-linux-x86_64` executable; add `--vulkan` |
 | Windows NVIDIA | Native `windows-x86_64-nvidia.zip` |
 | Windows AMD / Pascal Quantus | Native `windows-x86_64-quantus-opencl.zip` |
 | HiveOS | NVIDIA or OpenCL `_u2004.tar.gz` / `_u2204.tar.gz` custom package |
-| mmPOS | NVIDIA or OpenCL `mmpos_1.9.37` external-miner package |
+| mmPOS | NVIDIA or OpenCL `mmpos_1.9.40` external-miner package |
 | SMOS | NVIDIA or OpenCL `smos-…-u2004.zip` / `u2204.zip` custom package |
-| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.37` |
+| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.40` |
 
 Verify the SHA-256 checksum before installation. Extract complete archives and
 keep their supporting files beside the executable. Install the appropriate GPU
@@ -214,7 +265,7 @@ Replace each placeholder with your own payout address and worker name:
 # NPT (Neptune Cash) — plain TCP; the username is your pool account
 ./suprminer-neptune -a npt -o stratum+tcp://npt.suprnova.cc:6453 -u YOUR_POOL_ACCOUNT.rig1 -p x
 
-# NEB (proof-of-training) — the dataset file is downloaded automatically
+# NEB v0.3.0 only — switch when the pool activates the fork
 ./suprminer-neptune -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u YOUR_NEB_ADDRESS.rig1 -p x
 ```
 
@@ -240,7 +291,7 @@ GPUs. Stop with Ctrl+C. Use `--help` for all supported options.
 | `sha256mem` | `fairchain`, `fair` | Fairchain — memory-hard sha256mem | NVIDIA |
 | `noid` | `parano1d`, `poseidon2b` | NOID / Parano1d — Poseidon2b over GF(2¹²⁸) | NVIDIA sm_80 / sm_86 / sm_89 / sm_90 / sm_120; experimental sm_75 (GTX 16xx / RTX 20xx) |
 | `npt` | `neptune`, `neptune-cash` | Neptune Cash — HardforkDelta PoW, negotiated suffix search | NVIDIA sm_80+ (RTX 30xx, CMP 170HX, RTX 40xx/50xx, A100/H100, RTX PRO 6000) |
-| `neb` | `nebcoin`, `pot` | NEB — proof-of-training (integer training step per attempt) | NVIDIA sm_80+ tensor cores; sm_75 (GTX 16xx / RTX 20xx) dp4a |
+| `neb` | `nebcoin`, `pot` | NEB v0.3.0 — KEP1/RET2 proof-of-training | NVIDIA sm_75+ |
 
 Algorithm support depends on the selected backend and GPU. The PRL/NOID guide
 lists their requirements; the NEB guide covers NEB. Saved GPU profiles are selected automatically.
@@ -261,7 +312,7 @@ Linux GPU testing do not replace validation of a particular mining OS installati
 ```sh
 docker run -d --name suprminer --gpus all --restart unless-stopped \
   -e COIN=PRL -e USERNAME=YOUR_PRL_ADDRESS -e WORKER=rig1 \
-  ocminersupr/suprminer-base:1.9.37
+  ocminersupr/suprminer-base:1.9.40
 ```
 
 For merged mining, use `USERNAME=YOUR_PRL_ADDRESS+YOUR_NOCK_ADDRESS` and add

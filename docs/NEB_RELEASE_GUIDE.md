@@ -1,12 +1,20 @@
-# NEB with Suprminer 1.9.39
+# NEB with Suprminer 1.9.40
 
 NEB (Neural Engine Byte) is proof-of-training: every mining attempt is one exact
 integer training step of a small neural network on 16 samples of the chain's
 dataset. Suprminer mines NEB on NVIDIA GPUs with the algorithm name `neb`.
-NEB version 0.2.1 currently runs a test network.
+Suprminer 1.9.40 supports **NEB v0.3.0 only**: KEP1 and RET2 convolutional
+networks (nebhash v2). It replaces the old NEB algorithm; the product remains
+Suprminer and the command is still `-a neb`.
+
+On the public NEB network, KEP1 starts at block **8800**, followed by RET2 at
+**8801**. Use the previous Suprminer release for pre-fork mining, and switch to
+1.9.40 when your pool starts sending the new jobs. This version reports old jobs
+as unsupported and waits for compatible work. Height determines activation;
+the miner follows the dataset index sent by the pool, including on private chains.
 
 Download the NVIDIA package for your operating system from the
-[1.9.39 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.39).
+[1.9.40 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.40).
 The full NVIDIA Linux packages (`u2004` and `u2204`), the NVIDIA Windows package
 and the Docker image include NEB. The Quantus-only OpenCL and Vulkan packages do not.
 
@@ -14,25 +22,27 @@ and the Docker image include NEB. The Quantus-only OpenCL and Vulkan packages do
 
 | GPU | Kernel |
 |---|---|
-| RTX 30xx, 40xx, 50xx, A100/H100, CMP 170HX (compute capability 8.0 or newer) | tensor cores (K1, K1P, K1X, K2 or K3, selected automatically) |
-| GTX 16xx and RTX 20xx (compute capability 7.5) | dp4a (K0) |
+| NVIDIA compute capability 7.5 and newer (GTX 16xx, RTX 20/30/40/50 series, A100/H100 and compatible datacenter GPUs) | exact integer KEP1/RET2 CUDA kernel |
 
-Use a current NVIDIA driver (610 or newer recommended). Every share the GPU finds
-is checked again with the NEB reference code on the CPU before it is submitted.
+Use a current NVIDIA driver (610 or newer recommended). At startup, each GPU
+checks complete tickets against the CPU reference for both architectures. New
+job headers are checked before mining, and every found share is recomputed on
+the CPU before submission. A mismatch stops that GPU.
 
-At start, `auto` checks each tensor-core kernel against the CPU reference on the
-card and times the ones that pass; on each new job it times them again on the
-job's model and keeps the fastest. A kernel that does not match the reference is
-never used.
+The new convolutional networks do substantially more work per attempt than the
+old network. Their kH/s figures must not be compared with pre-fork MH/s figures.
+GPU waits use blocking events and two queued batches to keep CPU use low.
 
 ## Dataset file
 
-NEB needs the chain's training data, `neb-datasets.bin` (37.6 MB). The miner looks
+NEB needs the chain's training data, `neb-datasets.bin` (259.9 MB). The miner looks
 for it in the working directory and next to the executable. When it is missing,
 the miner downloads it automatically over HTTPS from the NEB release (with the
 Suprminer release as a mirror), checks its BLAKE3 hash
-`b1008b970f87083179a7b297b8f0fbec4cfc8cc66f605cf2fb2c03bad8b6f37a` and saves it
-next to the executable. No `curl` or `wget` is needed. The Docker image already
+`296a174edbf67339fa0af341f063154292bba224b3d2cacf5b18b31c70da80eb` and saves it
+next to the executable. The old 37.6 MB file cannot be used. An explicitly
+selected `--neb-dataset` file must already contain the new data. No `curl` or
+`wget` is needed. The Docker image already
 contains the file.
 
 - Use `--neb-dataset PATH` to choose a file.
@@ -40,7 +50,7 @@ contains the file.
 - Set `NEB_NO_DOWNLOAD=1` to disable the download.
 
 Without internet access, download
-`https://github.com/SilasEigen/neb/releases/download/v0.2.1/neb-datasets.bin`
+`https://github.com/SilasEigen/neb/releases/download/v0.3.0/neb-datasets.bin`
 on another computer and copy it next to the miner. A file with a different hash
 is never used.
 
@@ -62,9 +72,9 @@ suprminer-neptune.exe -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u YOUR_NEB_A
 ```
 
 Extract the whole archive into one writable folder, so the dataset can be saved
-next to the executable. Since 1.9.38, GPU work is submitted differently on
-Windows and WSL2 to address a much lower NEB hashrate reported there with
-earlier versions. Windows GPU mining has not been tested on hardware.
+next to the executable. CUDA submissions are flushed before the host waits,
+including under Windows WDDM and WSL2. Windows GPU mining has not been tested
+on physical hardware for this release.
 
 ## HiveOS
 
@@ -92,7 +102,7 @@ user `YOUR_NEB_ADDRESS.rig01` and password `x`.
 docker run -d --name suprminer-neb --gpus all --restart unless-stopped \
   -e COIN=NEB -e USERNAME=YOUR_NEB_ADDRESS -e WORKER=rig01 \
   -e PASSWORD=x -e STARTUP_SCRIPT_URL= \
-  ocminersupr/suprminer-base:1.9.39
+  ocminersupr/suprminer-base:1.9.40
 ```
 
 `COIN=NEB` selects `neb.suprnova.cc:7804`.
@@ -101,14 +111,14 @@ docker run -d --name suprminer-neb --gpus all --restart unless-stopped \
 
 | Option | Meaning |
 |---|---|
-| `--neb-kernel auto\|k0\|k1\|k1p\|k1x\|k2\|k3` | GPU kernel; `auto` picks the fastest verified tensor-core kernel on compute capability 8.0 and newer, K0 below |
+| `--neb-kernel auto\|reference` | KEP1/RET2 CUDA kernel (`k0` is also accepted); old tensor-kernel overrides are unsupported |
 | `--neb-dataset PATH` | dataset file |
 | `--neb-test` | compares GPU results with the CPU reference on both datasets, then benchmarks and exits |
 | `--api --api-port 4068` | HiveOS/mmpOS-compatible statistics, including the current share difficulty |
 
 ## Licenses
 
-The NEB reference and GPU code is adapted from NEB v0.2.1 (Apache License 2.0).
+The NEB reference and GPU code is adapted from NEB v0.3.0 (Apache License 2.0).
 The dataset file is redistributed unmodified; it contains data derived from the
-NASA Exoplanet Archive (Kepler) and OCTMNIST (MedMNIST v2, CC BY 4.0). See
+NASA Exoplanet Archive (Kepler) and OCTMNIST (MedMNIST v2 / MedMNIST+, CC BY 4.0). See
 `THIRD_PARTY_NOTICES` and `licenses/`.

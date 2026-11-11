@@ -1,13 +1,18 @@
 # Suprminer Docker user guide
 
+**NEB fork migration:** 1.9.40 supports only NEB v0.3.0 KEP1/RET2.
+Before your pool activates the fork, pin `ocminersupr/suprminer-base:1.9.39`.
+The `latest` tag moves to 1.9.40. KEP1 starts at block 8800 and RET2 at block 8801.
+
+
 `ocminersupr/suprminer-base` runs Suprminer on NVIDIA GPUs using environment
 variables. It includes the miner and starts mining automatically when the
 container starts. Use it on Octa.Space, Vast.ai, or a Docker host with the NVIDIA
 Container Toolkit.
 
 - Image: [`ocminersupr/suprminer-base`](https://hub.docker.com/r/ocminersupr/suprminer-base)
-- Current release: [`1.9.39`](https://github.com/ocminer/suprminer/releases/tag/v1.9.39)
-- Tags: `1.9.39` selects this miner version; `latest` follows new releases.
+- Current release: [`1.9.40`](https://github.com/ocminer/suprminer/releases/tag/v1.9.40)
+- Tags: `1.9.40` selects this miner version; `latest` follows new releases.
 - [Quantus setup guide](https://github.com/ocminer/suprminer/blob/main/docker/QUANTUS.md)
 - [PRL and NOID setup guide](https://github.com/ocminer/suprminer/blob/main/docs/PRL_NOID_RELEASE_GUIDE.md)
 - [Public copy of this guide](https://github.com/ocminer/suprminer/blob/main/docker/README.md)
@@ -26,7 +31,7 @@ docker run -d --name suprminer-quantus \
   -e COIN=QUANTUS \
   -e USERNAME=YOUR_QUANTUS_WALLET_ADDRESS \
   -e WORKER=rig1 \
-  ocminersupr/suprminer-base:1.9.39
+  ocminersupr/suprminer-base:1.9.40
 ```
 
 This selects `quantus.suprnova.cc:7071`. For TLS, also set
@@ -43,7 +48,7 @@ Configure your custom app or container with these settings:
 
 | Setting | Value |
 |---|---|
-| Container image | `ocminersupr/suprminer-base:1.9.39` |
+| Container image | `ocminersupr/suprminer-base:1.9.40` |
 | GPU | Allocate the NVIDIA GPU or GPUs to the container |
 | Startup command | Use the image default, `/entrypoint.sh` |
 | `COIN` | `QUANTUS` |
@@ -117,7 +122,7 @@ app using this field for its User Guide link.
 
 ## Vast.ai
 
-Set the image to `ocminersupr/suprminer-base:1.9.39`. Choose the
+Set the image to `ocminersupr/suprminer-base:1.9.40`. Choose the
 **docker ENTRYPOINT** launch mode and use `/entrypoint.sh` as the command if an
 explicit command is required. In API templates, use `runtype: "args"` with
 `args_str: "/entrypoint.sh"`. Add these Docker options, replacing the address:
@@ -190,7 +195,7 @@ Read the README without starting the miner:
 
 ```bash
 docker run --rm --runtime=runc -e NVIDIA_VISIBLE_DEVICES=void \
-  --entrypoint cat ocminersupr/suprminer-base:1.9.39 /app/README.md
+  --entrypoint cat ocminersupr/suprminer-base:1.9.40 /app/README.md
 ```
 
 Stop cleanly with:
@@ -208,8 +213,8 @@ The build context must contain `Dockerfile`, `entrypoint.sh`, `README.md`,
 `QUANTUS.md`, and the release binary named `suprminer-neptune`.
 
 ```bash
-docker build -t ocminersupr/suprminer-base:1.9.39 docker/octa
-docker push ocminersupr/suprminer-base:1.9.39
+docker build -t ocminersupr/suprminer-base:1.9.40 docker/octa
+docker push ocminersupr/suprminer-base:1.9.40
 ```
 
 The Docker Hub overview is maintained separately from the files inside the
