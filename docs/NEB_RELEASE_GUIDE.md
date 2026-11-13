@@ -1,20 +1,20 @@
-# NEB with Suprminer 1.9.40
+# NEB with Suprminer 1.9.41
 
 NEB (Neural Engine Byte) is proof-of-training: every mining attempt is one exact
 integer training step of a small neural network on 16 samples of the chain's
 dataset. Suprminer mines NEB on NVIDIA GPUs with the algorithm name `neb`.
-Suprminer 1.9.40 supports **NEB v0.3.0 only**: KEP1 and RET2 convolutional
+Suprminer 1.9.41 supports **NEB v0.3.0 only**: KEP1 and RET2 convolutional
 networks (nebhash v2). It replaces the old NEB algorithm; the product remains
 Suprminer and the command is still `-a neb`.
 
 On the public NEB network, KEP1 starts at block **8800**, followed by RET2 at
 **8801**. Use the previous Suprminer release for pre-fork mining, and switch to
-1.9.40 when your pool starts sending the new jobs. This version reports old jobs
+1.9.41 when your pool starts sending the new jobs. This version reports old jobs
 as unsupported and waits for compatible work. Height determines activation;
 the miner follows the dataset index sent by the pool, including on private chains.
 
 Download the NVIDIA package for your operating system from the
-[1.9.40 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.40).
+[1.9.41 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.41).
 The full NVIDIA Linux packages (`u2004` and `u2204`), the NVIDIA Windows package
 and the Docker image include NEB. The Quantus-only OpenCL and Vulkan packages do not.
 
@@ -102,7 +102,7 @@ user `YOUR_NEB_ADDRESS.rig01` and password `x`.
 docker run -d --name suprminer-neb --gpus all --restart unless-stopped \
   -e COIN=NEB -e USERNAME=YOUR_NEB_ADDRESS -e WORKER=rig01 \
   -e PASSWORD=x -e STARTUP_SCRIPT_URL= \
-  ocminersupr/suprminer-base:1.9.40
+  ocminersupr/suprminer-base:1.9.41
 ```
 
 `COIN=NEB` selects `neb.suprnova.cc:7804`.
