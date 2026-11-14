@@ -3,14 +3,48 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL packages
 for AMD and NVIDIA devices, plus an AMD Vulkan package.
 
-## Suprminer 1.9.41 — faster NEB v0.3.0
+## Suprminer 1.9.42 — faster NEB v0.3.0
 
 > [!IMPORTANT]
-> **For NEB, start using 1.9.41 when your pool activates the v0.3.0 fork.**
-> KEP1 starts at block **8800** and RET2 at block **8801**; activation follows
-> block height, not a fixed time. Until then, keep using **1.9.39** for NEB
-> (Docker: `ocminersupr/suprminer-base:1.9.39`). Versions 1.9.40 and 1.9.41 reject
-> old NEB jobs. Other supported algorithms can be used immediately.
+> **NEB v0.3.0 is active** (KEP1 since block **8800**, RET2 since block **8801**).
+> Update to 1.9.42 for the fastest NEB mining. Versions before 1.9.40 cannot mine
+> the new algorithm.
+
+New CUDA kernels compute each NEB attempt in one warp without shared-memory
+staging, and RET2 layer 3 reads precomputed tensor-core operands. Shares and
+blocks are bit-identical to the reference algorithm; every submitted share is
+still checked on the CPU.
+
+[Download 1.9.42](https://github.com/ocminer/suprminer/releases/tag/v1.9.42) ·
+[NEB setup guide](docs/NEB_RELEASE_GUIDE.md)
+
+### NEB v0.3.0 measurements — 1.9.42
+
+| GPU | Power limit | KEP1 | RET2 | 1.9.41 (KEP1 / RET2) |
+|---|---:|---:|---:|---:|
+| RTX PRO 6000 | 600 W | **193.2 MH/s** | **82.1 MH/s** | 139.0 / 66.6 MH/s |
+| RTX 5090 | 575 W | **163.9 MH/s** | **72.2 MH/s** | 120.9 / 56.2 MH/s |
+| RTX 5090 | 450 W | **139.4 MH/s** | **61.1 MH/s** | 102.4 / 47.3 MH/s |
+| RTX 5080 | 360 W | **99.7 MH/s** | **38.1 MH/s** | 71.8 / 32.4 MH/s |
+| RTX 5070 Ti | 300 W | **82.4 MH/s** | **28.1 MH/s** | 59.3 / 25.0 MH/s |
+| RTX 3070 | 240 W | **16.5 MH/s** | **7.9 MH/s** | 3.9 / 3.3 MH/s |
+
+Measured on Linux on 2026-11-13 with the built-in `--neb-test` benchmark (fixed
+seeded models, 12 to 60 seconds per network; the 450 W row is the final release
+executable). Clocks were unchanged; the power
+limit is the card's configured limit. Each row is one run. Actual pool rates
+alternate between KEP1 and RET2 blocks and vary with the model.
+
+The full `--neb-test` (complete tickets, boundary nonces, hit sets and queued
+batches for two models of each network) passed on the RTX 5090, RTX PRO 6000,
+5080, 5070 Ti and 3070, and on the final Linux and both HiveOS executables,
+including forced PTX compilation. The final Linux executable mined on the NEB
+v0.3.0 network with 0 rejected shares at 1.4% of one CPU core. Quantus, NPT and
+XNT regression checks passed and their kernels are unchanged. Physical Windows GPU
+mining was not tested.
+
+## Suprminer 1.9.41 — NEB v0.3.0 (previous release)
+
 
 1.9.41 mines NEB v0.3.0 more than a thousand times faster than 1.9.40. Each
 dataset sample is computed once per model and every attempt is built from these
@@ -51,7 +85,7 @@ pool CPU use was 2.0% of one core. Old NEB jobs are refused. Quantus, NPT and XN
 regression checks passed and their kernels are unchanged. Physical Windows GPU
 mining was not tested.
 
-## Suprminer 1.9.40 — NEB v0.3.0 (previous release)
+## Suprminer 1.9.40 — NEB v0.3.0
 
 
 **Required for NEB block 8800. This version supports only the new KEP1/RET2
@@ -272,15 +306,15 @@ unavailable. No Turing hardware hashrate or compatibility result is claimed.
 
 | Platform | Package |
 |---|---|
-| Linux NVIDIA, Ubuntu 20.04+ | Complete `suprminer-1.9.41-linux-x86_64.tar.gz` bundle |
+| Linux NVIDIA, Ubuntu 20.04+ | Complete `suprminer-1.9.42-linux-x86_64.tar.gz` bundle |
 | Linux NVIDIA, Ubuntu 20.04 / 22.04 | Matching `linux-x86_64-u2004` / `u2204` executable; helper is also available separately |
 | Linux AMD, Ubuntu 20.04+, Quantus | Optional `quantus-vulkan-linux-x86_64` executable; add `--vulkan` |
 | Windows NVIDIA | Native `windows-x86_64-nvidia.zip` |
 | Windows AMD / Pascal Quantus | Native `windows-x86_64-quantus-opencl.zip` |
 | HiveOS | NVIDIA or OpenCL `_u2004.tar.gz` / `_u2204.tar.gz` custom package |
-| mmPOS | NVIDIA or OpenCL `mmpos_1.9.41` external-miner package |
+| mmPOS | NVIDIA or OpenCL `mmpos_1.9.42` external-miner package |
 | SMOS | NVIDIA or OpenCL `smos-…-u2004.zip` / `u2204.zip` custom package |
-| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.41` |
+| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.42` |
 
 Verify the SHA-256 checksum before installation. Extract complete archives and
 keep their supporting files beside the executable. Install the appropriate GPU
@@ -361,7 +395,7 @@ Linux GPU testing do not replace validation of a particular mining OS installati
 ```sh
 docker run -d --name suprminer --gpus all --restart unless-stopped \
   -e COIN=PRL -e USERNAME=YOUR_PRL_ADDRESS -e WORKER=rig1 \
-  ocminersupr/suprminer-base:1.9.41
+  ocminersupr/suprminer-base:1.9.42
 ```
 
 For merged mining, use `USERNAME=YOUR_PRL_ADDRESS+YOUR_NOCK_ADDRESS` and add
