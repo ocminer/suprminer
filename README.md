@@ -3,19 +3,84 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL packages
 for AMD and NVIDIA devices, plus an AMD Vulkan package.
 
-## NEB 1.0.1 update in progress
+## Suprminer 1.9.44 — NEB 1.0.1 Kepler / TESS
 
 > [!IMPORTANT]
-> **NEB 1.0.1 requires a new Kepler/TESS dataset and two KEP1 model slots.**
-> Existing Suprminer NEB releases, including 1.9.43, are incompatible with this
-> updated mainnet. The 1.9.43 release has been withdrawn. Please wait for
-> **Suprminer 1.9.44**, which is being validated against the NEB 1.0.1 node.
-> Mainnet launch remains **18 November 2026 at 14:00 UTC**.
+> **NEB 1.0.1 mainnet starts on 18 November 2026 at 14:00 UTC.**
+> Upgrade to 1.9.44: earlier NEB releases cannot mine this revised mainnet.
+> Jobs become available around 13:58 UTC. The command remains `-a neb`.
 
-The measurements below are historical NEB 1.0.0 results. RET2 is no longer used
-on the new mainnet; those figures must not be read as TESS benchmarks.
-Linux, Windows, mining-OS packages and Docker will be refreshed for 1.9.44.
-Other algorithms are unaffected.
+Both datasets now use **KEP1**: slot **0 = Kepler**, slot **1 = TESS**. This
+release accepts native indices 0/1, maintains separate model and dataset caches,
+and automatically installs the verified **16.1 MB** dataset. Recognized old
+NEB caches are upgraded. The old 2/3 mapping and RET2 models are rejected.
+Every submitted share is still checked against the CPU reference.
+
+The optimized hashing kernels and per-card selection from 1.9.43 are retained.
+The update changes dataset and protocol handling; it does not change NEB's
+integer hashing math. **0% miner fee**. NVIDIA NEB builds cover Linux, Windows,
+HiveOS, mmpOS, SMOS and Docker. AMD OpenCL/Vulkan packages support Quantus;
+they do not implement NEB.
+
+[Download 1.9.44](https://github.com/ocminer/suprminer/releases/tag/v1.9.44) ·
+[NEB setup guide](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
+
+The compatibility build mined **eight blocks accepted by the NEB 1.0.1 node**
+on an isolated rehearsal chain: four Kepler and four TESS, with zero rejected
+shares or blocks. The pool operator confirmed every block hash. This proves
+hash/consensus compatibility; the rehearsal did not test payouts.
+
+### NEB 1.0.1 — final Linux 1.9.44 executable
+
+| GPU | Limit | Kepler | TESS | CPU use |
+|---|---:|---:|---:|---:|
+| RTX 5090 | 450 W | **138.25 MH/s** | **139.95 MH/s** | 1.68% of one core |
+
+Measured on 17 November 2026 with the actual 1.0.1 genesis models and dataset,
+in fixed 60-second windows after warmup. All 188 submitted benchmark shares
+passed the upstream CPU reference, with zero invalid shares. Mean draw was
+449.9 W, mean core clock 1759 MHz and memory 13801 MHz;
+clock settings were unchanged. These are synthetic throughput measurements,
+separate from the real-node rehearsal. The Docker image carries the same
+Linux executable. [Measurement data](docs/benchmarks/neb-1944-mainnet101-5090.csv).
+
+### Fleet KEP1 reference measurements
+
+These results reuse the **1.9.43 Linux executable, NEB 1.0.0 Kepler genesis
+model and dataset**, measured on 17 November 2026. The KEP1 kernels and Kepler
+samples are unchanged, but 1.0.1 has new starting weights. These are historical
+performance references, **not new TESS results or a repeated 1.9.44 fleet
+sweep**. Rates vary with models and settings.
+
+| GPU | Limit W | KEP1 reference MH/s | Mean W | Mean core MHz | Memory MHz |
+|---|---:|---:|---:|---:|---:|
+| RTX 5090 | 450 | **139.31** | 449.9 | 1764 | 13801 |
+| RTX 5090 | 600 | **170.74** | 599.9 | 2193 | 13801 |
+| RTX 4070 Ti SUPER | 285 | **58.24** | 284.4 | 2640 | 10251 |
+| RTX 5080 | 360 | **99.12** | 359.7 | 2604 | 14801 |
+| RTX 3070 | 240 | **16.43** | 238.2 | 1871 | 6801 |
+| RTX 3070 | 240 | **16.43** | 238.6 | 1896 | 6801 |
+| RTX 5080 | 360 | **98.02** | 360.0 | 2574 | 14801 |
+| RTX 5070 Ti | 300 | **81.53** | 299.9 | 2578 | 13801 |
+| RTX 5090 | 420 | **130.92** | 419.7 | 1660 | 13801 |
+| RTX 3070 | 220 | **16.39** | 219.2 | 1846 | 6801 |
+| CMP 170HX | 300 | **31.68** | 212.6 | 1295 | 1728 |
+
+Fixed measurement windows follow warmup; each card's shares were checked with
+the upstream CPU reference, with zero invalid shares. Clocks were unchanged.
+Power limits are settings, not measured consumption; actual mean watts and
+clocks are in the [CSV](docs/benchmarks/neb-1944-fleet-kep1-reference.csv).
+The RTX 4070 Ti SUPER retained another application's GPU context. Repeated
+5080 and 3070 rows represent separate physical cards. The CMP completed the
+full measurement at a 300 W limit with native thermal throttling active at
+85 C (87 C peak memory); Kepler mean draw was 212.6 W. Its rate reflects
+that cooling condition. Original power and verifier service were restored.
+
+The earlier matched RTX 5090 kernel A/B/B/A at 450 W improved KEP1 from
+**136.00 to 139.19 MH/s (+2.35%)** in 1.9.43. This optimization is preserved;
+1.9.44 makes no additional speed-gain claim. Historical RET2 figures below
+are for the old network and must not be interpreted as TESS performance.
+
 
 ## Historical Suprminer 1.9.43 measurements — NEB 1.0.0
 

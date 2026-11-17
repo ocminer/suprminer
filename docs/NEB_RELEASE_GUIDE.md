@@ -1,21 +1,25 @@
-# NEB with Suprminer 1.9.43
+# NEB with Suprminer 1.9.44
 
 NEB (Neural Engine Byte) is proof-of-training: every mining attempt is one exact
 integer training step of a small neural network on 16 samples of the chain's
 dataset. Suprminer mines NEB on NVIDIA GPUs with the algorithm name `neb`.
-Suprminer supports **nebhash v2**: KEP1 and RET2 convolutional networks, used
-by NEB 1.0.0 mainnet and the final v0.3.0 testnet. The command is `-a neb`.
+Suprminer 1.9.44 supports **NEB 1.0.1 mainnet**, using nebhash v2 KEP1
+convolutional networks in both slots. The command remains `-a neb`.
 
-NEB 1.0.0 mainnet starts on **18 November 2026 at 14:00 UTC**. RET2 is used
-at odd heights and KEP1 at even heights, starting from genesis. Suprminer 1.9.43
-accepts Stratum indices **0/1 or 2/3** in both `set_model` and `notify`,
-normalizing them to the same v2 samples. Strict model size and weight-hash
-checks still reject old v1 models. For published **1.9.42** clients, pools must
-continue mapping the mainnet node's indices 0/1 to Stratum **2/3**. The miner follows the supplied model, dataset index and timestamp;
-it does not wait for the historical testnet fork height. Old v1 jobs are unsupported.
+Mainnet starts on **18 November 2026 at 14:00 UTC**. Slot **0 is Kepler**
+(even heights); slot **1 is TESS** (odd heights). Both `set_model` and `notify`
+must use these native indices. Both models have 13,000 packed weight bytes.
+The former 2/3 mapping and RET2 models are rejected. Models and cached forward
+passes remain separate for the two datasets, even though their architecture
+is the same. Every model's weight hash and size are checked.
+
+**1.9.43 and earlier are incompatible with NEB 1.0.1.** Its new genesis is
+`da2f5af7bb4c5e2bcc8d558b2f4f01d4c88557a943e6cff9cd035638fe9439ae`.
+The miner follows the pool's supplied model, index and timestamp, including
+shifted timestamps on private rehearsal chains.
 
 Download the NVIDIA package for your operating system from the
-[1.9.43 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.43).
+[1.9.44 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.44).
 The full NVIDIA Linux packages (`u2004` and `u2204`), the NVIDIA Windows package
 and the Docker image include NEB. The Quantus-only OpenCL and Vulkan packages do not.
 
@@ -23,38 +27,36 @@ and the Docker image include NEB. The Quantus-only OpenCL and Vulkan packages do
 
 | GPU | Kernel |
 |---|---|
-| NVIDIA compute capability 7.5 and newer (GTX 16xx, RTX 20/30/40/50 series, A100/H100 and compatible datacenter GPUs) | exact integer KEP1/RET2 CUDA kernel |
+| NVIDIA compute capability 7.5 and newer (GTX 16xx, RTX 20/30/40/50 series, A100/H100 and compatible datacenter GPUs) | exact integer KEP1 CUDA kernel |
 
 Use a current NVIDIA driver (610 or newer recommended). At startup, each GPU
-checks complete tickets against the CPU reference for both architectures. New
+checks complete tickets against the CPU reference for both datasets. New
 job headers are checked before mining, and every found share is recomputed on
 the CPU before submission. A mismatch stops that GPU.
 
-KEP1 and RET2 have different work per attempt. Compare rates for the same
-architecture and model; pre-v0.3.0 testnet rates measure a different algorithm.
+Both slots use KEP1 but have different samples and model weights. Compare rates
+with the same model, dataset and settings. Old RET2 rates are not TESS rates.
 GPU waits use blocking events and two queued batches to keep CPU use low.
 
 ## Dataset file
 
-Suprminer 1.9.43 accepts the NEB 1.0.0 mainnet `neb-datasets.bin` (222.3 MB). Published
-1.9.42 requires its v0.3.0 file (259.9 MB), whose KEP1/RET2 samples are identical;
-1.9.43 also accepts that exact pinned file without downloading it again.
-The miner looks
-for it in the working directory and next to the executable. When it is missing,
-the miner downloads it automatically over HTTPS from the NEB release (with the
-Suprminer release as a mirror), checks its BLAKE3 hash
-`fbabd0bdde0b43aef946e7031ff6e037c8a2a5d0ae2616b49b2b49b11af8010e` and saves it
-next to the executable. The old 37.6 MB file cannot be used. An explicitly
-selected `--neb-dataset` file must contain one of those two verified files. No `curl` or
-`wget` is needed. The Docker image already
-contains the file.
+Suprminer 1.9.44 requires the **NEB 1.0.1** `neb-datasets.bin`: **16,087,037
+bytes**, with 13,404 Kepler samples and 7,089 TESS samples. Its BLAKE3 hash is
+`790b57fbd830f3dcbe7de9d1146aa89a0a20799118e30dd48a343a5c98f19e72`.
+
+The miner looks in the working directory and next to the executable, then
+downloads a verified copy over HTTPS if necessary. Recognized NEB 1.0.0 and
+v0.3.0 caches are automatically upgraded, including at an explicit
+`--neb-dataset` path. An unknown explicit file is preserved and rejected with
+an error. `NEB_NO_DOWNLOAD=1` disables upgrades as well as downloads.
+No `curl` or `wget` is needed. Docker includes the new dataset.
 
 - Use `--neb-dataset PATH` to choose a file.
 - Set `NEB_DATASET_URL=<url>` to try your own mirror first.
 - Set `NEB_NO_DOWNLOAD=1` to disable the download.
 
 Without internet access, download
-`https://github.com/SilasEigen/neb/releases/download/v1.0.0/neb-datasets.bin`
+`https://github.com/SilasEigen/neb/releases/download/v1.0.1/neb-datasets.bin`
 on another computer and copy it next to the miner. A file with a different hash
 is never used.
 
@@ -106,7 +108,7 @@ user `YOUR_NEB_ADDRESS.rig01` and password `x`.
 docker run -d --name suprminer-neb --gpus all --restart unless-stopped \
   -e COIN=NEB -e USERNAME=YOUR_NEB_ADDRESS -e WORKER=rig01 \
   -e PASSWORD=x -e STARTUP_SCRIPT_URL= \
-  ocminersupr/suprminer-base:1.9.43
+  ocminersupr/suprminer-base:1.9.44
 ```
 
 `COIN=NEB` selects `neb.suprnova.cc:7804`.
@@ -115,7 +117,7 @@ docker run -d --name suprminer-neb --gpus all --restart unless-stopped \
 
 | Option | Meaning |
 |---|---|
-| `--neb-kernel auto\|reference` | KEP1/RET2 CUDA kernel (`k0` is also accepted); old tensor-kernel overrides are unsupported |
+| `--neb-kernel auto\|reference` | KEP1 CUDA kernel (`k0` is also accepted); old tensor-kernel overrides are unsupported |
 | `--neb-dataset PATH` | dataset file |
 | `--neb-test` | compares GPU results with the CPU reference on both datasets, then benchmarks and exits |
 | `--api --api-port 4068` | HiveOS/mmpOS-compatible statistics, including the current share difficulty |
@@ -124,13 +126,12 @@ docker run -d --name suprminer-neb --gpus all --restart unless-stopped \
 
 The NEB reference and GPU code is adapted from NEB v0.3.0 (Apache License 2.0).
 The dataset file is redistributed unmodified; it contains data derived from the
-NASA Exoplanet Archive (Kepler) and OCTMNIST (MedMNIST v2 / MedMNIST+, CC BY 4.0). See
+NASA Exoplanet Archive (Kepler) and Astronet-Triage-v2 (TESS, Tey et al. 2023, CC BY 4.0). See
 `THIRD_PARTY_NOTICES` and `licenses/`.
 
 ## Mainnet development qualification
 
-The current development branch accepts both official pinned dataset containers
-and both v2 Stratum index conventions. The RTX 5090 selects the measured vector
+This release accepts only the pinned NEB 1.0.1 dataset and native indices 0/1. The RTX 5090 selects the measured vector
 write and integer reduction kernels; other device names retain the existing
 entry points. Startup logs identify the RTX5090 path. For controlled regression
 tests, `NEB_DISABLE_5090_TUNING=1` selects the preserved kernels. It does not
@@ -138,6 +139,8 @@ change clocks, power, models or consensus arithmetic.
 
 Use CUDA 13.3 for NEB device compilation, including when a platform requires an
 older host toolchain (`NEB_NVCC`). The measured gains must not be attributed to
-CUDA 12.9 device code. Windows GPU execution and other-card performance have
-not been newly qualified in this development session. A future release still
-requires the full platform packaging and publication gates.
+CUDA 12.9 device code. Native Linux and HiveOS executables passed full reference checks on both
+datasets, including forced PTX and preserved fallback paths. The final Linux
+executable also passed a live private-chain test against NEB 1.0.1. Windows
+GPU execution was not tested on physical hardware. The README distinguishes
+fresh 1.0.1 measurements from the historical fleet reference table.

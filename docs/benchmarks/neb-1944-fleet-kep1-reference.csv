@@ -1,0 +1,12 @@
+GPU,Power limit W,KEP1 MH/s,Actual mean W,Mean SM MHz,Mean memory MHz,Measurement scope
+RTX 5090,450,139.30700000000002,449.91,1763.9,13801.0,Historical1.9.43 NEB1.0.0 Kepler genesis; unchanged KEP1 kernels
+RTX 5090,600,170.74349999999998,599.94,2192.9,13801.0,Historical1.9.43 NEB1.0.0 Kepler genesis; unchanged KEP1 kernels
+RTX 4070 Ti SUPER,285.0,58.241,284.37,2640.1,10251.0,Historical1.9.43 NEB1.0.0 Kepler genesis; unchanged KEP1 kernels; another GPU context present
+RTX 5080,360.0,99.1175,359.74,2603.6,14801.0,Historical1.9.43 NEB1.0.0 Kepler genesis; unchanged KEP1 kernels
+RTX 3070,240.0,16.426499999999997,238.22,1871.2,6801.0,Historical1.9.43 NEB1.0.0 Kepler genesis; unchanged KEP1 kernels
+RTX 3070,240.0,16.431,238.57,1896.2,6801.0,Historical1.9.43 NEB1.0.0 Kepler genesis; unchanged KEP1 kernels
+RTX 5080,360.0,98.021,359.96,2574.2,14801.0,Historical1.9.43 NEB1.0.0 Kepler genesis; unchanged KEP1 kernels
+RTX 5070 Ti,300.0,81.533,299.95,2578.2,13801.0,Historical1.9.43 NEB1.0.0 Kepler genesis; unchanged KEP1 kernels
+RTX 5090,420.0,130.917,419.7,1660.1,13801.0,Historical1.9.43 NEB1.0.0 Kepler genesis; unchanged KEP1 kernels
+RTX 3070,220.0,16.392,219.15,1845.8,6801.0,Historical1.9.43 NEB1.0.0 Kepler genesis; unchanged KEP1 kernels
+CMP 170HX,300,31.675,212.57,1295.0,1728.0,Historical1.9.43 NEB1.0.0 Kepler genesis; native thermal throttling at85C; no kernel changes
