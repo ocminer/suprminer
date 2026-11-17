@@ -3,21 +3,21 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL packages
 for AMD and NVIDIA devices, plus an AMD Vulkan package.
 
-## Suprminer 1.9.43 — NEB mainnet and faster RTX 5090 mining
+## NEB 1.0.1 update in progress
 
 > [!IMPORTANT]
-> **NEB 1.0.0 mainnet starts on 18 November 2026 at 14:00 UTC.**
-> Mainnet jobs become available around 13:58 UTC. Install now; Suprminer follows
-> the work provided by your pool. The command remains `-a neb`.
+> **NEB 1.0.1 requires a new Kepler/TESS dataset and two KEP1 model slots.**
+> Existing Suprminer NEB releases, including 1.9.43, are incompatible with this
+> updated mainnet. The 1.9.43 release has been withdrawn. Please wait for
+> **Suprminer 1.9.44**, which is being validated against the NEB 1.0.1 node.
+> Mainnet launch remains **18 November 2026 at 14:00 UTC**.
 
-1.9.43 accepts the new 222.3 MB mainnet dataset and both native indices 0/1 and
-compatible pool indices 2/3. Existing verified v0.3.0 caches remain usable.
-The dataset downloads automatically when needed. Exact integer kernels improve
-RTX 5090 performance; other GPUs retain their existing kernels. Every submitted
-NEB share is checked on the CPU.
+The measurements below are historical NEB 1.0.0 results. RET2 is no longer used
+on the new mainnet; those figures must not be read as TESS benchmarks.
+Linux, Windows, mining-OS packages and Docker will be refreshed for 1.9.44.
+Other algorithms are unaffected.
 
-[Download 1.9.43](https://github.com/ocminer/suprminer/releases/tag/v1.9.43) ·
-[NEB setup guide](docs/NEB_RELEASE_GUIDE.md)
+## Historical Suprminer 1.9.43 measurements — NEB 1.0.0
 
 ### Mainnet before / after — RTX 5090
 
