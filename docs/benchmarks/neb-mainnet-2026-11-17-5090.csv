@@ -1,0 +1,23 @@
+date_utc,gpu,power_limit_w,architecture,build,role,seconds,mhs,model,clock_changes
+2026-11-17,RTX 5090,450,KEP1,1.9.42,warmup,45,137.817,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,KEP1,1.9.42,ABBA,30,136.329,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,KEP1,mainnet candidate,ABBA,30,139.34,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,KEP1,mainnet candidate,ABBA,30,139.04,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,KEP1,1.9.42,ABBA,30,135.672,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,RET2,1.9.42,warmup,45,60.337,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,RET2,1.9.42,ABBA,30,60.501,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,RET2,mainnet candidate,ABBA,30,62.136,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,RET2,mainnet candidate,ABBA,30,62.026,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,RET2,1.9.42,ABBA,30,60.511,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,RET2,1.9.43,final-miner-sample,10,62.13,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,RET2,1.9.43,final-miner-sample,10,61.862,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,RET2,1.9.43,final-miner-sample,10,61.824,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,RET2,1.9.43,final-miner-sample,10,61.592,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,RET2,1.9.43,final-miner-sample,10,61.575,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,RET2,1.9.43,final-miner-sample,10,61.515,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,KEP1,1.9.43,final-miner-sample,10,138.493,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,KEP1,1.9.43,final-miner-sample,10,138.437,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,KEP1,1.9.43,final-miner-sample,10,138.425,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,KEP1,1.9.43,final-miner-sample,10,138.357,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,KEP1,1.9.43,final-miner-sample,10,138.405,NEB1.0.0 mainnet genesis,False
+2026-11-17,RTX 5090,450,KEP1,1.9.43,final-miner-sample,10,138.559,NEB1.0.0 mainnet genesis,False

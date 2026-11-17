@@ -3,12 +3,48 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL packages
 for AMD and NVIDIA devices, plus an AMD Vulkan package.
 
-## Suprminer 1.9.42 — faster NEB v0.3.0
+## Suprminer 1.9.43 — NEB mainnet and faster RTX 5090 mining
 
 > [!IMPORTANT]
-> **NEB v0.3.0 is active** (KEP1 since block **8800**, RET2 since block **8801**).
-> Update to 1.9.42 for the fastest NEB mining. Versions before 1.9.40 cannot mine
-> the new algorithm.
+> **NEB 1.0.0 mainnet starts on 18 November 2026 at 14:00 UTC.**
+> Mainnet jobs become available around 13:58 UTC. Install now; Suprminer follows
+> the work provided by your pool. The command remains `-a neb`.
+
+1.9.43 accepts the new 222.3 MB mainnet dataset and both native indices 0/1 and
+compatible pool indices 2/3. Existing verified v0.3.0 caches remain usable.
+The dataset downloads automatically when needed. Exact integer kernels improve
+RTX 5090 performance; other GPUs retain their existing kernels. Every submitted
+NEB share is checked on the CPU.
+
+[Download 1.9.43](https://github.com/ocminer/suprminer/releases/tag/v1.9.43) ·
+[NEB setup guide](docs/NEB_RELEASE_GUIDE.md)
+
+### Mainnet before / after — RTX 5090
+
+| GPU / power limit | Architecture | 1.9.42 kernels | 1.9.43 kernels | Gain |
+|---|---|---:|---:|---:|
+| RTX 5090 / 450 W | KEP1 | 136.00 MH/s | **139.19 MH/s** | **+2.35%** |
+| RTX 5090 / 450 W | RET2 | 60.51 MH/s | **62.08 MH/s** | **+2.60%** |
+
+Measured on Linux, CUDA 13.3, on 17 November 2026 with the mainnet genesis
+models and dataset. After 45 seconds of warmup per architecture, four 30-second
+A/B/B/A arms were averaged by build. Power limit and clocks were unchanged.
+These are kernel-pipeline measurements from the qualified development build
+used for 1.9.43; rates depend on the model and GPU settings.
+[Individual measurements](docs/benchmarks/neb-mainnet-2026-11-17-5090.csv).
+
+The final Linux 1.9.43 executable measured **138.43 MH/s KEP1 and 61.71 MH/s
+RET2** on the same mainnet models, with CPU use of **1.45% of one core**. All
+56 submitted test shares matched the upstream CPU reference. This is a controlled synthetic
+workload, not a pool earnings measurement.
+
+Both architectures also mined on an isolated chain using the real NEB 1.0.0
+mainnet consensus. Physical Windows GPU performance and other cards were not
+remeasured for this optimization. The 1.9.42 table below is historical, using
+different fixed models; it is not the baseline for this mainnet comparison.
+
+## Suprminer 1.9.42 — historical NEB v0.3.0 measurements
+
 
 New CUDA kernels compute each NEB attempt in one warp without shared-memory
 staging, and RET2 layer 3 reads precomputed tensor-core operands. Shares and
@@ -306,15 +342,15 @@ unavailable. No Turing hardware hashrate or compatibility result is claimed.
 
 | Platform | Package |
 |---|---|
-| Linux NVIDIA, Ubuntu 20.04+ | Complete `suprminer-1.9.42-linux-x86_64.tar.gz` bundle |
+| Linux NVIDIA, Ubuntu 20.04+ | Complete `suprminer-1.9.43-linux-x86_64.tar.gz` bundle |
 | Linux NVIDIA, Ubuntu 20.04 / 22.04 | Matching `linux-x86_64-u2004` / `u2204` executable; helper is also available separately |
 | Linux AMD, Ubuntu 20.04+, Quantus | Optional `quantus-vulkan-linux-x86_64` executable; add `--vulkan` |
 | Windows NVIDIA | Native `windows-x86_64-nvidia.zip` |
 | Windows AMD / Pascal Quantus | Native `windows-x86_64-quantus-opencl.zip` |
 | HiveOS | NVIDIA or OpenCL `_u2004.tar.gz` / `_u2204.tar.gz` custom package |
-| mmPOS | NVIDIA or OpenCL `mmpos_1.9.42` external-miner package |
+| mmPOS | NVIDIA or OpenCL `mmpos_1.9.43` external-miner package |
 | SMOS | NVIDIA or OpenCL `smos-…-u2004.zip` / `u2204.zip` custom package |
-| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.42` |
+| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.43` |
 
 Verify the SHA-256 checksum before installation. Extract complete archives and
 keep their supporting files beside the executable. Install the appropriate GPU
@@ -395,7 +431,7 @@ Linux GPU testing do not replace validation of a particular mining OS installati
 ```sh
 docker run -d --name suprminer --gpus all --restart unless-stopped \
   -e COIN=PRL -e USERNAME=YOUR_PRL_ADDRESS -e WORKER=rig1 \
-  ocminersupr/suprminer-base:1.9.42
+  ocminersupr/suprminer-base:1.9.43
 ```
 
 For merged mining, use `USERNAME=YOUR_PRL_ADDRESS+YOUR_NOCK_ADDRESS` and add
