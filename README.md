@@ -1,11 +1,7 @@
-# suprminer
+# Suprminer
 
-Multi-algorithm GPU/CPU miner for Suprnova pools and beyond. One binary, many algorithms —
-NVIDIA CUDA first (RTX 20xx "Turing" sm_75 through RTX 50xx "Blackwell" sm_120, plus
-datacenter A100/H100/B200), AMD/OpenCL for selected algorithms, CPU for the memory-hard ones.
-
-Binary name: `suprminer-neptune` (historical). Releases:
-https://github.com/ocminer/suprminer/releases
+A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
+for AMD devices, plus a Quantus Vulkan option.
 
 ## Suprminer 1.9.46 — faster NEB with per-GPU kernels
 
@@ -14,11 +10,9 @@ Native slots **0 = Kepler** and **1 = TESS** both use exact KEP1 integer math
 and the verified 16.1 MB dataset. Recognized old dataset caches update automatically.
 Every submitted share is checked against the CPU reference. **0% miner fee.**
 
-NVIDIA improvements combine exact packed integer matrix operations, DP4A convolution
-sums and cached header hashing. Runtime selection uses the measured GPU model and
-compute capability, with separate schedules for RTX 5090, RTX 5080, RTX PRO 6000
-Blackwell Server Edition, A100 SXM4 80GB and H100 HBM3. Other cards keep their
-previous kernels. No floating-point approximation or relaxed share validation.
+Automatic NVIDIA kernel selection now includes the qualified RTX 5090, RTX 5080,
+RTX PRO 6000 Blackwell Server Edition, A100 SXM4 80GB and H100 HBM3 paths.
+Other cards keep their previous kernels. Exact share validation remains enabled.
 
 AMD retains the qualified OpenCL backend: exact INT8 matrix instructions on tested
 RDNA3 cards, the faster measured portable integer path on MI50, and a portable
@@ -102,19 +96,19 @@ model and dataset**, measured on 17 November 2026. The Kepler samples are unchan
 performance references, **not new TESS results or a repeated 1.9.46 fleet
 sweep**. Rates vary with models and settings.
 
-| GPU | Power limit | Kepler KEP1 reference |
-|---|---:|---:|
-| RTX 5090 | 450 W | **139.31 MH/s** |
-| RTX 5090 | 600 W | **170.74 MH/s** |
-| RTX 4070 Ti SUPER | 285 W | **58.24 MH/s** |
-| RTX 5080 | 360 W | **99.12 MH/s** |
-| RTX 3070 | 240 W | **16.43 MH/s** |
-| RTX 3070 | 240 W | **16.43 MH/s** |
-| RTX 5080 | 360 W | **98.02 MH/s** |
-| RTX 5070 Ti | 300 W | **81.53 MH/s** |
-| RTX 5090 | 420 W | **130.92 MH/s** |
-| RTX 3070 | 220 W | **16.39 MH/s** |
-| CMP 170HX | 300 W | **31.67 MH/s** |
+| GPU | Limit W | KEP1 reference MH/s | Mean W | Mean core MHz | Memory MHz |
+|---|---:|---:|---:|---:|---:|
+| RTX 5090 | 450 | **139.31** | 449.9 | 1764 | 13801 |
+| RTX 5090 | 600 | **170.74** | 599.9 | 2193 | 13801 |
+| RTX 4070 Ti SUPER | 285 | **58.24** | 284.4 | 2640 | 10251 |
+| RTX 5080 | 360 | **99.12** | 359.7 | 2604 | 14801 |
+| RTX 3070 | 240 | **16.43** | 238.2 | 1871 | 6801 |
+| RTX 3070 | 240 | **16.43** | 238.6 | 1896 | 6801 |
+| RTX 5080 | 360 | **98.02** | 360.0 | 2574 | 14801 |
+| RTX 5070 Ti | 300 | **81.53** | 299.9 | 2578 | 13801 |
+| RTX 5090 | 420 | **130.92** | 419.7 | 1660 | 13801 |
+| RTX 3070 | 220 | **16.39** | 219.2 | 1846 | 6801 |
+| CMP 170HX | 300 | **31.68** | 212.6 | 1295 | 1728 |
 
 Fixed measurement windows follow warmup; each card's shares were checked with
 the upstream CPU reference, with zero invalid shares. Clocks were unchanged.
@@ -127,83 +121,49 @@ full measurement at a 300 W limit with native thermal throttling active at
 that cooling condition. Original power and verifier service were restored.
 
 The earlier matched RTX 5090 kernel A/B/B/A at 450 W improved KEP1 from
-**136.00 to 139.19 MH/s (+2.35%)** in 1.9.43. This optimization is preserved.
-The new 1.9.46 measurements are listed above. Historical RET2 figures below
+**136.00 to 139.19 MH/s (+2.35%)** in 1.9.43. This optimization is preserved;
+The new 1.9.46 gains are listed above. Historical RET2 figures below
 are for the old network and must not be interpreted as TESS performance.
 
-## Quick start
 
-```bash
-./suprminer-neptune -a pearl -o stratum+tcp://prl.suprnova.cc:3373 -u <wallet>.<worker> -p x
-./suprminer-neptune -a sha3t -o stratum+tcp://bc3.suprnova.cc:7700 -u <wallet>.<worker> -p x
-./suprminer-neptune -a noid  -o stratum+tcp://noid.suprnova.cc:3337 -u <NOID_ADDRESS>.<worker>
-```
+## Historical Suprminer 1.9.43 measurements — NEB 1.0.0
 
-Run as root if you want the miner to manage power limits / clocks (`--power-limit`,
-`--core-clock`, `--mem-clock`, `--fan-speed` — all reset to defaults on exit).
-Stop with SIGINT (Ctrl-C) for a clean shutdown; PearlHash requires it.
-
-## Supported algorithms
-
-| `-a` name | Aliases | Coin / PoW | Backend |
-|---|---|---|---|
-| `pearl` | `pearlhash`, `prl` | Pearl — noised INT8 GEMM (tensor cores) | NVIDIA sm_75+ |
-| `sha3t` | `sha3d3`, `bc3`, `bitcoiniii` | BitcoinIII — triple NIST SHA3-256 | NVIDIA + AMD/OpenCL |
-| `xelis` | `xel` | Xelis — XelisHash v2 | NVIDIA + CPU |
-| `decred` | `dcr` | Decred — BLAKE3 | NVIDIA |
-| `verthash` | `vtc`, `vertcoin` | Vertcoin — Verthash (needs `verthash.dat`, `--verthash-data`) | NVIDIA |
-| `neoscrypt` | `neo` | NeoScrypt memory-hard | NVIDIA |
-| `qhash` | `qtc`, `qubitcoin` | QuBitcoin — quantum-circuit PoW | NVIDIA |
-| `quantus` | `poseidon2-goldilocks`, `qpow-poseidon2` | Quantus — Poseidon2 over Goldilocks | NVIDIA + AMD + CPU |
-| `gap` | `gapcoin` | Gapcoin — prime gaps | NVIDIA |
-| `qubit` | `dgb`, `digibyte-qubit` | DigiByte — Qubit 5-hash chain | NVIDIA |
-| `groestl` | `grs`, `groestlcoin` | GroestlCoin — double Groestl-512 | NVIDIA |
-| `yescrypt` | `yescryptr32`, `lpepe` | YescryptR32 memory-hard | CPU |
-| `sha256mem` | `fairchain`, `fair` | Fairchain — memory-hard sha256mem | NVIDIA |
-| `nock` | `nockchain` | Nockchain — TIP5 ZK-STARK | NVIDIA |
-| `noid` | `parano1d`, `poseidon2b` | NOID / Parano1d — Poseidon2b over GF(2¹²⁸) | NVIDIA sm_80 / sm_86 / sm_89 / sm_90 / sm_120; experimental sm_75 (GTX 16xx / RTX 20xx) |
-| `npt` | `neptune`, `neptune-cash` | Neptune Cash — HardforkDelta PoW, negotiated suffix search (`npt_suffix_v1`) with legacy fallback | NVIDIA sm_80+ (RTX 30xx, CMP 170HX, RTX 40xx/50xx, A100/H100) |
-| `xnt` | `neptune-privacy` | Neptune Privacy — commitment-seeded 2^27-leaf memory tree (~10.7 GB VRAM) | NVIDIA sm_80+ with >= 12 GB (CMP 170HX, RTX 3080 12G+, 40xx/50xx, A100/H100) |
-| `neb` | `nebcoin`, `pot` | NEB 1.0.1 nebhash v2 — KEP1 Kepler/TESS proof-of-training | NVIDIA sm_75+ / AMD OpenCL |
-
-`./suprminer-neptune --help` prints the full flag reference and a per-algorithm footer.
-
-## NEB (proof-of-training)
-```bash
-./suprminer-neptune -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u <neb-address>.<worker> -p x
-```
-**Suprminer 1.9.46 supports NEB 1.0.1: KEP1 on both Kepler and TESS.**
-Use native dataset indices 0/1 and the new pinned 16.1 MB file; old cache
-containers and RET2 work are incompatible. The automatic downloader upgrades
-recognized old caches. Each card keeps separate KEP1 sample and model caches
-for the two datasets. New jobs and every submitted share are checked against
-the CPU reference. CUDA device code remains encrypted.
-See [the NEB guide](docs/NEB_RELEASE_GUIDE.md) for setup and dataset controls.
-
-### Historical NEB 1.0.0 performance — 1.9.43
-
-1.9.43 adds a measured RTX 5090 path with vectorized writes and
-lower-cost integer reductions. Other cards retain their existing kernels.
+### Mainnet before / after — RTX 5090
 
 | GPU / power limit | Architecture | 1.9.42 kernels | 1.9.43 kernels | Gain |
 |---|---|---:|---:|---:|
-| RTX 5090 / 450 W | KEP1 | 136.00 MH/s | 139.19 MH/s | +2.35% |
-| RTX 5090 / 450 W | RET2 | 60.51 MH/s | 62.08 MH/s | +2.60% |
+| RTX 5090 / 450 W | KEP1 | 136.00 MH/s | **139.19 MH/s** | **+2.35%** |
+| RTX 5090 / 450 W | RET2 | 60.51 MH/s | **62.08 MH/s** | **+2.60%** |
 
-Measured on Linux, CUDA 13.3, on 2026-11-17 with the actual mainnet genesis
-models and dataset. Each architecture had 45 seconds of warmup followed by
-30-second A/B/B/A arms; the table averages the two arms per build. No power or
-clock changes. These are timed kernel-pipeline measurements from the qualified development
-build used for 1.9.43, not a performance claim for unmeasured cards. The integrated
-native kernels match the measured machine code; complete tickets remain exact.
+Measured on Linux, CUDA 13.3, on 17 November 2026 with the mainnet genesis
+models and dataset. After 45 seconds of warmup per architecture, four 30-second
+A/B/B/A arms were averaged by build. Power limit and clocks were unchanged.
+These are kernel-pipeline measurements from the qualified development build
+used for 1.9.43; rates depend on the model and GPU settings.
 [Individual measurements](docs/benchmarks/neb-mainnet-2026-11-17-5090.csv).
-The historical table below uses different fixed models and is not this A/B baseline.
 
-### NEB v0.3.0 measurements (1.9.42)
+The final Linux 1.9.43 executable measured **138.43 MH/s KEP1 and 61.71 MH/s
+RET2** on the same mainnet models, with CPU use of **1.45% of one core**. All
+56 submitted test shares matched the upstream CPU reference. This is a controlled synthetic
+workload, not a pool earnings measurement.
 
-1.9.42 computes each dataset sample once per model, and every attempt runs in one
-warp from these cached results on tensor cores. Shares and blocks are
-bit-identical to the reference algorithm.
+Both architectures also mined on an isolated chain using the real NEB 1.0.0
+mainnet consensus. Physical Windows GPU performance and other cards were not
+remeasured for this optimization. The 1.9.42 table below is historical, using
+different fixed models; it is not the baseline for this mainnet comparison.
+
+## Suprminer 1.9.42 — historical NEB v0.3.0 measurements
+
+
+New CUDA kernels compute each NEB attempt in one warp without shared-memory
+staging, and RET2 layer 3 reads precomputed tensor-core operands. Shares and
+blocks are bit-identical to the reference algorithm; every submitted share is
+still checked on the CPU.
+
+[Download 1.9.42](https://github.com/ocminer/suprminer/releases/tag/v1.9.42) ·
+[NEB setup guide](docs/NEB_RELEASE_GUIDE.md)
+
+### NEB v0.3.0 measurements — 1.9.42
 
 | GPU | Power limit | KEP1 | RET2 | 1.9.41 (KEP1 / RET2) |
 |---|---:|---:|---:|---:|
@@ -228,109 +188,220 @@ v0.3.0 network with 0 rejected shares at 1.4% of one CPU core. Quantus, NPT and
 XNT regression checks passed and their kernels are unchanged. Physical Windows GPU
 mining was not tested.
 
+## Suprminer 1.9.41 — NEB v0.3.0 (previous release)
 
-## XNT (Neptune Privacy)
-```bash
-./suprminer-neptune -a xnt -o <host>:<port> -u <xnt-address>.<worker> -p x -d 0
+
+1.9.41 mines NEB v0.3.0 more than a thousand times faster than 1.9.40. Each
+dataset sample is computed once per model and every attempt is built from these
+cached results; shares and blocks are bit-identical to the reference algorithm.
+Every submitted share is still checked on the CPU.
+
+[Download 1.9.41](https://github.com/ocminer/suprminer/releases/tag/v1.9.41) ·
+[NEB setup guide](docs/NEB_RELEASE_GUIDE.md) ·
+[Pre-fork 1.9.39](https://github.com/ocminer/suprminer/releases/tag/v1.9.39)
+
+### NEB v0.3.0 measurements — 1.9.41
+
+| GPU | Power limit | KEP1 | RET2 |
+|---|---:|---:|---:|
+| RTX 5090 | 575 W | **120.9 MH/s** | **56.2 MH/s** |
+| RTX 5090 | 450 W | **102.4 MH/s** | **47.3 MH/s** |
+| RTX 5080 | 360 W | **71.8 MH/s** | **32.4 MH/s** |
+| RTX 5070 Ti | 300 W | **59.3 MH/s** | **25.0 MH/s** |
+| RTX 3070 | 240 W | 3.9 MH/s | 3.3 MH/s |
+
+For comparison, 1.9.40 reached 0.075 MH/s (KEP1) and 0.020 MH/s (RET2) on the
+RTX 5090 at 450 W.
+
+Measured on Linux with the 1.9.41 CUDA build on 2026-11-13, using the built-in
+`--neb-test` benchmark (fixed seeded models, 6 to 60 seconds per network). The
+450 W row is the final release executable (60 seconds per network; the HiveOS
+20.04 package measured 103.0 / 47.4 MH/s). Clocks were unchanged; the power limit
+is the card's configured limit. Each row is one run. Actual pool rates alternate between KEP1 and RET2 blocks and vary with the
+model. RTX 30-series cards have much smaller caches and are far slower on NEB v2.
+
+The full `--neb-test` (complete tickets, boundary nonces, hit sets and queued
+batches for two models of each network) passed on the RTX 5090, 5080, 5070 Ti and
+3070, including the path without sparse tensor cores, and on the final Linux and
+both HiveOS executables, including forced PTX compilation. On a private NEB v0.3.0
+chain the final Linux executable mined four node-confirmed blocks through a pool;
+a post-fork rehearsal pool accepted every share. 0 shares were rejected. Steady
+pool CPU use was 2.0% of one core. Old NEB jobs are refused. Quantus, NPT and XNT
+regression checks passed and their kernels are unchanged. Physical Windows GPU
+mining was not tested.
+
+## Suprminer 1.9.40 — NEB v0.3.0
+
+
+**Required for NEB block 8800. This version supports only the new KEP1/RET2
+algorithm. Keep 1.9.39 for pre-fork NEB jobs and switch when your pool activates
+the fork.** Old NEB jobs are refused; the product remains Suprminer and the
+command stays `-a neb`. KEP1 begins at block 8800, RET2 at block 8801.
+For Docker NEB deployments before pool activation, pin
+`ocminersupr/suprminer-base:1.9.39`; `latest` moves to 1.9.40.
+
+The new 259.9 MB dataset downloads automatically with BLAKE3 verification.
+NVIDIA Linux, Windows, HiveOS, mmpOS, SMOS and Docker packages include new NEB.
+The Quantus OpenCL/Vulkan packages remain available for their existing algorithms.
+Every submitted NEB share is checked on the CPU; queued GPU work uses blocking
+waits to keep CPU usage low.
+
+[Download 1.9.40](https://github.com/ocminer/suprminer/releases/tag/v1.9.40) ·
+[NEB setup guide](docs/NEB_RELEASE_GUIDE.md) ·
+[Pre-fork 1.9.39](https://github.com/ocminer/suprminer/releases/tag/v1.9.39)
+
+### NEB v0.3.0 measurements — 1.9.40
+
+Measured on Linux using the final 1.9.40 CUDA executables on 2026-11-11,
+with a 60-second built-in benchmark and a fixed seeded model for each
+architecture. The existing 450 W limit and clocks were unchanged. GPU watts and clocks
+are sampled averages during the benchmark; CPU percentages refer to one core.
+Each row is one run, not a matched A/B comparison. The Docker image contains the
+same executable as the portable Linux bundle. These are initial post-fork
+algorithm measurements, not an old/new speedup comparison. Actual pool rates
+vary with the model and share difficulty.
+
+| GPU | Build | Network | kH/s | Limit W | GPU W | Core MHz | Memory MHz | CPU % of one core |
+|---|---|---|---:|---:|---:|---:|---:|---:|
+| RTX 5090 | Portable Linux / Docker | KEP1 | **75.065** | 450 | 347.2 | 2837 | 13801 | 0.74 |
+| RTX 5090 | Portable Linux / Docker | RET2 | **19.585** | 450 | 376.0 | 2806 | 13801 | 0.37 |
+| RTX 5090 | HiveOS 20.04 | KEP1 | **65.571** | 450 | 355.7 | 2839 | 13801 | 0.55 |
+| RTX 5090 | HiveOS 20.04 | RET2 | **22.808** | 450 | 450.2 | 2774 | 13801 | 0.25 |
+
+The final Linux executable was tested on an RTX 5090 against NEB v0.3.0.
+Both KEP1 and RET2 produced accepted shares and node-confirmed blocks.
+Steady pool-test CPU use was 0.94% of one core. Old NEB
+jobs were refused with a clear requirement message and zero reported mining rate.
+Quantus, NPT and XNT regression checks passed, and unrelated algorithm kernels
+were preserved. Native Windows builds and CPU protocol tests passed. Physical
+Windows GPU mining and other GPU models were not tested in this release session.
+
+The HiveOS 20.04 package also passed automatic replacement of the old cached
+dataset and live statistics checks with curl 7.58.
+
+
+New KEP1/RET2 kH/s figures are not comparable to the old NEB algorithm's MH/s figures.
+
+## Suprminer 1.9.39
+
+NEB: new GPU kernel K3. RTX 5070 Ti at 300 W: built-in benchmark 31.42 MH/s
+(1.9.38: 21.57, +45.7%), live 36.81 MH/s on `neb.suprnova.cc:7804` (1.9.38:
+22.02). RTX 5090 at 450 W: about 65 MH/s (1.9.38: 40.01); the 5090 figures are
+development measurements of the same K3 code (65.9/66.5 MH/s benchmark, 65.4
+MH/s live for 27 minutes, 65 accepted, 0 rejected), not of the release
+download. `auto` picks the fastest kernel that matches the CPU reference. GPU
+code of all other algorithms is unchanged from 1.9.38.
+
+```sh
+./suprminer-neptune -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u YOUR_NEB_ADDRESS.rig01 -p x
 ```
-Plain TCP only. One pool session and one ~10.7 GB memory tree per GPU (>= 12 GB VRAM). The tree is
-rebuilt only when the puzzle changes; a `no_work_available` pause keeps the GPU idle without
-discarding it. Every GPU share is re-verified on the CPU before it is submitted. A session with no
-pool traffic for `XNT_NOTIFY_WATCHDOG_S` seconds (default 90) reconnects. Offline GPU gate (no
-pool): `-a xnt --xnt-gpu-selfcheck 8 -d <gpu>`. Compile-time switch: on in every CUDA build;
-`-no-xnt` drops it (feature `xnt`). Details: `docs/xnt/XNT-ON-MAIN.md`.
 
-## NPT (Neptune Cash)
-```bash
-./suprminer-neptune -a npt -o stratum+tcp://npt.suprnova.cc:6453 -u <account>.<worker> -p x -d 0,1
-```
-Plain TCP only (the pool's TLS ports are not supported). One pool session per GPU; when the pool
-acknowledges `npt_suffix_v1` the fast suffix-search kernel is used, otherwise the legacy nonce kernel.
-The pool repeats `no_work_available` or re-sends the job as a heartbeat; a session with no pool traffic for
-`NPT_NOTIFY_WATCHDOG_S` seconds (default 90) reconnects. Offline GPU gates (no pool): `-a npt --npt-gpu-echo 7,0`,
-`-a npt --npt-gpu-selfcheck 24`, `-a npt --npt-gpu-bench 20`, each with `--npt-meta <saved mining.notify metadata JSON>` and `-d <gpu>`.
-Compile-time switch: on in every CUDA build; `./build.sh -prod -no-npt` drops it (feature `npt`).
-The pre-fork `neptune` code was removed in 1.9.28; XNT is back as its own `-a xnt` (see above).
+[Download 1.9.39](https://github.com/ocminer/suprminer/releases/tag/v1.9.39) ·
+[Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.39) ·
+[NEB](docs/NEB_RELEASE_GUIDE.md)
 
-## Quantus
+## Historical pre-fork NEB performance — 1.9.39
 
-Quantus uses CryptoNote-style TCP Stratum (`login`, `job`, `submit`, `keepalived`).
-It is a separate algorithm from QuBitcoin/QHash and NOID/Poseidon2b.
+Release executable on Linux, stock clocks. Benchmark rows are the built-in
+`--neb-test` benchmark (30 seconds per run, A/B/B/A order). The pool row is the
+average of the miner's own rate over live mining on `neb.suprnova.cc:7804`
+after the first 30 seconds. Watts and clocks are GPU averages while hashing.
 
-```bash
-# Suprnova pool
-./suprminer-neptune -a quantus -o stratum+tcp://quantus.suprnova.cc:7071 -u <ADDRESS>.<WORKER> -d 0
+| GPU | Limit W | Version, kernel | MH/s | GPU W | SM MHz | Pool shares |
+|---|---:|---|---:|---:|---:|---|
+| RTX 5070 Ti | 300 | 1.9.38 auto = K1X (benchmark) | 21.57 | 291.1 | 2744 | |
+| RTX 5070 Ti | 300 | 1.9.39 auto = K3 (benchmark) | **31.42** | 294.2 | 2749 | |
+| RTX 5070 Ti | 300 | 1.9.39 auto = K3 (pool, 26 min) | **36.81** | 299.4 | 2743 | 63 accepted, 0 rejected |
 
-# TLS
-./suprminer-neptune -a quantus -o stratum+ssl://quantus.suprnova.cc:7074 -u <ADDRESS>.<WORKER> -d 0
+## Suprminer 1.9.38
 
-# CPU mining
-./suprminer-neptune -a quantus -o quantus.suprnova.cc:7071 -u <ADDRESS>.<WORKER> --no-gpu --cpu-threads 4
+NEB: new tensor-core kernel K1X and a fix for low NEB hashrates reported on
+Windows and WSL2. Live NEB mining: RTX 5090 at 450 W 40.01 MH/s (1.9.37: 33.73,
++18.6%), RTX 5070 Ti at 300 W 22.02 MH/s (1.9.37: 18.95, +16.2%). `auto` checks
+every tensor-core kernel against the CPU reference and keeps the fastest per
+card and job. GPU code of all other algorithms is unchanged from 1.9.37.
 
-# Offline GPU/CPU correctness check, no pool required
-./suprminer-neptune --quantus-test -d 0
+```sh
+./suprminer-neptune -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u YOUR_NEB_ADDRESS.rig01 -p x
 ```
 
-Use your Quantus payout address, optionally followed by `.worker`.
+[Download 1.9.38](https://github.com/ocminer/suprminer/releases/tag/v1.9.38) ·
+[Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.38) ·
+[NEB](docs/NEB_RELEASE_GUIDE.md)
 
-GPU batches adapt to a 50 ms budget. The automatically selected RTX PRO 6000
-Blackwell Server Edition and H100 80GB HBM3 profiles allow up to 67,108,864 nonces;
-other profiles retain the 16,777,216-nonce ceiling. A100 SXM4 80 GB and CMP 170HX each
-select their own measured kernel schedule. Selection uses the exact model, CUDA architecture and SM count.
-`QUANTUS_BATCH` sets a lower ceiling when needed. `QUANTUS_SUBMIT_RESULT=1` adds the 64-byte hash
-for gateways that require it; the default submits the full nonce without a result field.
-Normal production and HiveOS builds include `quantus-gpu`; CPU-only development builds
-can enable `quantus`. AMD and GTX 1080 Ti/Pascal use the Quantus OpenCL variant,
-built with `./build.sh -prod -quantus-opencl-only`. It uses the installed vendor
-OpenCL driver and requires no CUDA libraries. Device indices in that variant are
-OpenCL indices; it selects OpenCL automatically, with `--opencl` available explicitly.
-The same `--quantus-test -d 0` check works on both variants. Both embed encrypted
-device code. See the [download and pool setup instructions](docs/QUANTUS_GETTING_STARTED.md)
-and [protocol and hash details](docs/QUANTUS_INTEGRATION.md).
+## Historical pre-fork NEB performance — 1.9.38
 
-## NOID (Parano1d) and TAPE (Retro Boomer)
+Measured on Linux with the release executable on 2026-11-10/11, stock clocks,
+no overclocking. Benchmark rows are the built-in `--neb-test` benchmark
+(30 seconds per run, A/B/B/A order, four runs per kernel). Pool rows are
+averages of the miner's own rate over live mining on `neb.suprnova.cc:7804`
+after the first 30 seconds, with every share checked by the CPU reference.
+Watts and clocks are GPU averages while hashing.
 
-NOID uses the Poseidon2b proof-of-work over GF(2¹²⁸). suprminer mines it with native
-CUDA kernels for Ampere, Ada, Hopper and Blackwell and needs **no developer fee**.
+| GPU | Limit W | Kernel | MH/s | GPU W | SM MHz | Pool shares |
+|---|---:|---|---:|---:|---:|---|
+| RTX 5090 | 450 | K1P (benchmark) | 33.35 | 449.9 | 2193 | |
+| RTX 5090 | 450 | K1X (benchmark) | **38.33** | 447.6 | 2014 | |
+| RTX 5090 | 450 | auto = K1X (pool, 25 min) | **40.01** | 449.5 | 2026 | 57 accepted, 0 rejected |
+| RTX 5070 Ti | 300 | auto = K1X (pool, 21 min) | **22.02** | 299.2 | 2761 | 61 accepted, 0 rejected |
 
-```bash
-# TAPE / Retro Boomer
-./suprminer-neptune -a noid -o stratum+tcp://tape.suprnova.cc:3351 -u YOUR_TAPE_ADDRESS.rig1 -p x --no-cpu
+Other GPUs were not measured with this release; their kernel is chosen by the
+same check and timing.
 
-# NOID plain stratum (ports 3337-3340)
-./suprminer-neptune -a noid \
-  -o stratum+tcp://noid.suprnova.cc:3337 \
-  -u o1yournoidaddress....rig01
+## Suprminer 1.9.37
 
-# TLS (port 3341)
-./suprminer-neptune -a noid \
-  -o stratum+ssl://noid.suprnova.cc:3341 \
-  -u o1yournoidaddress....rig01
+NEB: fixes the reconnect loop on Windows and on slow or remote connections with
+a new stratum client. A network thread receives complete pool messages however
+they are split, and the mining loop no longer reads from the connection. GPU code
+is unchanged from 1.9.36 for all algorithms.
 
-# pick specific GPUs
-./suprminer-neptune -a noid -o stratum+tcp://noid.suprnova.cc:3337 \
-  -u o1yournoidaddress....rig01 --devices 0,1
+[Download 1.9.37](https://github.com/ocminer/suprminer/releases/tag/v1.9.37) ·
+[Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.37)
+
+## Suprminer 1.9.36
+
+Adds NEB (Neural Engine Byte) proof-of-training mining on NVIDIA GPUs (`-a neb`).
+Each attempt is one exact integer training step of a small neural network; every
+GPU share is checked again with the NEB reference code on the CPU. The 37.6 MB
+dataset file is downloaded and hash-checked automatically. All other algorithms
+are unchanged from 1.9.35. Portable Linux packages support Ubuntu 20.04 and newer
+without system C++ or OpenSSL libraries.
+
+```sh
+./suprminer-neptune -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u YOUR_NEB_ADDRESS.rig01 -p x
 ```
 
-The username is your **bech32m NOID address** (`o1...`), optionally followed by `.workername`.
-No password is required — leave `-p` unset. A static difficulty can be requested with
-`-p d=<number>`; otherwise the pool applies VarDiff automatically.
+[Download 1.9.36](https://github.com/ocminer/suprminer/releases/tag/v1.9.36) ·
+[Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.36) ·
+[NEB](docs/NEB_RELEASE_GUIDE.md) ·
+[Merged mining](MERGED_MINING.md) · [PRL and NOID](docs/PRL_NOID_RELEASE_GUIDE.md) ·
+[Quantus](docs/QUANTUS_RELEASE_GUIDE.md) · [Docker and cloud hosting](docker/README.md)
 
-**Requirements**
+## Historical pre-fork NEB performance — 1.9.36
 
-| | |
-|---|---|
-| GPU | NVIDIA RTX 30xx/40xx/50xx, A100/H100 and CMP 170HX; experimental GTX 16xx/RTX 20xx support |
-| Driver | 610.x or newer |
-| CUDA (build only) | 13.3 or newer — earlier `ptxas` cannot assemble the `clmad` instruction |
+Measured on Linux with the full release executable on 2026-11-10, stock
+clocks, no overclocking. The benchmark rows are the built-in `--neb-test`
+benchmark (30 seconds per run, A/B/B/A order, four runs per kernel). The pool
+rows are averages of the miner's own rate over live mining on
+`neb.suprnova.cc:7804` after the first 30 seconds, with every share checked by
+the CPU reference. Watts and clocks are GPU averages while hashing.
 
-Version 1.9.35 reduces NOID/TAPE CPU overhead while GPU mining, including when
-`--no-cpu` is set. This helps rigs where several GPUs share a small CPU.
+| GPU | Limit W | Kernel | MH/s | GPU W | SM MHz | Pool shares |
+|---|---:|---|---:|---:|---:|---|
+| RTX 5090 | 450 | K1 (benchmark) | 31.43 | 449.4 | 1835 | |
+| RTX 5090 | 450 | K1P (benchmark) | **32.91** | 450.1 | 2172 | |
+| RTX 5090 | 450 | auto = K1P (pool, 15 min) | **32.35** | 450.0 | 2278 | 41 accepted, 0 rejected |
+| RTX 5070 Ti | 300 | auto = K1 (pool, 10 min) | **18.31** | 299.5 | 2685 | 24 accepted, 0 rejected |
 
-GTX 16xx and RTX 20xx (`sm_75`, Turing) support is experimental. Arithmetic,
-target handling and nonce recovery were checked using Turing-targeted code on
-a newer GPU. A physical GTX 1660 Super was unavailable for validation, so no
-Turing hashrate or hardware compatibility result is claimed.
+K1P computes two attempts per thread block and loads each weight fragment once
+for both, which cuts memory traffic. With the same 450 W limit the RTX 5090
+runs at higher clocks and reaches 4.7% more attempts per second than K1. On the
+RTX 5070 Ti, K1 is faster, so the start-up timing keeps K1 there. Both kernels
+produce bit-identical results. Other GPUs (RTX 30xx/40xx, A100/H100, CMP 170HX,
+GTX 16xx/RTX 20xx) were not measured; their kernel is chosen by the same timing.
+
+While mining, the miner uses about 0.7% of one CPU core per GPU instead of
+waiting in a busy loop.
 
 ## TAPE / NOID performance — 1.9.35
 
@@ -375,66 +446,114 @@ GTX 16xx / RTX 20xx NOID support is experimental: Turing-targeted arithmetic and
 nonce recovery passed checks on a newer GPU, but a physical GTX 1660 Super was
 unavailable. No Turing hardware hashrate or compatibility result is claimed.
 
-Pool endpoints: `noid.suprnova.cc:3337` … `:3340` (plain), `:3341` (TLS).
 
-## Common flags
+## Choose a download
 
-```
--a, --algo <ALGO>          algorithm (table above)
--o, --url <URL>            pool, stratum+tcp://host:port
--u, --user <USER>          wallet or account (append .worker for a worker name)
--p, --pass <PASS>          pool password (default: x)
--d, --devices <LIST>       GPU selection, comma-separated (0,1,2); default = all
--i, --intensity <18-28>    batch size = 2^intensity
-    --core-clock <MHZ,..>  lock core clocks, per device index
-    --mem-clock <MHZ,..>   lock memory clocks, per device index
-    --power-limit <W,..>   set power limits (needs root; restored on exit)
-    --fan-speed <PCT,..>   set fan speeds (0 = leave untouched; restored on exit)
-    --api-port <PORT>      HTTP stats API, HiveOS-compatible (default 4068)
-    --sha3t-test           sha3t GPU-vs-CPU byte-exact self-test, then exit
-    --test-vectors         verify hashes against pool implementations
-```
+| Platform | Package |
+|---|---|
+| Linux NVIDIA, Ubuntu 20.04+ | Complete `suprminer-1.9.43-linux-x86_64.tar.gz` bundle |
+| Linux NVIDIA, Ubuntu 20.04 / 22.04 | Matching `linux-x86_64-u2004` / `u2204` executable; helper is also available separately |
+| Linux AMD, Ubuntu 20.04+, Quantus | Optional `quantus-vulkan-linux-x86_64` executable; add `--vulkan` |
+| Windows NVIDIA | Native `windows-x86_64-nvidia.zip` |
+| Windows AMD / Pascal Quantus | Native `windows-x86_64-quantus-opencl.zip` |
+| HiveOS | NVIDIA or OpenCL `_u2004.tar.gz` / `_u2204.tar.gz` custom package |
+| mmPOS | NVIDIA or OpenCL `mmpos_1.9.43` external-miner package |
+| SMOS | NVIDIA or OpenCL `smos-…-u2004.zip` / `u2204.zip` custom package |
+| Docker, Octa.Space, Vast.ai | `ocminersupr/suprminer-base:1.9.46` |
 
-Device numbering follows CUDA's "fastest first" order by default — export
-`CUDA_DEVICE_ORDER=PCI_BUS_ID` to make `-d` match `nvidia-smi` indices.
+Verify the SHA-256 checksum before installation. Extract complete archives and
+keep their supporting files beside the executable. Install the appropriate GPU
+driver and choose a package compatible with the rig's OS.
 
-Algorithm tuning is available through environment variables (e.g. `PEARL_*` for PearlHash);
-these are documented in the per-algorithm docs under `docs/`.
+PRL + NOCK requires a Linux NVIDIA package, a compatible pool, CPU capacity and
+at least **24 GiB available system RAM**. The Windows miner is native and supports
+ordinary PRL; the auxiliary NOCK helper is Linux-only in this release. NOCK
+accounting and payouts depend on the pool. OpenCL and Vulkan packages support Quantus.
 
-PRL proof submissions use gzip before base64 whenever compression reduces the payload size.
-The pool must support automatic gzip detection in `plain_proof`. Set `PEARL_PROOF_GZIP=0`
-to send raw base64 proofs to older pools. Submission logs show the encoding and byte savings.
+## Quick start
 
-## Building
+Replace each placeholder with your own payout address and worker name:
 
-Always build through the script (never raw cargo):
+```sh
+# PRL
+./suprminer-neptune -a pearl -o stratum+tcp://prl.suprnova.cc:3373 -u YOUR_PRL_ADDRESS.rig1 -p x --no-cpu
 
-```bash
-./build.sh -prod -sha3t        # release build: all archs, packed, PearlHash + sha3t
-./build.sh -no-pearl -sha3t    # sha3t-only, faster build
-./build-hiveos.sh              # HiveOS/mmpOS packages (Docker cross-compile, glibc 2.31)
-scripts/build-linux-portable.sh <target-dir> -prod  # generic Linux release binary (Ubuntu 20.04 container: glibc 2.31, static libstdc++)
-```
+# PRL + NOCK, Linux NVIDIA with the bundled helper
+./suprminer-neptune -a pearl --nock-merge -o stratum+tcp://prl.suprnova.cc:3373 -u 'YOUR_PRL_ADDRESS+YOUR_NOCK_ADDRESS.rig1' -p x --no-cpu
 
-Requires CUDA 12.9+ (13.x preferred); Pascal support requires a CUDA 12.x toolchain plus the
-opt-in `SUPRMINER_SHA3T_PASCAL=1` (sha3t only).
+# NOID
+./suprminer-neptune -a noid -o stratum+tcp://noid.suprnova.cc:3337 -u YOUR_NOID_ADDRESS.rig1 -p x
 
-## Docker (octa.space / any NVIDIA docker host)
+# TAPE / Retro Boomer (the NOID algorithm)
+./suprminer-neptune -a noid -o stratum+tcp://tape.suprnova.cc:3351 -u YOUR_TAPE_ADDRESS.rig1 -p x --no-cpu
 
-An env-driven image is published as
-[`ocminersupr/suprminer-base`](https://hub.docker.com/r/ocminersupr/suprminer-base):
+# Quantus
+./suprminer-neptune -a quantus -o stratum+ssl://quantus.suprnova.cc:7074 -u YOUR_QUANTUS_ADDRESS.rig1 -p x
 
-```bash
-docker run -d --gpus all --restart unless-stopped \
-  -e COIN=PRL -e USERNAME=<wallet> -e WORKER=rig1 \
-  ocminersupr/suprminer-base:latest
+# NPT (Neptune Cash) — plain TCP; the username is your pool account
+./suprminer-neptune -a npt -o stratum+tcp://npt.suprnova.cc:6453 -u YOUR_POOL_ACCOUNT.rig1 -p x
+
+# NEB 1.0.1 mainnet — Kepler and TESS
+./suprminer-neptune -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u YOUR_NEB_ADDRESS.rig1 -p x
 ```
 
-`COIN=PRL|NOID|BC3|QUANTUS` selects the algorithm and Suprnova pool automatically; other settings are configurable
-via env (`ALGO`, `POOL_URL`, `DEVICES`, `POWER_LIMIT`, `EXTRA_ARGS`, …). See
-[`docker/octa/README.md`](docker/octa/README.md) for the full contract.
+On Windows, use `.\suprminer-neptune.exe` in PowerShell. Add `-d 0,1` to select
+GPUs. Stop with Ctrl+C. Use `--help` for all supported options.
 
-## HiveOS / mmpOS
+## Supported algorithms
 
-Release tarballs include HiveOS custom-miner packages (`_u2004`/`_u2204`) and an mmpOS
-package — see the release assets and `hiveos/` in this repo. Stats API on `:4068`.
+| `-a` name | Aliases | Coin / PoW | Backend |
+|---|---|---|---|
+| `pearl` | `pearlhash`, `prl` | Pearl — noised INT8 GEMM (tensor cores) | NVIDIA sm_75+ |
+| `sha3t` | `sha3d3`, `bc3`, `bitcoiniii` | BitcoinIII — triple NIST SHA3-256 | NVIDIA + AMD/OpenCL |
+| `xelis` | `xel` | Xelis — XelisHash v2 | NVIDIA + CPU |
+| `decred` | `dcr` | Decred — BLAKE3 | NVIDIA |
+| `verthash` | `vtc`, `vertcoin` | Vertcoin — Verthash (needs `verthash.dat`, `--verthash-data`) | NVIDIA |
+| `neoscrypt` | `neo` | NeoScrypt memory-hard | NVIDIA |
+| `qhash` | `qtc`, `qubitcoin` | QuBitcoin — quantum-circuit PoW | NVIDIA |
+| `quantus` | `poseidon2-goldilocks`, `qpow-poseidon2` | Quantus — Poseidon2 over Goldilocks | NVIDIA + AMD + CPU |
+| `gap` | `gapcoin` | Gapcoin — prime gaps | NVIDIA |
+| `qubit` | `dgb`, `digibyte-qubit` | DigiByte — Qubit 5-hash chain | NVIDIA |
+| `groestl` | `grs`, `groestlcoin` | GroestlCoin — double Groestl-512 | NVIDIA |
+| `yescrypt` | `yescryptr32`, `lpepe` | YescryptR32 memory-hard | CPU |
+| `sha256mem` | `fairchain`, `fair` | Fairchain — memory-hard sha256mem | NVIDIA |
+| `noid` | `parano1d`, `poseidon2b` | NOID / Parano1d — Poseidon2b over GF(2¹²⁸) | NVIDIA sm_80 / sm_86 / sm_89 / sm_90 / sm_120; experimental sm_75 (GTX 16xx / RTX 20xx) |
+| `npt` | `neptune`, `neptune-cash` | Neptune Cash — HardforkDelta PoW, negotiated suffix search | NVIDIA sm_80+ (RTX 30xx, CMP 170HX, RTX 40xx/50xx, A100/H100, RTX PRO 6000) |
+| `neb` | `nebcoin`, `pot` | NEB 1.0.1 — KEP1 Kepler/TESS proof-of-training | NVIDIA sm_75+ / AMD OpenCL |
+
+Algorithm support depends on the selected backend and GPU. The PRL/NOID guide
+lists their requirements; the NEB guide covers NEB. Saved GPU profiles are selected automatically.
+
+## Mining operating systems
+
+Use the NVIDIA HiveOS, mmPOS or SMOS package for PRL/NOID/NPT/NEB. Configure the algorithm,
+pool and your own wallet address in the platform's custom miner settings.
+For PRL + NOCK, use the combined wallet format and add `--nock-merge` to extra
+arguments. The helper is bundled in the NVIDIA packages.
+
+SMOS packages use its CUSTOM ZIP format. These are custom packages, not a claim
+that Suprminer is included in a platform's managed miner list. Package checks and
+Linux GPU testing do not replace validation of a particular mining OS installation.
+
+## Docker
+
+```sh
+docker run -d --name suprminer --gpus all --restart unless-stopped \
+  -e COIN=PRL -e USERNAME=YOUR_PRL_ADDRESS -e WORKER=rig1 \
+  ocminersupr/suprminer-base:1.9.46
+```
+
+For merged mining, use `USERNAME=YOUR_PRL_ADDRESS+YOUR_NOCK_ADDRESS` and add
+`-e EXTRA_ARGS=--nock-merge`. See the Docker guide for all environment settings.
+
+## Status and support
+
+Enable the local statistics API with `--api --api-port 4068`; read
+`http://localhost:4068/summary`. Confirm accepted shares after changing a package
+or pool. Use the GitHub issue tracker for problems and include the version, OS,
+GPU model and relevant log excerpt. Do not post passwords, access tokens or
+private configuration files.
+
+Windows packages are compiled natively in GitHub CI and checked with command-line
+and CPU protocol tests. Windows GPU mining has not been tested on hardware.
+Third-party license notices are included in the downloads.
