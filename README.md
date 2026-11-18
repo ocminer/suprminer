@@ -1,55 +1,63 @@
 # Suprminer
 
-A multi-algorithm miner for NVIDIA GPUs, with separate Quantus OpenCL packages
-for AMD and NVIDIA devices, plus an AMD Vulkan package.
+A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
+for AMD devices, plus a Quantus Vulkan option.
 
-## Suprminer 1.9.44 — NEB 1.0.1 Kepler / TESS
+## Suprminer 1.9.45 — NEB on AMD and NVIDIA
 
-> [!IMPORTANT]
-> **NEB 1.0.1 mainnet starts on 18 November 2026 at 14:00 UTC.**
-> Upgrade to 1.9.44: earlier NEB releases cannot mine this revised mainnet.
-> Jobs become available around 13:58 UTC. The command remains `-a neb`.
+**NEB 1.0.1 mainnet starts on 18 November 2026 at 14:00 UTC.** Use `-a neb`.
+Native slots **0 = Kepler** and **1 = TESS** both use exact KEP1 integer math
+and the verified 16.1 MB dataset. Recognized old dataset caches update automatically.
+Every submitted share is checked against the CPU reference. **0% miner fee.**
 
-Both datasets now use **KEP1**: slot **0 = Kepler**, slot **1 = TESS**. This
-release accepts native indices 0/1, maintains separate model and dataset caches,
-and automatically installs the verified **16.1 MB** dataset. Recognized old
-NEB caches are upgraded. The old 2/3 mapping and RET2 models are rejected.
-Every submitted share is still checked against the CPU reference.
+New AMD OpenCL support uses exact INT8 matrix instructions on tested RDNA3 cards,
+and the faster measured portable integer path on MI50. Unknown cards and compilers
+use a portable fallback. GPU model preparation and separate per-slot caches keep
+CPU load low. NVIDIA kernels and per-card selection from 1.9.44 are retained.
 
-The optimized hashing kernels and per-card selection from 1.9.43 are retained.
-The update changes dataset and protocol handling; it does not change NEB's
-integer hashing math. **0% miner fee**. NVIDIA NEB builds cover Linux, Windows,
-HiveOS, mmpOS, SMOS and Docker. AMD OpenCL/Vulkan packages support Quantus;
-they do not implement NEB.
+Linux, Windows, HiveOS, mmpOS, SMOS and Docker have separate NVIDIA and AMD packages.
+AMD names retain `quantus-opencl` / `_opencl`; they now include NEB as well.
+The `quantus-vulkan` Linux package uses OpenCL for NEB. Physical Windows GPU
+execution and unlisted AMD generations remain unqualified.
 
-[Download 1.9.44](https://github.com/ocminer/suprminer/releases/tag/v1.9.44) ·
-[NEB setup guide](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
+[Download 1.9.45](https://github.com/ocminer/suprminer/releases/tag/v1.9.45) ·
+[NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
 
-The compatibility build mined **eight blocks accepted by the NEB 1.0.1 node**
-on an isolated rehearsal chain: four Kepler and four TESS, with zero rejected
-shares or blocks. The pool operator confirmed every block hash. This proves
-hash/consensus compatibility; the rehearsal did not test payouts.
+### Final v1.9.45 measurements
 
-### NEB 1.0.1 — final Linux 1.9.44 executable
+Actual NEB 1.0.1 genesis models and dataset, measured on Linux on 18 November
+2026 using the final protected release executables. Each dataset has a fixed
+60-second measurement window after warmup. These are initial AMD results and
+an NVIDIA regression check, not release-over-release gains.
 
-| GPU | Limit | Kepler | TESS | CPU use |
-|---|---:|---:|---:|---:|
-| RTX 5090 | 450 W | **138.25 MH/s** | **139.95 MH/s** | 1.68% of one core |
+| GPU | Limit W | Kepler MH/s | TESS MH/s | Mean W | CPU, % of one core |
+|---|---:|---:|---:|---:|---:|
+| RX 7600 XT | 165 | **6.97** | **6.99** | 160.9 | 5.72 |
+| MI50 | 150 | **4.92** | **4.99** | 147.3 | 5.47 |
+| RX 7900 XTX | 272 | **18.53** | **19.62** | 274.7 | 9.04 |
+| RTX 5090 | 450 | **137.96** | **139.24** | 449.9 | 1.73 |
 
-Measured on 17 November 2026 with the actual 1.0.1 genesis models and dataset,
-in fixed 60-second windows after warmup. All 188 submitted benchmark shares
-passed the upstream CPU reference, with zero invalid shares. Mean draw was
-449.9 W, mean core clock 1759 MHz and memory 13801 MHz;
-clock settings were unchanged. These are synthetic throughput measurements,
-separate from the real-node rehearsal. The Docker image carries the same
-Linux executable. [Measurement data](docs/benchmarks/neb-1944-mainnet101-5090.csv).
+Limits are configured settings; mean watts are sampled consumption. Clocks
+were unchanged. The MI50 and RX 7900 XTX tests used cooler limits of 150 W
+and 272 W. CPU use is the miner process after startup, expressed as a percentage
+of one CPU core; it includes CPU share validation and depends on share difficulty.
+Rates depend on the model, driver and cooling.
+
+[Measured clocks, watts and method (CSV)](docs/benchmarks/neb-1945-mainnet101.csv).
+All synthetic benchmark shares passed the independent upstream CPU reference.
+The earlier development measurements, including the short 225 W MI50 result,
+remain in [AMD qualification details](docs/NEB_OPENCL.md).
+
+Final AMD executables produced **60 accepted shares, zero rejects and zero CPU-invalid shares** on an isolated NEB 1.0.1 chain. All three cards covered both datasets; 60 exact block IDs were independently reconstructed and appeared as parents in later node work. The final NVIDIA executable added 8 accepted shares with zero rejects. This verifies the consensus path, not pool payouts or accounting.
+
+Known Quantus limitation: the OpenCL target-boundary self-test fails on the tested RX 7600 XT and MI50 with AMD OpenCL 3649.0. The same failure was reproduced with the published v1.9.44 binary, and the Quantus kernel and host path are unchanged. Quantus on these card/driver combinations is not qualified by this release. This does not affect the NEB checks, which passed independently on both cards; RX 7900 XTX passed the Quantus check. The new AMD Docker image also fails this Quantus self-test on RX 7900 XTX with its bundled ROCm 6.4.3 runtime, including when the published v1.9.44 executable is used. Use the AMD Docker image for NEB; Quantus GPU operation in that image is not qualified.
 
 ### Fleet KEP1 reference measurements
 
 These results reuse the **1.9.43 Linux executable, NEB 1.0.0 Kepler genesis
 model and dataset**, measured on 17 November 2026. The KEP1 kernels and Kepler
 samples are unchanged, but 1.0.1 has new starting weights. These are historical
-performance references, **not new TESS results or a repeated 1.9.44 fleet
+performance references, **not new TESS results or a repeated 1.9.45 fleet
 sweep**. Rates vary with models and settings.
 
 | GPU | Limit W | KEP1 reference MH/s | Mean W | Mean core MHz | Memory MHz |
@@ -78,7 +86,7 @@ that cooling condition. Original power and verifier service were restored.
 
 The earlier matched RTX 5090 kernel A/B/B/A at 450 W improved KEP1 from
 **136.00 to 139.19 MH/s (+2.35%)** in 1.9.43. This optimization is preserved;
-1.9.44 makes no additional speed-gain claim. Historical RET2 figures below
+1.9.44 and 1.9.45 make no additional NVIDIA speed-gain claim. Historical RET2 figures below
 are for the old network and must not be interpreted as TESS performance.
 
 

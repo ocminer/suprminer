@@ -1,9 +1,9 @@
-# Mine Quantus with Suprminer 1.9.44
+# Mine Quantus with Suprminer 1.9.45
 
 Mine Quantus on Suprnova with NVIDIA or AMD GPUs. Use a Quantus wallet address and a
 worker name of your choice. The algorithm setting is `quantus` (Poseidon2 Goldilocks).
 
-[Download Suprminer 1.9.44](https://github.com/ocminer/suprminer/releases/tag/v1.9.44)
+[Download Suprminer 1.9.45](https://github.com/ocminer/suprminer/releases/tag/v1.9.45)
 
 ## Linux
 
@@ -11,8 +11,8 @@ Choose the binary for your GPU. The following downloads support Ubuntu 20.04 or 
 
 | GPU | Download |
 | --- | --- |
-| NVIDIA RTX 20/30/40/50 series | [NVIDIA CUDA](https://github.com/ocminer/suprminer/releases/download/v1.9.44/suprminer-neptune-1.9.44-linux-x86_64-u2004) |
-| AMD or NVIDIA GTX 10 series | [Quantus OpenCL](https://github.com/ocminer/suprminer/releases/download/v1.9.44/suprminer-neptune-1.9.44-quantus-opencl-linux-x86_64) |
+| NVIDIA RTX 20/30/40/50 series | [NVIDIA CUDA](https://github.com/ocminer/suprminer/releases/download/v1.9.45/suprminer-neptune-1.9.45-linux-x86_64-u2004) |
+| AMD or NVIDIA GTX 10 series | [Quantus OpenCL](https://github.com/ocminer/suprminer/releases/download/v1.9.45/suprminer-neptune-1.9.45-quantus-opencl-linux-x86_64) |
 
 Install the GPU vendor's Linux driver; the OpenCL download also needs the vendor's OpenCL
 runtime. Download your binary, rename it to `suprminer-neptune`, and make it executable:
@@ -53,8 +53,8 @@ Use the installation URL matching your HiveOS base and GPU:
 
 | Platform | NVIDIA CUDA | AMD / GTX 10 series OpenCL |
 | --- | --- | --- |
-| Ubuntu 20.04 | [Installation URL](https://github.com/ocminer/suprminer/releases/download/v1.9.44/suprminer-neptune-1.9.44_u2004.tar.gz) | [Installation URL](https://github.com/ocminer/suprminer/releases/download/v1.9.44/suprminer-neptune-1.9.44_opencl_u2004.tar.gz) |
-| Ubuntu 22.04 | [Installation URL](https://github.com/ocminer/suprminer/releases/download/v1.9.44/suprminer-neptune-1.9.44_u2204.tar.gz) | [Installation URL](https://github.com/ocminer/suprminer/releases/download/v1.9.44/suprminer-neptune-1.9.44_opencl_u2204.tar.gz) |
+| Ubuntu 20.04 | [Installation URL](https://github.com/ocminer/suprminer/releases/download/v1.9.45/suprminer-neptune-1.9.45_u2004.tar.gz) | [Installation URL](https://github.com/ocminer/suprminer/releases/download/v1.9.45/suprminer-neptune-1.9.45_opencl_u2004.tar.gz) |
+| Ubuntu 22.04 | [Installation URL](https://github.com/ocminer/suprminer/releases/download/v1.9.45/suprminer-neptune-1.9.45_u2204.tar.gz) | [Installation URL](https://github.com/ocminer/suprminer/releases/download/v1.9.45/suprminer-neptune-1.9.45_opencl_u2204.tar.gz) |
 
 For TLS, change the pool URL to `stratum+ssl://quantus.suprnova.cc:7074`.
 
@@ -62,8 +62,8 @@ For TLS, change the pool URL to `stratum+ssl://quantus.suprnova.cc:7074`.
 
 Add an external miner using the appropriate package:
 
-- [NVIDIA CUDA package](https://github.com/ocminer/suprminer/releases/download/v1.9.44/suprminer-neptune-mmpos_1.9.44.tar.gz)
-- [AMD / GTX 10 series OpenCL package](https://github.com/ocminer/suprminer/releases/download/v1.9.44/suprminer-neptune-mmpos_1.9.44_opencl.tar.gz)
+- [NVIDIA CUDA package](https://github.com/ocminer/suprminer/releases/download/v1.9.45/suprminer-neptune-mmpos_1.9.45.tar.gz)
+- [AMD / GTX 10 series OpenCL package](https://github.com/ocminer/suprminer/releases/download/v1.9.45/suprminer-neptune-mmpos_1.9.45_opencl.tar.gz)
 
 Set algorithm `quantus`, pool `stratum+tcp://quantus.suprnova.cc:7071`, user
 `YOUR_QUANTUS_ADDRESS.rig01`, and password `x`. TLS uses
@@ -73,7 +73,7 @@ Set algorithm `quantus`, pool `stratum+tcp://quantus.suprnova.cc:7071`, user
 
 Use `ocminersupr/suprminer-base` on a host with an NVIDIA GPU, a working NVIDIA
 driver, and the NVIDIA Container Toolkit. The examples below pin the
-`1.9.44` image so a container restart does not unexpectedly change miner versions.
+`1.9.45` image so a container restart does not unexpectedly change miner versions.
 
 ### Start mining on Suprnova
 
@@ -97,7 +97,7 @@ docker run -d \
   --gpus all \
   --restart unless-stopped \
   --env-file quantus.env \
-  ocminersupr/suprminer-base:1.9.44
+  ocminersupr/suprminer-base:1.9.45
 ```
 
 The miner connects with `YOUR_QUANTUS_WALLET_ADDRESS.octa-rig-01`. Put the address
@@ -114,7 +114,7 @@ POOL_URL=stratum+ssl://quantus.suprnova.cc:7074
 
 ### Octa.Space and other container hosting panels
 
-Select `ocminersupr/suprminer-base:1.9.44` as the container image and allocate the
+Select `ocminersupr/suprminer-base:1.9.45` as the container image and allocate the
 NVIDIA GPU or GPUs to the container. Enter each row below as a separate environment
 variable. Enter the value directly, without a shell `-e` prefix or surrounding
 quotes.
@@ -213,7 +213,7 @@ Select **CUSTOM** and enter the matching SMOS ZIP URL first in Miner OPTIONS,
 followed by the miner arguments:
 
 ```text
-https://github.com/ocminer/suprminer/releases/download/v1.9.44/suprminer-neptune-1.9.44-smos-nvidia-u2204.zip -a quantus -o stratum+tcp://quantus.suprnova.cc:7071 -u YOUR_QUANTUS_ADDRESS.rig01 -p x
+https://github.com/ocminer/suprminer/releases/download/v1.9.45/suprminer-neptune-1.9.45-smos-nvidia-u2204.zip -a quantus -o stratum+tcp://quantus.suprnova.cc:7071 -u YOUR_QUANTUS_ADDRESS.rig01 -p x
 ```
 
 Choose `opencl` for AMD/Pascal Quantus, and `u2004` or `u2204` for the rig's OS
@@ -227,3 +227,7 @@ backends. It needs glibc 2.31 or newer (Ubuntu 20.04 and newer) and the relevant
 OpenCL is the default. Add `--vulkan` to select Vulkan explicitly. On the tested
 RX7900XTX, OpenCL produced higher hashrate; Vulkan/LLVM used less GPU power.
 Other AMD models have not been benchmarked with this Vulkan backend.
+
+## Qualification note for v1.9.45
+
+Known Quantus limitation: the OpenCL target-boundary self-test fails on the tested RX 7600 XT and MI50 with AMD OpenCL 3649.0. The same failure was reproduced with the published v1.9.44 binary, and the Quantus kernel and host path are unchanged. Quantus on these card/driver combinations is not qualified by this release. This does not affect the NEB checks, which passed independently on both cards; RX 7900 XTX passed the Quantus check. The new AMD Docker image also fails this Quantus self-test on RX 7900 XTX with its bundled ROCm 6.4.3 runtime, including when the published v1.9.44 executable is used. Use the AMD Docker image for NEB; Quantus GPU operation in that image is not qualified.

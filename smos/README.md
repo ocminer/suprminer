@@ -5,13 +5,13 @@ Miner OPTIONS, followed by the usual Suprminer arguments. For Quantus, after
 the release is published:
 
 ```text
-https://github.com/ocminer/suprminer/releases/download/v1.9.44/suprminer-neptune-1.9.44-smos-nvidia-u2204.zip -a quantus -o stratum+tcp://quantus.suprnova.cc:7071 -u YOUR_QUANTUS_ADDRESS.rig1 -p x
+https://github.com/ocminer/suprminer/releases/download/v1.9.45/suprminer-neptune-1.9.45-smos-nvidia-u2204.zip -a quantus -o stratum+tcp://quantus.suprnova.cc:7071 -u YOUR_QUANTUS_ADDRESS.rig1 -p x
 ```
 
 Use the `opencl` ZIP for AMD or Pascal Quantus mining. Each backend has Ubuntu
 20.04 (`u2004`, glibc 2.31 or newer) and Ubuntu 22.04 (`u2204`, glibc 2.35 or newer)
 packages. Match the package to the rig's OS and installed GPU driver. Both NVIDIA
-packages include PRL and NOID. OpenCL packages mine Quantus only.
+packages include PRL and NOID. OpenCL packages mine Quantus and NEB.
 
 For PRL, use `-a pearl -o stratum+tcp://prl.suprnova.cc:3373 -u YOUR_PRL_ADDRESS.rig1 -p x`.
 For NOID, use `-a noid -o stratum+tcp://noid.suprnova.cc:3337 -u YOUR_NOID_ADDRESS.rig1 -p x`.
