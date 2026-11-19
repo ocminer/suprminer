@@ -2,7 +2,7 @@
 
 Use `ocminersupr/suprminer-base` on a host with an NVIDIA GPU, a working NVIDIA
 driver, and the NVIDIA Container Toolkit. The examples below pin the
-`1.9.46` image so a new deployment selects this miner version. See the
+`1.9.47` image so a new deployment selects this miner version. See the
 [Docker user guide](https://github.com/ocminer/suprminer/blob/main/docker/README.md)
 for Octa app guide links, Vast.ai launch modes, and all supported environment
 variables. Both guides are bundled at `/app/README.md` and `/app/QUANTUS.md` in
@@ -31,7 +31,7 @@ docker run -d \
   --gpus all \
   --restart unless-stopped \
   --env-file quantus.env \
-  ocminersupr/suprminer-base:1.9.46
+  ocminersupr/suprminer-base:1.9.47
 ```
 
 The miner connects with `YOUR_QUANTUS_WALLET_ADDRESS.octa-rig-01`. Put the address
@@ -48,7 +48,7 @@ POOL_URL=stratum+ssl://quantus.suprnova.cc:7074
 
 ## Octa.Space and other container hosting panels
 
-Select `ocminersupr/suprminer-base:1.9.46` as the container image and allocate the
+Select `ocminersupr/suprminer-base:1.9.47` as the container image and allocate the
 NVIDIA GPU or GPUs to the container. Enter each row below as a separate environment
 variable. Enter the value directly, without a shell `-e` prefix or surrounding
 quotes.
@@ -137,6 +137,6 @@ docker rm suprminer-quantus
 In a hosting panel, apply the equivalent container recreation or redeployment
 after changing its environment variables.
 
-## Qualification note for v1.9.46
+## Qualification note for v1.9.47
 
 Known Quantus limitation: the OpenCL target-boundary self-test fails on the tested RX 7600 XT and MI50 with AMD OpenCL 3649.0. The same failure was reproduced with the published v1.9.44 binary, and the Quantus kernel and host path are unchanged. Quantus on these card/driver combinations is not qualified by this release. This does not affect the NEB checks, which passed independently on both cards; RX 7900 XTX passed the Quantus check. The new AMD Docker image also fails this Quantus self-test on RX 7900 XTX with its bundled ROCm 6.4.3 runtime, including when the published v1.9.44 executable is used. Use the AMD Docker image for NEB; Quantus GPU operation in that image is not qualified.
