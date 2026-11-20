@@ -3,9 +3,49 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
-## Suprminer 1.9.48 — much faster NEB on trained models
+## Suprminer 1.9.49 — NEB attempt selection for AMD, faster table updates
 
 **NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
+
+**AMD (OpenCL)** now uses the exact attempt selection that 1.9.48 introduced on
+NVIDIA: the miner finds the attempts that are cheap for the model of the current
+block, takes their exact result from a table and does not start the expensive
+ones. The reported hashrate counts only evaluated attempts.
+
+<!-- NEB1949_AMD:BEGIN -->
+| GPU (OpenCL) | Power allowance | 1.9.48 Kepler / TESS | 1.9.49 Kepler / TESS | Gain Kepler / TESS |
+|---|---:|---:|---:|---:|
+| RX 7900 XTX | 350 W | 21.0 / 21.3 MH/s | **97.6 / 874 MH/s** | **4.6x / 41x** |
+| RX 7600 XT | 165 W | 6.1 / 6.5 MH/s | **29.8 / 311 MH/s** | **4.9x / 48x** |
+| Radeon Instinct MI50 | 225 W | 5.1 / 5.6 MH/s | **19.9 / 287 MH/s** | **3.9x / 51x** |
+
+Measured on Linux on 20 November 2026 with the Kepler and TESS models the main
+network had on 19 November 2026, the same work for both versions (90 s per
+model), unchanged clocks. Every returned share passed an independent CPU
+reference; none was rejected. These short runs reached the cards' temperature
+limits (100 °C junction and more on these air-cooled test cards); sustained
+rates depend on cooling. The selection is checked against the previous kernel on
+real nonces at every model change and used only when it is faster.
+`NEB_DISABLE_NONCE_SELECTION=1` restores the 1.9.48 behaviour.
+<!-- NEB1949_AMD:END -->
+
+**NVIDIA** keeps the 1.9.48 kernels and rates on a fixed model. When the network
+changes a model, the large table is now updated only where the model's training
+rows changed instead of being rebuilt, and it grows into the memory that is
+still free once both models are loaded.
+
+Linux, Windows, HiveOS, mmpOS, SMOS and Docker have separate NVIDIA and AMD packages.
+AMD names retain `quantus-opencl` / `_opencl`; they include NEB as well.
+The `quantus-vulkan` Linux package uses OpenCL for NEB. Physical Windows GPU
+execution and unlisted AMD generations remain unqualified.
+
+[Download 1.9.49](https://github.com/ocminer/suprminer/releases/tag/v1.9.49) ·
+[NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
+
+Windows archives include **`start-neb.bat`**: enter your NEB wallet address and
+start mining at `neb.suprnova.cc:7804`. No miner fee; the pool charges 1%.
+
+### Previous release: 1.9.48 — NEB attempt selection on NVIDIA
 
 Every NEB attempt is one training step on 16 sampled rows, and its cost depends
 strongly on those rows. Suprminer 1.9.48 finds, for the model of each block, the
@@ -18,8 +58,8 @@ so more evaluated attempts mean proportionally more shares.
   network trains its models; the miner picks the fastest exact method per model
   and card at every block (`adaptive selection` in the log).
 - Enabled on RTX 30, RTX 40 and RTX 50 series GPUs (compute capability 8.6, 8.9
-  and 12.0); measured on the cards listed below. Other NVIDIA GPUs and the AMD
-  OpenCL backend keep the 1.9.47 path.
+  and 12.0); measured on the cards listed below. Other NVIDIA GPUs keep the
+  1.9.47 path (AMD follows in 1.9.49, above).
 - Every method is checked against the original kernel at each model change, and
   every submitted share is checked against the CPU reference. No floating-point
   approximation and no relaxed validation.
@@ -36,17 +76,6 @@ of a second.
 NEB supports **`stratum+tcp://`** and **`stratum+ssl://`** (certificate and
 hostname verified, never a silent plaintext fallback). Suprnova offers TLS on
 ports 7806 (PPLNS) and 7807 (solo) in Europe and Asia; see the setup guide.
-
-Linux, Windows, HiveOS, mmpOS, SMOS and Docker have separate NVIDIA and AMD packages.
-AMD names retain `quantus-opencl` / `_opencl`; they include NEB as well.
-The `quantus-vulkan` Linux package uses OpenCL for NEB. Physical Windows GPU
-execution and unlisted AMD generations remain unqualified.
-
-[Download 1.9.48](https://github.com/ocminer/suprminer/releases/tag/v1.9.48) ·
-[NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
-
-Windows archives include **`start-neb.bat`**: enter your NEB wallet address and
-start mining at `neb.suprnova.cc:7804`. No miner fee; the pool charges 1%.
 
 <!-- NEB1948_BENCHMARKS:BEGIN -->
 ### NEB 1.9.47 → 1.9.48 on the same trained models
