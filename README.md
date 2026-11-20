@@ -3,42 +3,88 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
-## Suprminer 1.9.47 — faster trained NEB models and TLS
+## Suprminer 1.9.48 — much faster NEB on trained models
 
-**NEB 1.0.1 mainnet is live.** Use `-a neb`.
-Native slots **0 = Kepler** and **1 = TESS** both use exact KEP1 integer math
-and the verified 16.1 MB dataset. Recognized old dataset caches update automatically.
-Every submitted share is checked against the CPU reference. **0% miner fee.**
+**NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
 
-NVIDIA now selects exact kernels for each trained model on the tested RTX 5090,
-RTX 5080, RTX 3070 and RTX 4070 Ti SUPER. It avoids redundant integer work where
-model bounds prove this is safe, measures candidate schedules on the GPU, and
-retains the previous path when the model cannot use the optimization. Other GPU
-models retain their existing dispatch. No floating-point approximation or relaxed
-share validation.
+Every NEB attempt is one training step on 16 sampled rows, and its cost depends
+strongly on those rows. Suprminer 1.9.48 finds, for the model of each block, the
+attempts that are cheap to evaluate, evaluates them **exactly**, and does not
+start the expensive ones. Every attempt has the same chance to meet the target,
+so more evaluated attempts mean proportionally more shares.
 
-NEB supports **`stratum+tcp://`** for plaintext and **`stratum+ssl://`** for TLS.
-TLS verifies the server certificate and hostname; a failed TLS connection never
-falls back to plaintext. Suprnova offers TLS on ports 7806 (PPLNS) and 7807 (solo)
-in Europe and Asia; see the setup guide below.
+- The reported hashrate counts **only attempts that were actually evaluated**.
+- The rate now differs a lot between Kepler and TESS blocks and changes as the
+  network trains its models; the miner picks the fastest exact method per model
+  and card at every block (`adaptive selection` in the log).
+- Enabled on RTX 30, RTX 40 and RTX 50 series GPUs (compute capability 8.6, 8.9
+  and 12.0); measured on the cards listed below. Other NVIDIA GPUs and the AMD
+  OpenCL backend keep the 1.9.47 path.
+- Every method is checked against the original kernel at each model change, and
+  every submitted share is checked against the CPU reference. No floating-point
+  approximation and no relaxed validation.
+- The miner keeps tables of exact results in GPU memory and by default uses the
+  free memory of the card except about 3 GB (more memory = more cheap attempts,
+  so cards with more VRAM gain more). `NEB_TRIPLE_TABLE_GB=<n>` limits the large
+  table, `NEB_DISABLE_TRIPLE_TABLE=1` turns it off.
+- `NEB_DISABLE_NONCE_SELECTION=1` restores the 1.9.47 behaviour.
 
-AMD retains the qualified OpenCL backend: exact INT8 matrix instructions on tested
-RDNA3 cards, the faster measured portable integer path on MI50, and a portable
-fallback for unknown hardware/compilers. CPU reference checks remain enabled.
+The pool must let the miner vary the extranonce (standard Stratum, as on
+Suprnova): the fast methods use up the 2^32 nonces of one header in a fraction
+of a second.
+
+NEB supports **`stratum+tcp://`** and **`stratum+ssl://`** (certificate and
+hostname verified, never a silent plaintext fallback). Suprnova offers TLS on
+ports 7806 (PPLNS) and 7807 (solo) in Europe and Asia; see the setup guide.
 
 Linux, Windows, HiveOS, mmpOS, SMOS and Docker have separate NVIDIA and AMD packages.
-AMD names retain `quantus-opencl` / `_opencl`; they now include NEB as well.
+AMD names retain `quantus-opencl` / `_opencl`; they include NEB as well.
 The `quantus-vulkan` Linux package uses OpenCL for NEB. Physical Windows GPU
 execution and unlisted AMD generations remain unqualified.
 
-[Download 1.9.47](https://github.com/ocminer/suprminer/releases/tag/v1.9.47) ·
+[Download 1.9.48](https://github.com/ocminer/suprminer/releases/tag/v1.9.48) ·
 [NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
 
 Windows archives include **`start-neb.bat`**: enter your NEB wallet address and
 start mining at `neb.suprnova.cc:7804`. No miner fee; the pool charges 1%.
 
+<!-- NEB1948_BENCHMARKS:BEGIN -->
+### NEB 1.9.47 → 1.9.48 on the same trained models
+
+Measured on Linux on 20 November 2026 with the Kepler and TESS models the main
+network had on 19 November 2026, the same dataset and the same work cadence for
+both versions (90 s per model). Every card ran at its maximum firmware power
+allowance with unchanged clocks. Rates are evaluated attempts per second
+(Kepler / TESS).
+
+| GPU | Maximum power allowance | 1.9.47 Kepler / TESS | 1.9.48 Kepler / TESS | Gain Kepler / TESS |
+|---|---:|---:|---:|---:|
+| RTX 5090 | 600 W | 237.1 / 279.0 MH/s | **361.6 MH/s / 4.88 GH/s** | **+53% / 17.5x** |
+| RTX 5080 | 400 W | 141.9 / 161.0 MH/s | **204.1 MH/s / 2.01 GH/s** | **+44% / 12.5x** |
+| RTX 4070 Ti SUPER | 285 W | 84.2 / 96.4 MH/s | **149.3 MH/s / 1.55 GH/s** | **+77% / 16.1x** |
+| RTX 3070 | 250 W | 36.0 / 44.3 MH/s | **63.4 MH/s / 626.9 MH/s** | **+76% / 14.1x** |
+
+Every returned share (7,298 in these runs) passed an independent CPU reference;
+none was rejected. The share counts confirm the displayed rates; the
+[complete CSV](docs/benchmarks/neb-1948-selection.csv) lists both, with actual
+watts, clocks and temperatures, and the second RTX 5080 and RTX 3070. The
+TESS rates include the large table sized from each card's free memory (26.8 GB
+on the RTX 5090, 10.4 GB on the RTX 5080, 2.7 GB on the RTX 3070). The
+RTX 5070 Ti is enabled as well (it used the general path in 1.9.47) but has no
+undisturbed measurement yet. Protected development executables
+provide these measurements; the release packages contain the same kernels.
+
+These are gross hashing rates on two fixed models, not payout measurements. The
+gain depends on the model: the fewer of its training rows still produce a
+gradient, the more attempts are cheap. On the live network the rate therefore
+moves from block to block and over time. Power allowance is not actual
+consumption. The miner does not change clocks or power settings.
+<!-- NEB1948_BENCHMARKS:END -->
+
+### Previous release: 1.9.47
+
 <!-- NEB1947_BENCHMARKS:BEGIN -->
-### NEB trained models: before / after
+### NEB trained models: 1.9.46 → 1.9.47
 
 Measured on Linux on 19 November 2026 using the same frozen trained Kepler and
 TESS models, dataset and work cadence. Every card used its maximum firmware
