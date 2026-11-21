@@ -3,9 +3,100 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
-## Suprminer 1.9.50 — faster NEB on RTX 30/40/50: larger and denser result table
+## Suprminer 1.9.51 — NEB: result tables on H100 and CMP 170HX, a second table on cards with much memory
 
 **NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
+
+The miner keeps tables of exact results in GPU memory and only evaluates the
+attempts they cover. Until now this was limited to RTX 30 / 40 / 50 class
+chips; on Hopper (H100) and on the CMP 170HX every nonce was still evaluated
+the slow way. Both use the tables now. On cards where the table of one model
+does not need all the memory, the other model gets a table of its own from
+what is left, so Kepler blocks are faster there.
+
+<!-- NEB1951:BEGIN -->
+| GPU | Power allowance | 1.9.50 Kepler / TESS | 1.9.51 Kepler / TESS | Gain Kepler / TESS |
+|---|---:|---:|---:|---:|
+| H100 (80 GB) | firmware maximum (about 590 W drawn) | 92 MH/s / 76 MH/s | **533 MH/s / 3.68 GH/s** | **5.8x / 48x** |
+| CMP 170HX (memory-unlocked, 48 GB free) | 250 W | 62 MH/s / 70 MH/s | **183 MH/s / 1.29 GH/s** | **2.9x / 18x** |
+| RTX PRO 6000 (96 GB) | 600 W | 813 MH/s / 5.86 GH/s | **917 MH/s / 5.90 GH/s** | **+12.8% / +0.7%** |
+| RTX 5090 (32 GB) | 600 W | 797 MH/s / 4.53 GH/s | 795 MH/s / 4.51 GH/s | within run variation |
+
+Measured on Linux on 21 November 2026 with the Kepler and TESS models the main
+network had that day, the same work for both versions (90 s per model),
+unchanged clocks, one run per version and card. H100, PRO 6000 and CMP 170HX
+rates of 1.9.51 are from the development build with the same kernels; the
+RTX 5090 pair was run back to back. The CMP 170HX shared its card with another
+program that held 16 GB and ran at 84-85 C, so its Kepler rate fell from 190
+to 181 MH/s during the run. Every returned share passed an independent CPU
+reference; none was rejected. Rates are for two fixed models and depend on the
+model of each block; the reported hashrate counts only evaluated attempts.
+An H100 has fewer and slower-clocked cores for this integer work than an
+RTX 5090, so it stays below it despite its memory.
+<!-- NEB1951:END -->
+
+All cards measured with 1.9.51 on the models of 21 November 2026 (Kepler / TESS):
+
+| GPU | Power allowance | Kepler | TESS |
+|---|---:|---:|---:|
+| RTX PRO 6000 (96 GB) | 600 W | 917 MH/s | 5.90 GH/s |
+| RTX 5090 | 600 W | 804 MH/s | 4.58 GH/s |
+| H100 (80 GB) | firmware maximum | 533 MH/s | 3.68 GH/s |
+| RTX 5080 | 400 W | 428 MH/s | 1.91 GH/s |
+| RTX 4070 Ti SUPER | 285 W | 325 MH/s | 1.42 GH/s |
+| CMP 170HX (memory-unlocked) | 250 W | 183 MH/s | 1.29 GH/s |
+| RTX 3070 | 250 W | 157 MH/s | 576 MH/s |
+| RX 7900 XTX (OpenCL) | 350 W | 241 MH/s | 760 MH/s |
+| RX 7600 XT (OpenCL) | 165 W | 78.5 MH/s | 269 MH/s |
+| Radeon Instinct MI50 (OpenCL) | 225 W | not measured | 284 MH/s |
+
+RTX 5090, 5080, 4070 Ti SUPER, 3070 and the AMD cards ran the final release
+executables; PRO 6000, H100 and CMP 170HX the development build with the same
+kernels. Same work for every card (90 s per model, TESS rate after both models
+were loaded), every share checked against the CPU reference, none rejected.
+The MI50 reached its 100 C limit after one minute at 225 W in our open test
+bench and was stopped before its Kepler phase. The tables of the earlier
+releases further down were measured on the models of earlier days; rates of
+different days cannot be compared (the same RTX 5090 gave 362 MH/s on the
+Kepler model of 20 November and 804 MH/s on that of 21 November).
+
+- RTX 5090 and other cards with up to 32 GB: the table of one model already
+  fills the memory, so the default rates are those of 1.9.50. With
+  `NEB_TRIPLE_POLICY=follow` the large table goes to whichever model is being
+  mined and is rebuilt at every change: the same RTX 5090 then gave 864 MH/s on
+  Kepler in a long run with one model. With the network's alternating blocks
+  this lowered the rate of both models in our measurement, so it is off by
+  default.
+- The large table is built about 1.4 times faster (RTX 5090: 310 to 440 million
+  rows per second), so the full rate returns sooner after a model change.
+- Right after a start, while only one of the two models has arrived, the table
+  is about 10% smaller than in 1.9.50; it grows to full size at the next model
+  change.
+- Kepler models with more than 5461 active samples can use the large table now
+  (it was silently left out for them before).
+- Turing cards (GTX 16, RTX 20, CMP 30HX / 40HX / 50HX) still use the previous
+  path.
+- `NEB_DISABLE_QUAD_BUILD=1` builds the table with the previous kernel.
+- **Do not run other programs on the same GPU while mining NEB**: the tables take
+  the free memory. `NEB_TRIPLE_RESERVE_MB=<n>` keeps n MiB free instead,
+  `NEB_TRIPLE_TABLE_GB=<n>` limits the first table, `NEB_DISABLE_TRIPLE_TABLE=1`
+  turns the large tables off.
+- Every method is checked against the original kernel at each model change and
+  every submitted share against the CPU reference, as before.
+- AMD (OpenCL) and all other algorithms are unchanged from 1.9.50.
+
+Linux, Windows, HiveOS, mmpOS, SMOS and Docker have separate NVIDIA and AMD packages.
+AMD names retain `quantus-opencl` / `_opencl`; they include NEB as well.
+The `quantus-vulkan` Linux package uses OpenCL for NEB. Physical Windows GPU
+execution and unlisted AMD generations remain unqualified.
+
+[Download 1.9.51](https://github.com/ocminer/suprminer/releases/tag/v1.9.51) ·
+[NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
+
+Windows archives include **`start-neb.bat`**: enter your NEB wallet address and
+start mining at `neb.suprnova.cc:7804`. No miner fee; the pool charges 1%.
+
+### Previous release: 1.9.50 — larger and denser result table
 
 The table of exact results that the miner keeps in GPU memory now holds more:
 its rows take 28 instead of 32 bytes, and it uses all free memory of the card
@@ -39,17 +130,6 @@ each block; the reported hashrate counts only evaluated attempts.
   every submitted share against the CPU reference, as before.
 - HiveOS: the miner log is now written to the file HiveOS reads (`miner log`).
 - AMD (OpenCL) and all other algorithms are unchanged from 1.9.49.
-
-Linux, Windows, HiveOS, mmpOS, SMOS and Docker have separate NVIDIA and AMD packages.
-AMD names retain `quantus-opencl` / `_opencl`; they include NEB as well.
-The `quantus-vulkan` Linux package uses OpenCL for NEB. Physical Windows GPU
-execution and unlisted AMD generations remain unqualified.
-
-[Download 1.9.50](https://github.com/ocminer/suprminer/releases/tag/v1.9.50) ·
-[NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
-
-Windows archives include **`start-neb.bat`**: enter your NEB wallet address and
-start mining at `neb.suprnova.cc:7804`. No miner fee; the pool charges 1%.
 
 ### Previous release: 1.9.49 — NEB attempt selection for AMD, faster table updates
 
