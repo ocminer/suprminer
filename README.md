@@ -3,9 +3,55 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
-## Suprminer 1.9.49 — NEB attempt selection for AMD, faster table updates
+## Suprminer 1.9.50 — faster NEB on RTX 30/40/50: larger and denser result table
 
 **NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
+
+The table of exact results that the miner keeps in GPU memory now holds more:
+its rows take 28 instead of 32 bytes, and it uses all free memory of the card
+except about 0.4 GiB (1 GiB on Windows). More attempts are answered from the
+table, so more attempts are evaluated per second on TESS blocks.
+
+<!-- NEB1950:BEGIN -->
+| GPU | Power allowance | 1.9.49 Kepler / TESS | 1.9.50 Kepler / TESS | Gain Kepler / TESS |
+|---|---:|---:|---:|---:|
+| RTX 5090 | 600 W | 361 MH/s / 5.11 GH/s | **362 MH/s / 5.37 GH/s** | **0% / +5.0%** |
+| RTX 5080 | 400 W | 206 MH/s / 2.14 GH/s | **211 MH/s / 2.34 GH/s** | **+2.3% / +8.9%** |
+| RTX 3070 | 250 W | 69.9 MH/s / 669 MH/s | **69.9 MH/s / 712 MH/s** | **0% / +6.4%** |
+
+Measured on Linux on 20 and 21 November 2026 with the Kepler and TESS models
+the main network had on 20 November 2026, the same work for both versions (90 s
+per model), unchanged clocks, maximum firmware power. RTX 5090: mean of an
+A/B/B/A sequence on a warm card; RTX 5080 (two cards) and RTX 3070 (two cards):
+one run per version. Every returned share passed an independent CPU reference;
+none was rejected. Rates are for two fixed models and depend on the model of
+each block; the reported hashrate counts only evaluated attempts.
+<!-- NEB1950:END -->
+
+- **Do not run other programs on the same GPU while mining NEB**: the table takes
+  the free memory. `NEB_TRIPLE_RESERVE_MB=<n>` keeps n MiB free instead,
+  `NEB_TRIPLE_TABLE_GB=<n>` limits the table, `NEB_DISABLE_TRIPLE_TABLE=1` turns
+  it off.
+- The table stays in place when the network alternates between Kepler and TESS
+  blocks, and is updated only where a model changed.
+- Blackwell cards (RTX 50) use a larger register budget in the scan kernels.
+- Every method is checked against the original kernel at each model change and
+  every submitted share against the CPU reference, as before.
+- HiveOS: the miner log is now written to the file HiveOS reads (`miner log`).
+- AMD (OpenCL) and all other algorithms are unchanged from 1.9.49.
+
+Linux, Windows, HiveOS, mmpOS, SMOS and Docker have separate NVIDIA and AMD packages.
+AMD names retain `quantus-opencl` / `_opencl`; they include NEB as well.
+The `quantus-vulkan` Linux package uses OpenCL for NEB. Physical Windows GPU
+execution and unlisted AMD generations remain unqualified.
+
+[Download 1.9.50](https://github.com/ocminer/suprminer/releases/tag/v1.9.50) ·
+[NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
+
+Windows archives include **`start-neb.bat`**: enter your NEB wallet address and
+start mining at `neb.suprnova.cc:7804`. No miner fee; the pool charges 1%.
+
+### Previous release: 1.9.49 — NEB attempt selection for AMD, faster table updates
 
 **AMD (OpenCL)** now uses the exact attempt selection that 1.9.48 introduced on
 NVIDIA: the miner finds the attempts that are cheap for the model of the current
@@ -33,17 +79,6 @@ real nonces at every model change and used only when it is faster.
 changes a model, the large table is now updated only where the model's training
 rows changed instead of being rebuilt, and it grows into the memory that is
 still free once both models are loaded.
-
-Linux, Windows, HiveOS, mmpOS, SMOS and Docker have separate NVIDIA and AMD packages.
-AMD names retain `quantus-opencl` / `_opencl`; they include NEB as well.
-The `quantus-vulkan` Linux package uses OpenCL for NEB. Physical Windows GPU
-execution and unlisted AMD generations remain unqualified.
-
-[Download 1.9.49](https://github.com/ocminer/suprminer/releases/tag/v1.9.49) ·
-[NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
-
-Windows archives include **`start-neb.bat`**: enter your NEB wallet address and
-start mining at `neb.suprnova.cc:7804`. No miner fee; the pool charges 1%.
 
 ### Previous release: 1.9.48 — NEB attempt selection on NVIDIA
 
