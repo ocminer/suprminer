@@ -3,7 +3,59 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
-## Suprminer 1.9.51 — NEB: result tables on H100 and CMP 170HX, a second table on cards with much memory
+## Suprminer 1.9.52 — ccminer-style API (`-b`), full NEB table from the first block
+
+**NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
+
+- **`-b [ADDR:]PORT`** (also `--api-bind`) turns on the API the way ccminer does:
+  `-b 4068` listens on this computer only, `-b 0.0.0.0:4068` on all interfaces,
+  `-b 0` turns it off. The port answers the ccminer text commands `summary`,
+  `threads` and `pool` (`echo -n summary | nc 127.0.0.1 4068`) and, as before,
+  HTTP JSON for HiveOS, mmpOS and SMOS.
+- **NEB:** in 1.9.51 the result table of the first model of a session was about
+  10% too small on cards with up to 32 GB until the next model change. It has
+  its full size from the start now (RTX 5090: TESS 4.33 to 4.60 GH/s during
+  that time; the rate afterwards is unchanged).
+- **NEB:** after a GPU error that leaves a card unusable for the running
+  process (illegal memory access, launch failure) the miner now starts itself
+  again with the same arguments instead of retrying forever with idle cards.
+- **A100 80 GB** measured: Kepler 305 MH/s, TESS 2.10 GH/s.
+
+<!-- NEB1952:BEGIN -->
+All cards on the Kepler and TESS models of 21 November 2026 (Kepler / TESS):
+
+| GPU | Power allowance | Kepler | TESS |
+|---|---:|---:|---:|
+| RTX PRO 6000 (96 GB) | 600 W | 917 MH/s | 5.90 GH/s |
+| RTX 5090 | 600 W | 804 MH/s | 4.60 GH/s |
+| H100 (80 GB) | firmware maximum | 533 MH/s | 3.68 GH/s |
+| A100 (80 GB) | 400 W | 305 MH/s | 2.10 GH/s |
+| RTX 5080 | 400 W | 428 MH/s | 1.91 GH/s |
+| RTX 4070 Ti SUPER | 285 W | 325 MH/s | 1.42 GH/s |
+| CMP 170HX (memory-unlocked) | 250 W | 183 MH/s | 1.29 GH/s |
+| RTX 3070 | 250 W | 157 MH/s | 576 MH/s |
+| RX 7900 XTX (OpenCL) | 350 W | 241 MH/s | 760 MH/s |
+| RX 7600 XT (OpenCL) | 165 W | 78.5 MH/s | 269 MH/s |
+| Radeon Instinct MI50 (OpenCL) | 225 W | not measured | 284 MH/s |
+
+Measured on Linux with unchanged clocks, the same work for every card (90 s
+per model), every share checked against the CPU reference, none rejected. The
+NEB kernels are those of 1.9.51; the RTX 5090 was run again with this release,
+the other rates are those measured for 1.9.51 (A100: 1.9.51 release executable;
+PRO 6000, H100, CMP 170HX: development build with the same kernels). Rates
+depend on the model of each block and cannot be compared between days. A100,
+H100 and CMP 170HX run at their maximum clock below their power allowance:
+this integer work is limited by the number of cores and their clock.
+<!-- NEB1952:END -->
+
+Linux, Windows, HiveOS, mmpOS, SMOS and Docker have separate NVIDIA and AMD packages.
+Physical Windows GPU execution and unlisted AMD generations remain unqualified.
+
+[Download 1.9.52](https://github.com/ocminer/suprminer/releases/tag/v1.9.52) ·
+[NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
+
+### Previous release: 1.9.51 — NEB result tables on H100 and CMP 170HX, a second table on cards with much memory
+
 
 **NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
 
