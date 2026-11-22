@@ -3,7 +3,49 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
-## Suprminer 1.9.52 — ccminer-style API (`-b`), full NEB table from the first block
+## Suprminer 1.9.53 — faster NEB on dense Kepler models, one download per platform
+
+**NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
+
+- **NEB, Kepler:** since 21 November the network's Kepler model is much denser,
+  and most of the work is the full evaluation of an attempt. That evaluation is
+  10-13% faster on RTX 40 and RTX 50 cards, RTX PRO 6000, H100 and CMP 170HX
+  (the A100 uses the same code and was not measured again). RTX 30 cards and
+  TESS are unchanged.
+- **One download per platform.** Linux, Windows, HiveOS (Ubuntu 20.04 and 22.04
+  base), mmpOS and SMOS each have a single archive that holds the NVIDIA build
+  and the AMD (OpenCL) build `suprminer-neptune-amd`. HiveOS and mmpOS start the
+  AMD build on rigs without an NVIDIA card; `--amd` or `--nvidia` in the extra
+  arguments forces one. On Windows use `start-neb.bat` (NVIDIA) or
+  `start-neb-amd.bat` (AMD). Docker keeps the `-amd` tag. `SHA256SUMS` lists all
+  checksums.
+
+<!-- NEB1953:BEGIN -->
+Kepler model of 21 November 2026 (evening, dense), same work for both versions:
+
+| GPU | Power allowance | 1.9.52 | 1.9.53 | Gain |
+|---|---:|---:|---:|---:|
+| RTX PRO 6000 (96 GB) | 600 W | 390 MH/s | **429 MH/s** | +10% |
+| RTX 5090 | 600 W | 368 MH/s | **405 MH/s** | +10% |
+| H100 (80 GB) | firmware maximum | 217 MH/s | **241 MH/s** | +11% |
+| RTX 5080 | 400 W | 206 MH/s | **231 MH/s** | +12% |
+| RTX 4070 Ti SUPER | 285 W | 139.5 MH/s | **154.5 MH/s** | +11% |
+| CMP 170HX (memory-unlocked) | 250 W | 80.5 MH/s | **91 MH/s** | +13% |
+| RTX 3070 | 250 W | 59 MH/s | 59 MH/s | unchanged |
+
+Linux, unchanged clocks, every share checked against the CPU reference, none
+rejected. Rates on this model are lower than the earlier tables for every card
+because the model changed; rates of different days cannot be compared.
+<!-- NEB1953:END -->
+
+- `NEB_QUAD_PACK=0` selects the previous evaluation, `1` forces the new one.
+- AMD (OpenCL) and all other algorithms are unchanged from 1.9.52.
+- Physical Windows GPU execution and unlisted AMD generations remain unqualified.
+
+[Download 1.9.53](https://github.com/ocminer/suprminer/releases/tag/v1.9.53) ·
+[NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
+
+### Previous release: 1.9.52 — ccminer-style API (`-b`), full NEB table from the first block
 
 **NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
 
