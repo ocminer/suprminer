@@ -11,20 +11,19 @@ TESS predictions are enabled by default on supporting pools.
 
 Matched Linux benchmarks: **Kepler / TESS, MH/s**, identical trained models and unchanged clocks.
 
-| GPU | Power allowance | 1.9.54 | 1.9.55 | Gain Kepler / TESS |
-|---|---:|---:|---:|---:|
-| RTX PRO 6000 Blackwell (96 GB) | 600 W | 471.79 / 6880.12 | **471.08 / 7077.50** | unchanged / **+2.87%** |
-| RTX 5090 | 600 W | 436.59 / 5627.13 | **438.09 / 5683.25** | no established gain¹ |
-| H100 (80 GB) | 700 W | 288.87 / 4280.38 | **291.72 / 4280.38** | **+0.99%** / unchanged |
-| RTX 5080 | 400 W | 253.14 / 2431.62 | **253.31 / 2434.25** | within run variation |
-| RTX 4070 Ti SUPER² | 285 W | 174.50 / 1798.00 | **174.78 / 1796.75** | within run variation |
-| CMP 170HX² | 250 W | — | **94.17 / 814.76** | no matched comparison |
-| RTX 3070 | 250 W | 82.41 / 726.12 | **83.42 / 734.81** | **+1.22% / +1.20%** |
-| Tesla V100 (16 GB) | 300 W | 108.71 / 948.16 | **112.43 / 988.51** | **+3.43% / +4.26%** |
+| GPU | Power allowance | 1.9.54 | 1.9.55 | Update benefit |
+|---|---:|---:|---:|---|
+| RTX PRO 6000 Blackwell (96 GB) | 600 W | 471.79 / 6880.12 | **471.08 / 7077.50** (+ predictions†) | **+2.87% TESS** |
+| RTX 5090 | 600 W | 436.59 / 5627.13 | **438.09 / 5683.25** (+ predictions†) | Retained steady speed; improved model switching |
+| H100 (80 GB) | 700 W | 288.87 / 4280.38 | **291.72 / 4280.38** (+ predictions†) | **+0.99% Kepler** |
+| RTX 5080 | 400 W | 253.14 / 2431.62 | **253.31 / 2434.25** (+ predictions†) | Retained steady speed; prediction support |
+| RTX 4070 Ti SUPER² | 285 W | 174.50 / 1798.00 | **174.78 / 1796.75** (+ predictions†) | Retained steady speed; prediction support |
+| CMP 170HX² | 250 W | — | **94.17 / 814.76** (+ predictions†) | Prediction support; shared measurement |
+| RTX 3070 | 250 W | 82.41 / 726.12 | **83.42 / 734.81** (+ predictions†) | **+1.22% Kepler / +1.20% TESS** |
+| Tesla V100 (16 GB) | 300 W | 108.71 / 948.16 | **112.43 / 988.51** (+ predictions†) | **+3.43% Kepler / +4.26% TESS** |
 
-¹ RTX 5090 warm repeat shown; cold and warm repeats differed with boost, so no new steady-rate gain is claimed.
-² Another GPU service remained active on the 4070 Ti SUPER and CMP; these are shared measurements.
-Rates vary with network models. [Full results, repeated cards and AMD notes](docs/benchmarks/neb-1.9.55-fleet.md).
+† **Optional, variable prediction potential**, not included in the displayed steady rates. The benefit depends on GPU, models and pool timing; it is not a guaranteed gain on every card. Paired live tests measured **+0.75% combined throughput on RTX 3070** and **+1.58% on RTX PRO 6000** with predictions enabled. These are separate tests, not percentages to add to the static gains.
+² The 4070 Ti SUPER and CMP measurements shared their GPUs with another service. RTX 5090 warm-repeat rates are shown; its steady-rate difference varied with boost. Rates change with network models. [Full test conditions](docs/benchmarks/neb-1.9.55-fleet.md).
 
 Prediction controls: `--disable-neb-predictions`,
 `--disable-neb-tess-predictions`, `--disable-neb-kepler-predictions`.
