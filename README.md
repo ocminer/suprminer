@@ -9,19 +9,22 @@ for AMD devices, plus a Quantus Vulkan option.
 smoother model changes, and improved stability when pool work changes.
 TESS predictions are enabled by default on supporting pools.
 
-Matched Linux benchmarks, **Kepler / TESS in MH/s**, same models and settings:
+Matched Linux benchmarks: **Kepler / TESS, MH/s**, identical trained models and unchanged clocks.
 
-| GPU | 1.9.54 | 1.9.55 | Gain |
-|---|---:|---:|---:|
-| Tesla V100 16 GB | 108.71 / 948.16 | 112.43 / 988.51 | +3.43% / +4.26% |
-| H100 80 GB | 288.87 / 4280.38 | 291.72 / 4280.38 | +0.99% / unchanged |
-| RTX PRO 6000 Blackwell 96 GB | 471.79 / 6880.12 | 471.08 / 7077.50 | unchanged / +2.87% |
-| RTX 3070 | 82.41 / 726.12 | 83.42 / 734.81 | +1.22% / +1.20% |
-| RTX 5080 | 253.14 / 2431.62 | 253.31 / 2434.25 | within run variation |
+| GPU | Power allowance | 1.9.54 | 1.9.55 | Gain Kepler / TESS |
+|---|---:|---:|---:|---:|
+| RTX PRO 6000 Blackwell (96 GB) | 600 W | 471.79 / 6880.12 | **471.08 / 7077.50** | unchanged / **+2.87%** |
+| RTX 5090 | 600 W | 436.59 / 5627.13 | **438.09 / 5683.25** | no established gain¹ |
+| H100 (80 GB) | 700 W | 288.87 / 4280.38 | **291.72 / 4280.38** | **+0.99%** / unchanged |
+| RTX 5080 | 400 W | 253.14 / 2431.62 | **253.31 / 2434.25** | within run variation |
+| RTX 4070 Ti SUPER² | 285 W | 174.50 / 1798.00 | **174.78 / 1796.75** | within run variation |
+| CMP 170HX² | 250 W | — | **94.17 / 814.76** | no matched comparison |
+| RTX 3070 | 250 W | 82.41 / 726.12 | **83.42 / 734.81** | **+1.22% / +1.20%** |
+| Tesla V100 (16 GB) | 300 W | 108.71 / 948.16 | **112.43 / 988.51** | **+3.43% / +4.26%** |
 
-Rates vary as the network trains its models. See the [full fleet results and
-test conditions](docs/benchmarks/neb-1.9.55-fleet.md), including repeated cards,
-RTX 5090, AMD and shared CMP measurements.
+¹ RTX 5090 warm repeat shown; cold and warm repeats differed with boost, so no new steady-rate gain is claimed.
+² Another GPU service remained active on the 4070 Ti SUPER and CMP; these are shared measurements.
+Rates vary with network models. [Full results, repeated cards and AMD notes](docs/benchmarks/neb-1.9.55-fleet.md).
 
 Prediction controls: `--disable-neb-predictions`,
 `--disable-neb-tess-predictions`, `--disable-neb-kepler-predictions`.
