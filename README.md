@@ -3,7 +3,37 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
-## Suprminer 1.9.53 — faster NEB on dense Kepler models, one download per platform
+## Suprminer 1.9.54 — NEB tables on Tesla V100 and Turing cards, table use decided by measurement
+
+**NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
+
+- **Tesla V100** mines NEB now (earlier versions refused the card): TESS 942
+  MH/s, Kepler 131 MH/s on the models of 22 November (16 GB card, 300 W
+  allowance, Linux; the Windows package has no kernels for this card).
+- **Turing cards** (RTX 20, GTX 16, CMP 30HX / 40HX / 50HX) use the attempt
+  selection and the result tables now instead of the plain kernel. We have no
+  Turing card: their code path was run on an RTX 5090 through the driver's
+  compiler (all shares valid), so no Turing rate is claimed. Every model is
+  checked against the plain kernel on the card itself and the miner keeps the
+  plain kernel when that check fails; `NEB_DISABLE_NONCE_SELECTION=1` forces it.
+- **Table use is measured.** When a large table is complete the miner times the
+  scan with and without it on that card and keeps the faster one. On cards with
+  much memory a table that adds few attempts could cost speed.
+- All other cards run the kernels of 1.9.53.
+
+<!-- NEB1954:BEGIN -->
+| GPU | Power allowance | Kepler | TESS | Before |
+|---|---:|---:|---:|---|
+| Tesla V100 (16 GB) | 300 W | 131 MH/s | 942 MH/s | not supported |
+
+Models of 22 November 2026, Linux, unchanged clocks, every share checked against
+the CPU reference, none rejected. Rates depend on the model of each block.
+<!-- NEB1954:END -->
+
+[Download 1.9.54](https://github.com/ocminer/suprminer/releases/tag/v1.9.54) ·
+[NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
+
+### Previous release: 1.9.53 — faster NEB on dense Kepler models, one download per platform
 
 **NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
 
