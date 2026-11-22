@@ -3,7 +3,37 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
-## Suprminer 1.9.54 — NEB tables on Tesla V100 and Turing cards, table use decided by measurement
+## Suprminer 1.9.55 — NEB performance and stability update
+
+**0% miner fee. NVIDIA and AMD.** Faster NEB mining on selected cards,
+smoother model changes, and improved stability when pool work changes.
+TESS predictions are enabled by default on supporting pools.
+
+Matched Linux benchmarks, **Kepler / TESS in MH/s**, same models and settings:
+
+| GPU | 1.9.54 | 1.9.55 | Gain |
+|---|---:|---:|---:|
+| Tesla V100 16 GB | 108.71 / 948.16 | 112.43 / 988.51 | +3.43% / +4.26% |
+| H100 80 GB | 288.87 / 4280.38 | 291.72 / 4280.38 | +0.99% / unchanged |
+| RTX PRO 6000 Blackwell 96 GB | 471.79 / 6880.12 | 471.08 / 7077.50 | unchanged / +2.87% |
+| RTX 3070 | 82.41 / 726.12 | 83.42 / 734.81 | +1.22% / +1.20% |
+| RTX 5080 | 253.14 / 2431.62 | 253.31 / 2434.25 | within run variation |
+
+Rates vary as the network trains its models. See the [full fleet results and
+test conditions](docs/benchmarks/neb-1.9.55-fleet.md), including repeated cards,
+RTX 5090, AMD and shared CMP measurements.
+
+Prediction controls: `--disable-neb-predictions`,
+`--disable-neb-tess-predictions`, `--disable-neb-kepler-predictions`.
+CPU share checks and verified TLS remain enabled.
+
+Linux, Windows, HiveOS, mmpOS, SMOS and NVIDIA/AMD Docker builds.
+V100 NEB support is Linux-only.
+
+[Download 1.9.55](https://github.com/ocminer/suprminer/releases/tag/v1.9.55) ·
+[NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
+
+### Previous release: 1.9.54 — NEB tables on Tesla V100 and Turing cards, table use decided by measurement
 
 **NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
 

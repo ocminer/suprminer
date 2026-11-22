@@ -6,8 +6,8 @@ container starts. Use it on Octa.Space, Vast.ai, or a Docker host with the NVIDI
 Container Toolkit.
 
 - Image: [`ocminersupr/suprminer-base`](https://hub.docker.com/r/ocminersupr/suprminer-base)
-- Current release: [`1.9.54`](https://github.com/ocminer/suprminer/releases/tag/v1.9.54)
-- Tags: `1.9.54` selects this miner version; `latest` follows new releases.
+- Current release: [`1.9.55`](https://github.com/ocminer/suprminer/releases/tag/v1.9.55)
+- Tags: `1.9.55` selects this miner version; `latest` follows new releases.
 - [Quantus setup guide](https://github.com/ocminer/suprminer/blob/main/docker/QUANTUS.md)
 - [PRL and NOID setup guide](https://github.com/ocminer/suprminer/blob/main/docs/PRL_NOID_RELEASE_GUIDE.md)
 - [Public copy of this guide](https://github.com/ocminer/suprminer/blob/main/docker/README.md)
@@ -26,7 +26,7 @@ docker run -d --name suprminer-quantus \
   -e COIN=QUANTUS \
   -e USERNAME=YOUR_QUANTUS_WALLET_ADDRESS \
   -e WORKER=rig1 \
-  ocminersupr/suprminer-base:1.9.54
+  ocminersupr/suprminer-base:1.9.55
 ```
 
 This selects `quantus.suprnova.cc:7071`. For TLS, also set
@@ -43,7 +43,7 @@ Configure your custom app or container with these settings:
 
 | Setting | Value |
 |---|---|
-| Container image | `ocminersupr/suprminer-base:1.9.54` |
+| Container image | `ocminersupr/suprminer-base:1.9.55` |
 | GPU | Allocate the NVIDIA GPU or GPUs to the container |
 | Startup command | Use the image default, `/entrypoint.sh` |
 | `COIN` | `QUANTUS` |
@@ -117,7 +117,7 @@ app using this field for its User Guide link.
 
 ## Vast.ai
 
-Set the image to `ocminersupr/suprminer-base:1.9.54`. Choose the
+Set the image to `ocminersupr/suprminer-base:1.9.55`. Choose the
 **docker ENTRYPOINT** launch mode and use `/entrypoint.sh` as the command if an
 explicit command is required. In API templates, use `runtype: "args"` with
 `args_str: "/entrypoint.sh"`. Add these Docker options, replacing the address:
@@ -190,7 +190,7 @@ Read the README without starting the miner:
 
 ```bash
 docker run --rm --runtime=runc -e NVIDIA_VISIBLE_DEVICES=void \
-  --entrypoint cat ocminersupr/suprminer-base:1.9.54 /app/README.md
+  --entrypoint cat ocminersupr/suprminer-base:1.9.55 /app/README.md
 ```
 
 Stop cleanly with:
@@ -208,8 +208,8 @@ The build context must contain `Dockerfile`, `entrypoint.sh`, `README.md`,
 `QUANTUS.md`, and the release binary named `suprminer-neptune`.
 
 ```bash
-docker build -t ocminersupr/suprminer-base:1.9.54 docker/octa
-docker push ocminersupr/suprminer-base:1.9.54
+docker build -t ocminersupr/suprminer-base:1.9.55 docker/octa
+docker push ocminersupr/suprminer-base:1.9.55
 ```
 
 The Docker Hub overview is maintained separately from the files inside the
@@ -225,7 +225,7 @@ for setup and pool support.
 
 ## AMD Docker
 
-The `1.9.54-amd` tag (moving alias `amd`) includes the AMD OpenCL runtime,
+The `1.9.55-amd` tag (moving alias `amd`) includes the AMD OpenCL runtime,
 NEB dataset and the same executable as the portable AMD package. The host
 needs the `amdgpu` kernel driver; the image does not install a host driver.
 NEB uses OpenCL; the container does not include a Vulkan NEB backend.
@@ -234,12 +234,19 @@ NEB uses OpenCL; the container does not include a Vulkan NEB backend.
 docker run --rm --device=/dev/kfd --device=/dev/dri \
   -e COIN=NEB -e USERNAME=YOUR_NEB_ADDRESS -e WORKER=rig01 \
   -e PASSWORD=x -e STARTUP_SCRIPT_URL= \
-  ocminersupr/suprminer-base:1.9.54-amd
+  ocminersupr/suprminer-base:1.9.55-amd
 ```
 
 Use `DEVICES=0,2` to select OpenCL ordinals. Check device enumeration before
 mining on a mixed rig. GPU clocks and power settings are not changed.
 
-## Qualification note for v1.9.54
+## Qualification note for v1.9.55
 
 Known Quantus limitation: the OpenCL target-boundary self-test fails on the tested RX 7600 XT and MI50 with AMD OpenCL 3649.0. The same failure was reproduced with the published v1.9.44 binary, and the Quantus kernel and host path are unchanged. Quantus on these card/driver combinations is not qualified by this release. This does not affect the NEB checks, which passed independently on both cards; RX 7900 XTX passed the Quantus check. The new AMD Docker image also fails this Quantus self-test on RX 7900 XTX with its bundled ROCm 6.4.3 runtime, including when the published v1.9.44 executable is used. Use the AMD Docker image for NEB; Quantus GPU operation in that image is not qualified.
+
+## NEB prediction options
+
+TESS predictions are enabled by default with a supporting pool. To disable
+them, add `-e EXTRA_ARGS="--disable-neb-predictions"`. The separate
+`--disable-neb-tess-predictions` and `--disable-neb-kepler-predictions` options
+are also available. Kepler predictions remain an explicit opt-in.

@@ -4,7 +4,7 @@ This folder contains the integration scripts for HiveOS.
 
 ## Quantus
 
-Install the 1.9.54 `_u2004.tar.gz` package on Ubuntu 20.04, or `_u2204.tar.gz`
+Install the 1.9.55 `_u2004.tar.gz` package on Ubuntu 20.04, or `_u2204.tar.gz`
 on Ubuntu 22.04. The package holds the NVIDIA build and the OpenCL build for AMD
 cards (`suprminer-neptune-amd`); on a rig without an NVIDIA card the OpenCL build
 starts. Add `--opencl` to the extra configuration for NVIDIA Pascal cards, or
@@ -14,6 +14,19 @@ Set the algorithm to `quantus`, wallet template to `%WAL%.%WORKER_NAME%`,
 pool to `quantus.suprnova.cc:7071`, and password to `x`.
 For TLS use `stratum+ssl://quantus.suprnova.cc:7074`.
 Device selection is optional, for example `-d 0,1` in extra configuration.
+
+## NEB
+
+Select algorithm `neb`, wallet template `%WAL%.%WORKER_NAME%`, pool
+`stratum+tcp://neb.suprnova.cc:7804`, and password `x`. NVIDIA CUDA and AMD
+OpenCL packages support NEB. For encrypted connections use
+`stratum+ssl://neb.suprnova.cc:7806`.
+
+In **Extra config arguments**, use `--disable-neb-predictions` to disable
+all predicted-model preparation, or `--disable-neb-tess-predictions` /
+`--disable-neb-kepler-predictions` to disable preparation of that model only.
+The global option takes precedence. Model messages are still received and
+cached so later jobs work normally. See the [NEB guide](../docs/NEB_RELEASE_GUIDE.md).
 
 ## PRL and NOID
 
@@ -52,7 +65,7 @@ Use the wallet for the selected coin. NOID supports Ampere and newer NVIDIA GPUs
    ```bash
    mkdir -p /hive/miners/custom
    cd /hive/miners/custom
-   tar -xzf /path/to/suprminer-neptune-1.9.54_u2004.tar.gz
+   tar -xzf /path/to/suprminer-neptune-1.9.55_u2004.tar.gz
    ```
 3. Configure the flight sheet to use `suprminer-neptune`.
 
@@ -71,6 +84,7 @@ Use the wallet for the selected coin. NOID supports Ampere and newer NVIDIA GPUs
 | `quantus` | Quantus Poseidon2 Goldilocks | NVIDIA; AMD/Pascal with the OpenCL package |
 | `pearl` | PearlHash (PRL) | Full NVIDIA package |
 | `noid` | Parano1d Poseidon2b | Full NVIDIA package; supported Ampere or newer GPU |
+| `neb` | NEB KEP1 (Kepler and TESS) | NVIDIA CUDA or AMD OpenCL |
 | `qhash` | QHash (QuBitcoin) | GPU only |
 
 ## Extra Config Arguments

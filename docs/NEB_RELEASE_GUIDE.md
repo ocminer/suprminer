@@ -1,9 +1,9 @@
-# NEB with Suprminer 1.9.54
+# NEB with Suprminer 1.9.55
 
 NEB (Neural Engine Byte) is proof-of-training: every mining attempt is one exact
 integer training step of a small neural network on 16 samples of the chain's
 dataset. Suprminer mines NEB on NVIDIA CUDA and AMD OpenCL GPUs with the algorithm name `neb`.
-Suprminer 1.9.54 supports **NEB 1.0.1 mainnet**, using nebhash v2 KEP1
+Suprminer 1.9.55 supports **NEB 1.0.1 mainnet**, using nebhash v2 KEP1
 convolutional networks in both slots. The command remains `-a neb`.
 
 Mainnet launched on **18 November 2026 at 14:00 UTC**. Slot **0 is Kepler**
@@ -19,7 +19,7 @@ The miner follows the pool's supplied model, index and timestamp, including
 shifted timestamps on private rehearsal chains.
 
 Download the archive for your operating system from the
-[1.9.54 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.54):
+[1.9.55 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.55):
 Linux, Windows, HiveOS (Ubuntu 20.04 or 22.04 base), mmpOS or SMOS. Each archive
 holds two builds: `suprminer-neptune` for NVIDIA cards and `suprminer-neptune-amd`
 (OpenCL) for AMD cards (`miner` and `miner-amd` in the SMOS archive). Both mine NEB
@@ -49,7 +49,7 @@ AMD telemetry is read-only on Linux; unavailable Windows AMD hardware telemetry 
 
 ## Dataset file
 
-Suprminer 1.9.54 requires the **NEB 1.0.1** `neb-datasets.bin`: **16,087,037
+Suprminer 1.9.55 requires the **NEB 1.0.1** `neb-datasets.bin`: **16,087,037
 bytes**, with 13,404 Kepler samples and 7,089 TESS samples. Its BLAKE3 hash is
 `790b57fbd830f3dcbe7de9d1146aa89a0a20799118e30dd48a343a5c98f19e72`.
 
@@ -133,7 +133,7 @@ user `YOUR_NEB_ADDRESS.rig01` and password `x`.
 docker run -d --name suprminer-neb --gpus all --restart unless-stopped \
   -e COIN=NEB -e USERNAME=YOUR_NEB_ADDRESS -e WORKER=rig01 \
   -e PASSWORD=x -e STARTUP_SCRIPT_URL= \
-  ocminersupr/suprminer-base:1.9.54
+  ocminersupr/suprminer-base:1.9.55
 ```
 
 `COIN=NEB` selects `neb.suprnova.cc:7804`.
@@ -178,7 +178,7 @@ For AMD benchmark settings, thermal limits and validation coverage, see [NEB Ope
 
 ## AMD Docker
 
-The `1.9.54-amd` tag (moving alias `amd`) includes the AMD OpenCL runtime,
+The `1.9.55-amd` tag (moving alias `amd`) includes the AMD OpenCL runtime,
 NEB dataset and the same executable as the portable AMD package. The host
 needs the `amdgpu` kernel driver; the image does not install a host driver.
 NEB uses OpenCL; the container does not include a Vulkan NEB backend.
@@ -187,7 +187,7 @@ NEB uses OpenCL; the container does not include a Vulkan NEB backend.
 docker run --rm --device=/dev/kfd --device=/dev/dri \
   -e COIN=NEB -e USERNAME=YOUR_NEB_ADDRESS -e WORKER=rig01 \
   -e PASSWORD=x -e STARTUP_SCRIPT_URL= \
-  ocminersupr/suprminer-base:1.9.54-amd
+  ocminersupr/suprminer-base:1.9.55-amd
 ```
 
 Use `DEVICES=0,2` to select OpenCL ordinals. Check device enumeration before
@@ -195,7 +195,45 @@ mining on a mixed rig. GPU clocks and power settings are not changed.
 
 ## Windows quick start
 
-The NVIDIA and AMD Windows archives include `start-neb.bat`. Replace
+The combined Windows archive includes `start-neb.bat` for NVIDIA and
+`start-neb-amd.bat` for AMD. Replace
 `YOUR_NEB_WALLET_ADDRESS` with your address, then double-click the file. It uses
 `neb.suprnova.cc:7804` and your computer name as the worker. Edit the pool or
 worker fields if desired. The launcher refuses to run with the placeholder.
+
+## NEB changes in 1.9.55
+
+This release improves performance on selected NVIDIA cards, reduces model-change
+work on NVIDIA and AMD, and improves stability during pool updates. Clocks, fans
+and power settings are unchanged. See the [fleet results](benchmarks/neb-1.9.55-fleet.md).
+
+### Early model delivery
+
+TESS preparation is enabled by default when the pool provides early models.
+Kepler preparation is disabled by default because a net speed gain has not been
+established. Set `NEB_PREPARE_KEPLER=1` to opt in; the per-model disable flag
+still takes precedence. `NEB_PREPARE_AHEAD=0` disables all background preparation
+as an environment alternative to the global CLI flag. Pools without early
+models continue normal mining.
+
+Supporting pools can provide early model updates. Suprminer validates them and
+continues normal mining if an update is missing or changes. Benefits depend on
+model changes and pool timing; pools without this feature work as before.
+
+Prediction controls are regular command-line options on NVIDIA and AMD:
+
+| Option | Effect |
+|---|---|
+| `--disable-neb-predictions` | Disable all predicted-model preparation. Overrides both per-model settings. |
+| `--disable-neb-tess-predictions` | Disable preparation of a predicted TESS model. |
+| `--disable-neb-kepler-predictions` | Disable preparation of a predicted Kepler model. |
+
+The per-model names refer to the model being prepared, regardless of which
+model is currently being mined. These options preserve normal mining and the
+model cache: the pool may send a model once, ahead of the job that needs it.
+They do not tell the pool to stop sending model messages.
+
+Append the option to the miner command on Linux or to the command in the
+Windows `.bat` launcher. In HiveOS put it in **Extra config arguments**.
+For Docker pass `-e EXTRA_ARGS="--disable-neb-predictions"`, or one of the
+per-model options. Both per-model options may be supplied together.
