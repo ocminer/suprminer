@@ -1,0 +1,23 @@
+GPU,power_allowance_W,measurement,benchmark_date_UTC,pair,baseline_version,baseline_Kepler_MH_s,baseline_TESS_MH_s,tested_version,Kepler_MH_s,TESS_MH_s,source
+RTX 5090,600,Linux package,2026-11-23,A,1.9.55,395.08,5207.38,1.9.56,414.54,5585.91,neb-1.9.56-packaged.csv
+RTX 5080,400,Linux package,2026-11-23,A,1.9.55,230.63,2231.57,1.9.56,230.76,2234.79,neb-1.9.56-packaged.csv
+RTX 5070 Ti,350,Linux package,2026-11-23,A,1.9.55,191.27,1837.52,1.9.56,191.93,1845.47,neb-1.9.56-packaged.csv
+RTX 4070 Ti SUPER,285,"Linux package, shared",2026-11-23,A,1.9.55,151.92,1675.04,1.9.56,162.98,1674.07,neb-1.9.56-packaged.csv
+Radeon RX 7900 XTX,350,Linux OpenCL,2026-11-23,A,1.9.55,50.93,688.14,1.9.56,50.51,945.39,neb-1.9.56-packaged.csv
+RTX 3070 A,250,"Linux package, dual-GPU",2026-11-23,A,1.9.55,55.58,686.06,1.9.56,66.09,701.49,neb-1.9.56-packaged.csv
+RTX 3070 A,250,"Linux package, dual-GPU",2026-11-23,B,1.9.55,126.06,905.98,1.9.56,137.97,913.81,neb-1.9.56-packaged.csv
+RTX 3070 B,250,"Linux package, dual-GPU",2026-11-23,A,1.9.55,55.99,699.05,1.9.56,67.12,713.70,neb-1.9.56-packaged.csv
+RTX 3070 B,250,"Linux package, dual-GPU",2026-11-23,B,1.9.55,128.68,922.02,1.9.56,140.46,929.61,neb-1.9.56-packaged.csv
+RTX 5090,600,"Release kernels, prepackaging",2026-11-23,A,1.9.55,387.71,5099.50,1.9.56,405.65,5468.66,neb-1.9.56-fleet.csv
+RTX 5090,600,"Release kernels, prepackaging",2026-11-23,B,1.9.55,627.23,6703.60,1.9.56,730.22,7084.72,neb-1.9.56-fleet.csv
+RTX PRO 6000 Blackwell 96 GB #1,600,Release kernels,2026-11-22,,1.9.54,471.79,6880.12,1.9.55,471.08,7077.5,https://github.com/ocminer/suprminer/blob/v1.9.55/docs/benchmarks/neb-1.9.55-fleet.md
+RTX PRO 6000 Blackwell 96 GB #2,600,Release kernels,2026-11-22,,1.9.54,470.17,6872.88,1.9.55,470.21,7054.0,https://github.com/ocminer/suprminer/blob/v1.9.55/docs/benchmarks/neb-1.9.55-fleet.md
+H100 80 GB,700,Release kernels,2026-11-22,,1.9.54,288.87,4280.38,1.9.55,291.72,4280.38,https://github.com/ocminer/suprminer/blob/v1.9.55/docs/benchmarks/neb-1.9.55-fleet.md
+Tesla V100 16 GB,300,"Release kernels, Linux only",2026-11-22,,1.9.54,108.71,948.16,1.9.55,112.43,988.51,https://github.com/ocminer/suprminer/blob/v1.9.55/docs/benchmarks/neb-1.9.55-fleet.md
+CMP 170HX,250,Shared with verifier,2026-11-22,,,,,1.9.55,94.17,814.76,https://github.com/ocminer/suprminer/blob/v1.9.55/docs/benchmarks/neb-1.9.55-fleet.md
+A100 SXM4 80 GB,400,Release executable,2026-11-21,,,,,1.9.51,305,2100,https://github.com/ocminer/suprminer/blob/v1.9.52/README.md
+Radeon RX 7600 XT,165,OpenCL,2026-11-21,,,,,1.9.51,78.5,269,https://github.com/ocminer/suprminer/blob/v1.9.52/README.md
+Radeon Instinct MI50,225,"OpenCL, TESS only",2026-11-21,,,,,1.9.51,,284,https://github.com/ocminer/suprminer/blob/v1.9.52/README.md
+Radeon Instinct MI50,225,"OpenCL, short thermal-limited run",2026-11-20,,1.9.48,5.1,5.6,1.9.49,19.9,287,https://github.com/ocminer/suprminer/blob/v1.9.49/README.md
+RTX 4070,,Base model: no verified fleet result,,,,,,,,,
+RTX 5070,,Base model: no verified fleet result,,,,,,,,,

@@ -7,3 +7,13 @@ RTX 3070 B,two GPUs in one process,250,A,Kepler,55.99,67.12,19.87
 RTX 3070 B,two GPUs in one process,250,A,TESS,699.05,713.70,2.10
 RTX 3070 B,two GPUs in one process,250,B,Kepler,128.68,140.46,9.16
 RTX 3070 B,two GPUs in one process,250,B,TESS,922.02,929.61,0.82
+RTX 5090,one miner on one GPU,600,A,Kepler,395.08,414.54,4.93
+RTX 5090,one miner on one GPU,600,A,TESS,5207.38,5585.91,7.27
+RTX 5080,one miner on one GPU,400,A,Kepler,230.63,230.76,0.06
+RTX 5080,one miner on one GPU,400,A,TESS,2231.57,2234.79,0.14
+RTX 5070 Ti,one miner on one GPU,350,A,Kepler,191.27,191.93,0.34
+RTX 5070 Ti,one miner on one GPU,350,A,TESS,1837.52,1845.47,0.43
+RTX 4070 Ti SUPER,"one miner on one GPU, co-resident node",285,A,Kepler,151.92,162.98,7.28
+RTX 4070 Ti SUPER,"one miner on one GPU, co-resident node",285,A,TESS,1675.04,1674.07,-0.06
+Radeon RX 7900 XTX,one miner on one GPU,350,A,Kepler,50.93,50.51,-0.82
+Radeon RX 7900 XTX,one miner on one GPU,350,A,TESS,688.14,945.39,37.38

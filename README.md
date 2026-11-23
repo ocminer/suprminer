@@ -7,18 +7,45 @@ for AMD devices, plus a Quantus Vulkan option.
 
 Suprminer 1.9.56 improves NEB mining on desktop RTX 3070 and RTX 5090 cards. The NVIDIA startup display shows available clock and fan readings. A ten-second rate sample that includes both slots now reads `rate window Kepler + TESS`. On shutdown, completed shares have time to reach the pool. **0% NEB miner fee.**
 
-The Linux production binaries mined the same captured models on the same physical cards, with automatic clocks. Rates below are **Kepler / TESS**, in millions of completed attempts per second after warm-up. Model pair A and pair B are different mainnet snapshots.
+### NEB benchmarks by GPU
 
-| GPU | Power allowance | Model pair | 1.9.55 MH/s | 1.9.56 MH/s | Difference |
-|---|---:|:---:|---:|---:|---:|
-| RTX 3070 A | 250 W | A | 55.58 / 686.06 | **66.09 / 701.49** | +18.9% / +2.3% |
-| RTX 3070 A | 250 W | B | 126.06 / 905.98 | **137.97 / 913.81** | +9.5% / +0.9% |
-| RTX 3070 B | 250 W | A | 55.99 / 699.05 | **67.12 / 713.70** | +19.9% / +2.1% |
-| RTX 3070 B | 250 W | B | 128.68 / 922.02 | **140.46 / 929.61** | +9.2% / +0.8% |
+Each cell gives **Kepler / TESS** in MH/s on the same captured model pair. A and B are two different mainnet snapshots. Power is the board allowance, and the runs used automatic clocks. Linux package rows compare the published binaries. Two additional RTX 5090 rows show earlier measurements with the selected release kernels.
 
-Across the first 192 seconds, including startup and all four model visits, the RTX 3070 results were 376.80 → **423.63 MH/s** (+12.4%) and 383.50 → **431.16 MH/s** (+12.4%).
+| GPU | Power allowance | Model pair | 1.9.55 MH/s | 1.9.56 MH/s | Change K / T | Measurement |
+| --- | ---: | ---: | ---: | ---: | ---: | --- |
+| RTX 5090 | 600 W | A | 395.08 / 5207.38 | **414.54 / 5585.91** | +4.9% / +7.3% | Linux package |
+| RTX 5080 | 400 W | A | 230.63 / 2231.57 | **230.76 / 2234.79** | +0.1% / +0.1% | Linux package |
+| RTX 5070 Ti | 350 W | A | 191.27 / 1837.52 | **191.93 / 1845.47** | +0.3% / +0.4% | Linux package |
+| RTX 4070 Ti SUPER | 285 W | A | 151.92 / 1675.04 | **162.98 / 1674.07** | +7.3% / -0.1% | Linux package, shared |
+| Radeon RX 7900 XTX | 350 W | A | 50.93 / 688.14 | **50.51 / 945.39** | -0.8% / +37.4% | Linux OpenCL |
+| RTX 3070 A | 250 W | A | 55.58 / 686.06 | **66.09 / 701.49** | +18.9% / +2.3% | Linux package, dual-GPU |
+| RTX 3070 A | 250 W | B | 126.06 / 905.98 | **137.97 / 913.81** | +9.5% / +0.9% | Linux package, dual-GPU |
+| RTX 3070 B | 250 W | A | 55.99 / 699.05 | **67.12 / 713.70** | +19.9% / +2.1% | Linux package, dual-GPU |
+| RTX 3070 B | 250 W | B | 128.68 / 922.02 | **140.46 / 929.61** | +9.2% / +0.8% | Linux package, dual-GPU |
+| RTX 5090 | 600 W | A | 387.71 / 5099.50 | **405.65 / 5468.66** | +4.6% / +7.2% | Release kernels, prepackaging |
+| RTX 5090 | 600 W | B | 627.23 / 6703.60 | **730.22 / 7084.72** | +16.4% / +5.7% | Release kernels, prepackaging |
 
-**RTX 5090 release-kernel benchmarks.** In separate Linux runs on the dedicated card, 1.9.55 was compared with builds of the 1.9.56 release kernels on the same weights. Pair A reached **405.65 / 5468.66 MH/s** (+4.6% / +7.2%), and pair B reached **730.22 / 7084.72 MH/s** (+16.4% / +5.7%). The benchmark report lists both versions’ warm measurement windows. [Benchmark details](docs/benchmarks/neb-1.9.56-fleet.md) · [Packaged binary CSV](docs/benchmarks/neb-1.9.56-packaged.csv)
+Across 192 seconds including startup and four model visits, the two RTX 3070s each gained **12.4%**, from 376.80 to 423.63 MH/s and from 383.50 to 431.16 MH/s. Single-run differences under 1% are within normal variation.
+
+### Last measured on earlier releases
+
+These cards were measured on earlier trained models. Each row gives the release actually tested. As the network trains its models, the rate on the same card can change substantially.
+
+| GPU | Power allowance | Tested version | Kepler MH/s | TESS MH/s | Test conditions |
+| --- | ---: | ---: | ---: | ---: | --- |
+| RTX PRO 6000 Blackwell 96 GB #1 | 600 W | 1.9.55 | 471.08 | 7077.5 | Release kernels |
+| RTX PRO 6000 Blackwell 96 GB #2 | 600 W | 1.9.55 | 470.21 | 7054 | Release kernels |
+| H100 80 GB | 700 W | 1.9.55 | 291.72 | 4280.38 | Release kernels |
+| Tesla V100 16 GB | 300 W | 1.9.55 | 112.43 | 988.51 | Release kernels, Linux only |
+| CMP 170HX | 250 W | 1.9.55 | 94.17 | 814.76 | Shared with verifier |
+| A100 SXM4 80 GB | 400 W | 1.9.51 | 305 | 2100 | Release executable |
+| Radeon RX 7600 XT | 165 W | 1.9.51 | 78.5 | 269 | OpenCL |
+| Radeon Instinct MI50 | 225 W | 1.9.51 | — | 284 | OpenCL, TESS only |
+| Radeon Instinct MI50 | 225 W | 1.9.49 | 19.9 | 287 | OpenCL, short thermal-limited run |
+
+The fleet has measurements for the **RTX 4070 Ti SUPER** and **RTX 5070 Ti**. The base RTX 4070 and RTX 5070 have no verified measurement here.
+
+[Benchmark methods and model hashes](docs/benchmarks/neb-1.9.56-fleet.md) · [All cards (CSV)](docs/benchmarks/neb-1.9.56-card-coverage.csv) · [Linux package comparisons (CSV)](docs/benchmarks/neb-1.9.56-packaged.csv)
 
 NVIDIA CUDA and AMD OpenCL for NEB. Packages for Linux, Windows, HiveOS, mmpOS and SMOS, plus NVIDIA and AMD Docker images. Tesla V100 support is available on Linux. [Download 1.9.56](https://github.com/ocminer/suprminer/releases/tag/v1.9.56) · [NEB setup](docs/NEB_RELEASE_GUIDE.md) · [Pool](https://neb.suprnova.cc/)
 
