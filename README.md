@@ -3,7 +3,24 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
-## Suprminer 1.9.55 — NEB performance and stability update
+## Suprminer 1.9.56 — faster NEB on RTX 3070 and RTX 5090
+
+**0% NEB miner fee.** This release improves Kepler and TESS mining on desktop RTX 3070 and RTX 5090 cards. The NVIDIA startup display now reports available clock and fan readings. If a rate sample spans a Kepler/TESS change, the miner labels it as mixed. Shutdown gives completed shares time to reach the pool.
+
+**Kepler / TESS**, millions of evaluated attempts per second after warm-up. Each row compares the same physical GPU and the same trained mainnet weights in separate Linux runs. Pair B uses a second set of weights.
+
+| GPU | Power allowance | Model pair | 1.9.55 MH/s | 1.9.56 MH/s | Difference |
+|---|---:|:---:|---:|---:|---:|
+| RTX 3070 A | 250 W | A | 55.70 / 680.70 | **65.37 / 697.20** | +17.4% / +2.4% |
+| RTX 3070 B | 250 W | A | 56.08 / 697.42 | **66.73 / 707.11** | +19.0% / +1.4% |
+| RTX 5090 | 600 W | A | 387.71 / 5099.50 | **405.65 / 5468.66** | +4.6% / +7.2% |
+| RTX 5090 | 600 W | B | 627.23 / 6703.60 | **730.22 / 7084.72** | +16.4% / +5.7% |
+
+Across continuous 209-second runs that included startup and all four model changes, the two RTX 3070s averaged **436.73 and 445.74 MH/s**. Rates vary as the network trains its models. See the full measurements for the shared RTX 5090, the second RTX 3070 model pair and the measurement windows. [Benchmark details](docs/benchmarks/neb-1.9.56-fleet.md) · [CSV](docs/benchmarks/neb-1.9.56-fleet.csv)
+
+NVIDIA CUDA and AMD OpenCL for NEB. Packages for Linux, Windows, HiveOS, mmpOS and SMOS, plus NVIDIA and AMD Docker images. Tesla V100 support is available on Linux. [Download 1.9.56](https://github.com/ocminer/suprminer/releases/tag/v1.9.56) · [NEB setup](docs/NEB_RELEASE_GUIDE.md) · [Pool](https://neb.suprnova.cc/)
+
+### Previous release: 1.9.55 — NEB performance and stability update
 
 **0% miner fee. NVIDIA and AMD.** Faster NEB mining on selected cards,
 smoother model changes, and improved stability when pool work changes.
