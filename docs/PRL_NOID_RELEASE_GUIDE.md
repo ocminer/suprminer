@@ -18,6 +18,10 @@ chmod +x suprminer-neptune
   -u YOUR_PRL_ADDRESS.worker -p x --no-cpu
 ```
 
+Pearl's FP8 upgrade: the same PRL command keeps working. `-a pearl` (or `-a prl`) mines today's scheme and
+switches by itself to the FP8 scheme with the pool's first FP8 job. The FP8 scheme needs an RTX 50 series or
+RTX PRO Blackwell card; `-a prlold` mines only the scheme before the upgrade.
+
 For NOID, use a NOID address beginning with `o1`:
 
 ```bash

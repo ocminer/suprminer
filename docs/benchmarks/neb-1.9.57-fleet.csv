@@ -1,0 +1,4 @@
+GPU,allowance_W,mainnet_height,dataset,v1.9.56_MH_s,v1.9.57_MH_s,change_pct,measurement
+RTX 5090,420,7652,Kepler,177.05,247.99,40.07,Two warm comparisons on the same board at its existing 420 W allowance.
+RTX 5080,400,7652,Kepler,135.85,193.37,42.34,Two runs per version on the same board. Each run contributed five warm five-second jobs.
+RTX 3070,250,7652,Kepler,29.50,42.01,42.37,Dense Kepler followed by TESS on the same board. Warm Kepler windows lasted about six seconds.

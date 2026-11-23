@@ -3,6 +3,33 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
+## Suprminer 1.9.57 — Pearl FP8 and faster NEB mining
+
+Suprminer 1.9.57 prepares PRL miners for Pearl's FP8 upgrade. `-a prl` (or `pearl`) now follows the pool: it mines today's PRL scheme and switches by itself to the FP8 scheme with the pool's first FP8 job, so one command line works before and after the upgrade. `-a prlold` mines only the scheme before the upgrade.
+
+The FP8 scheme runs on RTX 50 series and RTX PRO Blackwell cards. Rates on Pearl's FP8 test network, Linux, each card at its stock power allowance:
+
+| GPU | Power allowance | PRL FP8 |
+| --- | ---: | ---: |
+| RTX 5090 | 600 W | 344-371 TH/s |
+| RTX 5090 | 420 W | 266 TH/s |
+| RTX 5080 | 400 W | 199-206 TH/s |
+| RTX 5070 Ti | 350 W | 173 TH/s |
+
+TH/s is 10^12 FP8 products per second. The cards run at their power limit in this workload, so cooling changes the rate by several percent. Every share is checked with Pearl's own verifier before it is sent, and the miner needs about a quarter of a CPU core per card. A card that reaches 90 °C rests while the others keep mining (`PEARL_FP8_MAX_TEMP`). The Windows build has not been run on a physical GPU. [Download 1.9.57](https://github.com/ocminer/suprminer/releases/tag/v1.9.57)
+
+### NEB mainnet performance
+
+Faster dense Kepler mining on selected NVIDIA cards. Suprminer also retries when GPU memory pressure temporarily prevents it from preparing a model. **0% NEB miner fee.**
+
+| GPU | Power allowance | v1.9.56 | v1.9.57 | Gain |
+| --- | ---: | ---: | ---: | ---: |
+| RTX 5090 | 420 W | 177.05 MH/s | **247.99 MH/s** | +40.1% |
+| RTX 5080 | 400 W | 135.85 MH/s | **193.37 MH/s** | +42.3% |
+| RTX 3070 | 250 W | 29.50 MH/s | **42.01 MH/s** | +42.4% |
+
+Each row compares the same GPU on the same trained mainnet Kepler model at height 7652, replayed on Linux. Rates are warm measurements and vary with model weights. [Measurement details](docs/benchmarks/neb-1.9.57-fleet.md) · [NEB pool](https://neb.suprnova.cc/)
+
 ## Suprminer 1.9.56 — faster NEB on RTX 3070 and RTX 5090
 
 Suprminer 1.9.56 improves NEB mining on desktop RTX 3070 and RTX 5090 cards. The NVIDIA startup display shows available clock and fan readings. A ten-second rate sample that includes both slots now reads `rate window Kepler + TESS`. On shutdown, completed shares have time to reach the pool. **0% NEB miner fee.**
@@ -937,7 +964,8 @@ GPUs. Stop with Ctrl+C. Use `--help` for all supported options.
 
 | `-a` name | Aliases | Coin / PoW | Backend |
 |---|---|---|---|
-| `pearl` | `pearlhash`, `prl` | Pearl — noised INT8 GEMM (tensor cores) | NVIDIA sm_75+ |
+| `prl` | `pearl`, `pearlhash` | Pearl — follows the pool: noised INT8 GEMM today, FP8 tensor-core GEMM after the upgrade | INT8 scheme: NVIDIA sm_75+; FP8 scheme: RTX 50 / RTX PRO Blackwell |
+| `prlold` | `pearlold` | Pearl before the FP8 upgrade only | NVIDIA sm_75+ |
 | `sha3t` | `sha3d3`, `bc3`, `bitcoiniii` | BitcoinIII — triple NIST SHA3-256 | NVIDIA + AMD/OpenCL |
 | `xelis` | `xel` | Xelis — XelisHash v2 | NVIDIA + CPU |
 | `decred` | `dcr` | Decred — BLAKE3 | NVIDIA |

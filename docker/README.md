@@ -6,8 +6,8 @@ container starts. Use it on Octa.Space, Vast.ai, or a Docker host with the NVIDI
 Container Toolkit.
 
 - Image: [`ocminersupr/suprminer-base`](https://hub.docker.com/r/ocminersupr/suprminer-base)
-- Current release: [`1.9.56`](https://github.com/ocminer/suprminer/releases/tag/v1.9.56)
-- Tags: `1.9.56` selects this miner version; `latest` follows new releases.
+- Current release: [`1.9.57`](https://github.com/ocminer/suprminer/releases/tag/v1.9.57)
+- Tags: `1.9.57` selects this miner version; `latest` follows new releases.
 - [Quantus setup guide](https://github.com/ocminer/suprminer/blob/main/docker/QUANTUS.md)
 - [PRL and NOID setup guide](https://github.com/ocminer/suprminer/blob/main/docs/PRL_NOID_RELEASE_GUIDE.md)
 - [Public copy of this guide](https://github.com/ocminer/suprminer/blob/main/docker/README.md)
@@ -26,7 +26,7 @@ docker run -d --name suprminer-quantus \
   -e COIN=QUANTUS \
   -e USERNAME=YOUR_QUANTUS_WALLET_ADDRESS \
   -e WORKER=rig1 \
-  ocminersupr/suprminer-base:1.9.56
+  ocminersupr/suprminer-base:1.9.57
 ```
 
 This selects `quantus.suprnova.cc:7071`. For TLS, also set
@@ -43,7 +43,7 @@ Configure your custom app or container with these settings:
 
 | Setting | Value |
 |---|---|
-| Container image | `ocminersupr/suprminer-base:1.9.56` |
+| Container image | `ocminersupr/suprminer-base:1.9.57` |
 | GPU | Allocate the NVIDIA GPU or GPUs to the container |
 | Startup command | Use the image default, `/entrypoint.sh` |
 | `COIN` | `QUANTUS` |
@@ -117,7 +117,7 @@ app using this field for its User Guide link.
 
 ## Vast.ai
 
-Set the image to `ocminersupr/suprminer-base:1.9.56`. Choose the
+Set the image to `ocminersupr/suprminer-base:1.9.57`. Choose the
 **docker ENTRYPOINT** launch mode and use `/entrypoint.sh` as the command if an
 explicit command is required. In API templates, use `runtype: "args"` with
 `args_str: "/entrypoint.sh"`. Add these Docker options, replacing the address:
@@ -190,7 +190,7 @@ Read the README without starting the miner:
 
 ```bash
 docker run --rm --runtime=runc -e NVIDIA_VISIBLE_DEVICES=void \
-  --entrypoint cat ocminersupr/suprminer-base:1.9.56 /app/README.md
+  --entrypoint cat ocminersupr/suprminer-base:1.9.57 /app/README.md
 ```
 
 Stop cleanly with:
@@ -208,8 +208,8 @@ The build context must contain `Dockerfile`, `entrypoint.sh`, `README.md`,
 `QUANTUS.md`, and the release binary named `suprminer-neptune`.
 
 ```bash
-docker build -t ocminersupr/suprminer-base:1.9.56 docker/octa
-docker push ocminersupr/suprminer-base:1.9.56
+docker build -t ocminersupr/suprminer-base:1.9.57 docker/octa
+docker push ocminersupr/suprminer-base:1.9.57
 ```
 
 The Docker Hub overview is maintained separately from the files inside the
@@ -225,7 +225,7 @@ for setup and pool support.
 
 ## AMD Docker
 
-The `1.9.56-amd` tag (moving alias `amd`) includes the AMD OpenCL runtime,
+The `1.9.57-amd` tag (moving alias `amd`) includes the AMD OpenCL runtime,
 NEB dataset and the same executable as the portable AMD package. The host
 needs the `amdgpu` kernel driver; the image does not install a host driver.
 NEB uses OpenCL; the container does not include a Vulkan NEB backend.
@@ -234,7 +234,7 @@ NEB uses OpenCL; the container does not include a Vulkan NEB backend.
 docker run --rm --device=/dev/kfd --device=/dev/dri \
   -e COIN=NEB -e USERNAME=YOUR_NEB_ADDRESS -e WORKER=rig01 \
   -e PASSWORD=x -e STARTUP_SCRIPT_URL= \
-  ocminersupr/suprminer-base:1.9.56-amd
+  ocminersupr/suprminer-base:1.9.57-amd
 ```
 
 Use `DEVICES=0,2` to select OpenCL ordinals. Check device enumeration before
