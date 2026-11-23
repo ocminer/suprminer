@@ -5,18 +5,20 @@ for AMD devices, plus a Quantus Vulkan option.
 
 ## Suprminer 1.9.56 — faster NEB on RTX 3070 and RTX 5090
 
-**0% NEB miner fee.** This release improves Kepler and TESS mining on desktop RTX 3070 and RTX 5090 cards. The NVIDIA startup display now reports available clock and fan readings. If a rate sample spans a Kepler/TESS change, the miner labels it as mixed. Shutdown gives completed shares time to reach the pool.
+Suprminer 1.9.56 improves NEB mining on desktop RTX 3070 and RTX 5090 cards. The NVIDIA startup display shows available clock and fan readings. A ten-second rate sample that includes both slots now reads `rate window Kepler + TESS`. On shutdown, completed shares have time to reach the pool. **0% NEB miner fee.**
 
-**Kepler / TESS**, millions of evaluated attempts per second after warm-up. Each row compares the same physical GPU and the same trained mainnet weights in separate Linux runs. Pair B uses a second set of weights.
+The Linux production binaries mined the same captured models on the same physical cards, with automatic clocks. Rates below are **Kepler / TESS**, in millions of completed attempts per second after warm-up. Model pair A and pair B are different mainnet snapshots.
 
 | GPU | Power allowance | Model pair | 1.9.55 MH/s | 1.9.56 MH/s | Difference |
 |---|---:|:---:|---:|---:|---:|
-| RTX 3070 A | 250 W | A | 55.70 / 680.70 | **65.37 / 697.20** | +17.4% / +2.4% |
-| RTX 3070 B | 250 W | A | 56.08 / 697.42 | **66.73 / 707.11** | +19.0% / +1.4% |
-| RTX 5090 | 600 W | A | 387.71 / 5099.50 | **405.65 / 5468.66** | +4.6% / +7.2% |
-| RTX 5090 | 600 W | B | 627.23 / 6703.60 | **730.22 / 7084.72** | +16.4% / +5.7% |
+| RTX 3070 A | 250 W | A | 55.58 / 686.06 | **66.09 / 701.49** | +18.9% / +2.3% |
+| RTX 3070 A | 250 W | B | 126.06 / 905.98 | **137.97 / 913.81** | +9.5% / +0.9% |
+| RTX 3070 B | 250 W | A | 55.99 / 699.05 | **67.12 / 713.70** | +19.9% / +2.1% |
+| RTX 3070 B | 250 W | B | 128.68 / 922.02 | **140.46 / 929.61** | +9.2% / +0.8% |
 
-Across continuous 209-second runs that included startup and all four model changes, the two RTX 3070s averaged **436.73 and 445.74 MH/s**. Rates vary as the network trains its models. See the full measurements for the shared RTX 5090, the second RTX 3070 model pair and the measurement windows. [Benchmark details](docs/benchmarks/neb-1.9.56-fleet.md) · [CSV](docs/benchmarks/neb-1.9.56-fleet.csv)
+Across the first 192 seconds, including startup and all four model visits, the RTX 3070 results were 376.80 → **423.63 MH/s** (+12.4%) and 383.50 → **431.16 MH/s** (+12.4%).
+
+**RTX 5090 release-kernel benchmarks.** In separate Linux runs on the dedicated card, 1.9.55 was compared with builds of the 1.9.56 release kernels on the same weights. Pair A reached **405.65 / 5468.66 MH/s** (+4.6% / +7.2%), and pair B reached **730.22 / 7084.72 MH/s** (+16.4% / +5.7%). The benchmark report lists both versions’ warm measurement windows. [Benchmark details](docs/benchmarks/neb-1.9.56-fleet.md) · [Packaged binary CSV](docs/benchmarks/neb-1.9.56-packaged.csv)
 
 NVIDIA CUDA and AMD OpenCL for NEB. Packages for Linux, Windows, HiveOS, mmpOS and SMOS, plus NVIDIA and AMD Docker images. Tesla V100 support is available on Linux. [Download 1.9.56](https://github.com/ocminer/suprminer/releases/tag/v1.9.56) · [NEB setup](docs/NEB_RELEASE_GUIDE.md) · [Pool](https://neb.suprnova.cc/)
 

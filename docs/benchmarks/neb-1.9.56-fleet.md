@@ -1,8 +1,31 @@
 # NEB GPU benchmarks for Suprminer 1.9.56
 
-Linux tests used two desktop RTX 3070s and two RTX 5090s on 23 November 2026. Each measurement used the card's full firmware power allowance and automatic clocks. Rates count millions of completed evaluation attempts per second (MH/s).
+Linux tests used two desktop RTX 3070s, two RTX 5090s and one Radeon RX 7900 XTX on 23 November 2026. Each measurement used the card's full firmware power allowance and automatic clocks. Rates count millions of completed evaluation attempts per second (MH/s).
 
-## Same-card results against 1.9.55
+## Linux release packages
+
+The Linux production binaries mined the same captured models on the same physical cards, with automatic clocks. Rates below are **Kepler / TESS**, in millions of completed attempts per second after warm-up. Model pair A and pair B are different mainnet snapshots.
+
+| GPU | Power allowance | Model pair | 1.9.55 MH/s | 1.9.56 MH/s | Difference |
+|---|---:|:---:|---:|---:|---:|
+| RTX 3070 A | 250 W | A | 55.58 / 686.06 | **66.09 / 701.49** | +18.9% / +2.3% |
+| RTX 3070 A | 250 W | B | 126.06 / 905.98 | **137.97 / 913.81** | +9.5% / +0.9% |
+| RTX 3070 B | 250 W | A | 55.99 / 699.05 | **67.12 / 713.70** | +19.9% / +2.1% |
+| RTX 3070 B | 250 W | B | 128.68 / 922.02 | **140.46 / 929.61** | +9.2% / +0.8% |
+
+Across the first 192 seconds, including startup and all four model visits, the RTX 3070 results were 376.80 → **423.63 MH/s** (+12.4%) and 383.50 → **431.16 MH/s** (+12.4%).
+
+One miner process ran both RTX 3070 boards simultaneously. Each of the four model visits lasted 48 seconds. Warm rates use the final four complete six-second jobs of each visit. The 192-second comparison counts completed jobs from process launch. Across the full 199-second runs, the fixture recomputed all 6,371 tickets against the upstream NEB reference. Every ticket was valid and unique within its run.
+
+Both versions used the NEB 1.0.1 mainnet dataset.
+
+Linux NVIDIA executable SHA-256 was `fd341e0ea8b1506538de36c9364622b668c26ed8eda11cd0ae50171c432f8541` for 1.9.55 and `1b9cd473879e85d9f319a09f57efa5c7e40c296c2294c449ce2206764be2e812` for 1.9.56. [Release-package CSV](neb-1.9.56-packaged.csv)
+
+### AMD OpenCL
+
+The packaged Linux OpenCL executable completed both slots on a Radeon RX 7900 XTX with its 350 W firmware allowance. The upstream reference verified 238 Kepler and 4,925 TESS tickets with zero rejects. A separate live TLS test returned 16 accepted shares and one job-change stale. A short 24-second visit per slot gave one warm rate reading each, 46.19 MH/s for Kepler and 930.97 MH/s for TESS on model pair A.
+
+## Release-kernel benchmarks before packaging
 
 Values are **Kepler / TESS**. Both versions used the same captured weights on the same physical board in separate runs. Pair A and pair B are different mainnet snapshots. The 1.9.55 rates come from the published Linux miner. The 1.9.56 measurements come from protected Linux builds of the selected release kernels.
 

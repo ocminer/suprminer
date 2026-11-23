@@ -1,0 +1,9 @@
+GPU,process_layout,power_allowance_W,model_pair,model,v1.9.55_warm_MH_s,v1.9.56_warm_MH_s,change_percent
+RTX 3070 A,two GPUs in one process,250,A,Kepler,55.58,66.09,18.90
+RTX 3070 A,two GPUs in one process,250,A,TESS,686.06,701.49,2.25
+RTX 3070 A,two GPUs in one process,250,B,Kepler,126.06,137.97,9.45
+RTX 3070 A,two GPUs in one process,250,B,TESS,905.98,913.81,0.87
+RTX 3070 B,two GPUs in one process,250,A,Kepler,55.99,67.12,19.87
+RTX 3070 B,two GPUs in one process,250,A,TESS,699.05,713.70,2.10
+RTX 3070 B,two GPUs in one process,250,B,Kepler,128.68,140.46,9.16
+RTX 3070 B,two GPUs in one process,250,B,TESS,922.02,929.61,0.82
