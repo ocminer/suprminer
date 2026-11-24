@@ -10,12 +10,12 @@ Kepler is faster on the tested RTX cards. This release also fixes a large slowdo
 | GPU | Power allowance | Mainnet model | v1.9.57 MH/s | v1.9.58 MH/s | Change |
 |---|---:|---|---:|---:|---:|
 | RTX 5090 | 600 W | Kepler 7812 | 488.59 | **573.08** | +17.3% |
-| RTX 5080 | 400 W | Kepler 7650 | 324.84 | **415.57** | +27.9% |
+| RTX 5080 | 400 W | Kepler 7650 | 324.03 | **416.36** | +28.5% |
 | RTX 5070 Ti | 350 W | Kepler 7652 | 115.21 | **163.10** | +41.6% |
-| RTX 3070 A | 250 W | Kepler 7652 | 41.34 | **49.78** | +20.4% |
-| RTX 3070 B | 250 W | Kepler 7652 | 41.78 | **49.65** | +18.8% |
+| RTX 3070 A | 250 W | Kepler 7652 | 41.41 | **49.29** | +19.0% |
+| RTX 3070 B | 250 W | Kepler 7652 | 41.88 | **49.41** | +18.0% |
 
-These are warm Linux measurements on the indicated models. The RTX 5090 also delivered **16.7% more on-time shares** across its two matched runs. The [full benchmark table](docs/benchmarks/neb-1.9.58-fleet.md) includes TESS, the shared CMP 170HX and the test conditions. [CSV](docs/benchmarks/neb-1.9.58-fleet.csv)
+The RTX 5090, RTX 5080 and both RTX 3070s ran two matched warm Linux tests each. The RTX 5070 Ti row comes from earlier v1.9.58 qualification on the indicated model. The RTX 5090 also delivered **16.7% more on-time shares** across its two matched runs. The [full benchmark table](docs/benchmarks/neb-1.9.58-fleet.md) includes TESS, the shared CMP 170HX and the test conditions. [CSV](docs/benchmarks/neb-1.9.58-fleet.csv)
 
 **0% NEB miner fee · 1% Suprnova PPLNS pool fee.** NEB supports NVIDIA CUDA and AMD OpenCL on Linux, Windows, HiveOS, mmpOS, SMOS and Docker. [Download v1.9.58](https://github.com/ocminer/suprminer/releases/tag/v1.9.58) · [Pool](https://neb.suprnova.cc/) · [Discord](https://discord.gg/29RHZwvVPN)
 
