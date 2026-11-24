@@ -1,9 +1,9 @@
-# NEB with Suprminer 1.9.57
+# NEB with Suprminer 1.9.58
 
 NEB (Neural Engine Byte) is proof-of-training: every mining attempt is one exact
 integer training step of a small neural network on 16 samples of the chain's
 dataset. Suprminer mines NEB on NVIDIA CUDA and AMD OpenCL GPUs with the algorithm name `neb`.
-Suprminer 1.9.57 supports **NEB 1.0.1 mainnet**, using nebhash v2 KEP1
+Suprminer 1.9.58 supports **NEB 1.0.1 mainnet**, using nebhash v2 KEP1
 convolutional networks in both slots. The command remains `-a neb`.
 
 Mainnet launched on **18 November 2026 at 14:00 UTC**. Slot **0 is Kepler**
@@ -19,7 +19,7 @@ The miner follows the pool's supplied model, index and timestamp, including
 shifted timestamps on private rehearsal chains.
 
 Download the archive for your operating system from the
-[1.9.57 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.57):
+[1.9.58 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.58):
 Linux, Windows, HiveOS (Ubuntu 20.04 or 22.04 base), mmpOS or SMOS. Each archive
 holds two builds: `suprminer-neptune` for NVIDIA cards and `suprminer-neptune-amd`
 (OpenCL) for AMD cards (`miner` and `miner-amd` in the SMOS archive). Both mine NEB
@@ -49,7 +49,7 @@ AMD telemetry is read-only on Linux; unavailable Windows AMD hardware telemetry 
 
 ## Dataset file
 
-Suprminer 1.9.57 requires the **NEB 1.0.1** `neb-datasets.bin`: **16,087,037
+Suprminer 1.9.58 requires the **NEB 1.0.1** `neb-datasets.bin`: **16,087,037
 bytes**, with 13,404 Kepler samples and 7,089 TESS samples. Its BLAKE3 hash is
 `790b57fbd830f3dcbe7de9d1146aa89a0a20799118e30dd48a343a5c98f19e72`.
 
@@ -133,7 +133,7 @@ user `YOUR_NEB_ADDRESS.rig01` and password `x`.
 docker run -d --name suprminer-neb --gpus all --restart unless-stopped \
   -e COIN=NEB -e USERNAME=YOUR_NEB_ADDRESS -e WORKER=rig01 \
   -e PASSWORD=x -e STARTUP_SCRIPT_URL= \
-  ocminersupr/suprminer-base:1.9.57
+  ocminersupr/suprminer-base:1.9.58
 ```
 
 `COIN=NEB` selects `neb.suprnova.cc:7804`.
@@ -154,17 +154,17 @@ The dataset file is redistributed unmodified; it contains data derived from the
 NASA Exoplanet Archive (Kepler) and Astronet-Triage-v2 (TESS, Tey et al. 2023, CC BY 4.0). See
 `THIRD_PARTY_NOTICES` and `licenses/`.
 
-## Mainnet qualification
+## Mainnet benchmarks
 
-On the same trained Kepler model, v1.9.57 improved Linux throughput by 40–42% on the tested desktop RTX 3070, 5080 and 5090. The GPU and the current model determine the rate. [1.9.57 benchmark data](benchmarks/neb-1.9.57-fleet.md)
+Version 1.9.58 improves Kepler throughput on the tested desktop RTX cards and fixes a large slowdown on some trained TESS models. Both GPUs and model weights affect the hashrate. Suprminer verifies found shares on the CPU before submission. [v1.9.58 fleet benchmarks](benchmarks/neb-1.9.58-fleet.md) · [CSV](benchmarks/neb-1.9.58-fleet.csv)
 
-Suprminer checks each supplied model and verifies found shares on the CPU before submission. The 1.9.56 Linux benchmarks cover two desktop RTX 3070s and two RTX 5090s using captured Kepler and TESS models. The results include rates for each slot and the overall throughput through a sequence of model changes. [1.9.56 benchmark data](benchmarks/neb-1.9.56-fleet.md)
+The NEB miner fee is 0%. Suprnova charges a 1% PPLNS pool fee. [NEB pool](https://neb.suprnova.cc/)
 
-Earlier Linux OpenCL tests covered the RX 7600 XT, RX 7900 XTX and MI50. The report lists driver versions and test conditions. [AMD OpenCL measurements](NEB_OPENCL.md)
+Linux AMD OpenCL measurements are available for the RX 7600 XT, RX 7900 XTX and MI50. [AMD test conditions](https://github.com/ocminer/suprminer/blob/main/docs/NEB_OPENCL.md)
 
 ## AMD Docker
 
-The `1.9.57-amd` tag (moving alias `amd`) includes the AMD OpenCL runtime,
+The `1.9.58-amd` tag (moving alias `amd`) includes the AMD OpenCL runtime,
 NEB dataset and the same executable as the portable AMD package. The host
 needs the `amdgpu` kernel driver; the image does not install a host driver.
 NEB uses OpenCL; the container does not include a Vulkan NEB backend.
@@ -173,7 +173,7 @@ NEB uses OpenCL; the container does not include a Vulkan NEB backend.
 docker run --rm --device=/dev/kfd --device=/dev/dri \
   -e COIN=NEB -e USERNAME=YOUR_NEB_ADDRESS -e WORKER=rig01 \
   -e PASSWORD=x -e STARTUP_SCRIPT_URL= \
-  ocminersupr/suprminer-base:1.9.57-amd
+  ocminersupr/suprminer-base:1.9.58-amd
 ```
 
 Use `DEVICES=0,2` to select OpenCL ordinals. Check device enumeration before

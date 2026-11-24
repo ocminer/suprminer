@@ -3,6 +3,22 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
+## Suprminer 1.9.58 — faster NEB mining
+
+Kepler is faster on the tested RTX cards. This release also fixes a large slowdown on certain trained TESS models and improves continuity when the pool updates a job.
+
+| GPU | Power allowance | Mainnet model | v1.9.57 MH/s | v1.9.58 MH/s | Change |
+|---|---:|---|---:|---:|---:|
+| RTX 5090 | 600 W | Kepler 7812 | 488.59 | **573.08** | +17.3% |
+| RTX 5080 | 400 W | Kepler 7650 | 324.84 | **415.57** | +27.9% |
+| RTX 5070 Ti | 350 W | Kepler 7652 | 115.21 | **163.10** | +41.6% |
+| RTX 3070 A | 250 W | Kepler 7652 | 41.34 | **49.78** | +20.4% |
+| RTX 3070 B | 250 W | Kepler 7652 | 41.78 | **49.65** | +18.8% |
+
+These are warm Linux measurements on the indicated models. The RTX 5090 also delivered **16.7% more on-time shares** across its two matched runs. The [full benchmark table](docs/benchmarks/neb-1.9.58-fleet.md) includes TESS, the shared CMP 170HX and the test conditions. [CSV](docs/benchmarks/neb-1.9.58-fleet.csv)
+
+**0% NEB miner fee · 1% Suprnova PPLNS pool fee.** NEB supports NVIDIA CUDA and AMD OpenCL on Linux, Windows, HiveOS, mmpOS, SMOS and Docker. [Download v1.9.58](https://github.com/ocminer/suprminer/releases/tag/v1.9.58) · [Pool](https://neb.suprnova.cc/) · [Discord](https://discord.gg/29RHZwvVPN)
+
 ## Suprminer 1.9.57 — Pearl FP8 and faster NEB mining
 
 Suprminer 1.9.57 prepares PRL miners for Pearl's FP8 upgrade. `-a prl` (or `pearl`) now follows the pool: it mines today's PRL scheme and switches by itself to the FP8 scheme with the pool's first FP8 job, so one command line works before and after the upgrade. `-a prlold` mines only the scheme before the upgrade.

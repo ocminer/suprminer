@@ -1,0 +1,34 @@
+gpu,allowance_w,height,model,v1_9_57_mhs,v1_9_58_mhs,change_pct,scope,measurement,model_hash
+RTX 5090,600,7812,Kepler,488.586,573.075,17.293,dedicated,"final qualification, repeated matched model",36dd9a1dae389667fa00fafb8d00f20e72f0d7106ce6f8e1b2ffd6275d4cc0be
+RTX 5080,400,7652,Kepler,195.985,196.351,0.187,dedicated,release-series development measurement,68b82604638f7799f42dca1cd75730d35aab454e24fa02e672385076b3ad9d5f
+RTX 5080,400,7653,TESS,2290.551,2366.591,3.32,dedicated,release-series development measurement,f723de228ad38c480689734a77f4ad5e6ed75b1abc8216b41edd759c06b61d20
+RTX 5080,400,7650,Kepler,324.844,415.569,27.929,dedicated,release-series development measurement,1e04df431956cc1767f42f7fce6f76b2f55e07fbde9c27eb487baf5a2b4c2fcf
+RTX 5080,400,7651,TESS,2596.584,2687.777,3.512,dedicated,release-series development measurement,b666304c17ba2ce17868e2d131bd52f632271a49437671f512a31d8a565709fe
+RTX 5080,400,7752,Kepler,452.947,502.607,10.964,dedicated,release-series development measurement,6c3205240cb00cac33f89b1c8d7bb9c963c5b31861d630b98c5828d335f3a20b
+RTX 5080,400,7753,TESS,2204.201,2278.331,3.363,dedicated,release-series development measurement,29fef5391716ca73df02807fa097edd6cbced991cb7cc928fe5b448f6a559e3a
+RTX 5070 Ti,350,7652,Kepler,115.208,163.103,41.573,dedicated,release-series development measurement,68b82604638f7799f42dca1cd75730d35aab454e24fa02e672385076b3ad9d5f
+RTX 5070 Ti,350,7653,TESS,1887.021,1953.445,3.52,dedicated,release-series development measurement,f723de228ad38c480689734a77f4ad5e6ed75b1abc8216b41edd759c06b61d20
+RTX 5070 Ti,350,7650,Kepler,266.957,345.317,29.353,dedicated,release-series development measurement,1e04df431956cc1767f42f7fce6f76b2f55e07fbde9c27eb487baf5a2b4c2fcf
+RTX 5070 Ti,350,7651,TESS,2144.655,2215.36,3.297,dedicated,release-series development measurement,b666304c17ba2ce17868e2d131bd52f632271a49437671f512a31d8a565709fe
+RTX 5070 Ti,350,7752,Kepler,372.091,414.35,11.357,dedicated,release-series development measurement,6c3205240cb00cac33f89b1c8d7bb9c963c5b31861d630b98c5828d335f3a20b
+RTX 5070 Ti,350,7753,TESS,1818.997,1878.107,3.25,dedicated,release-series development measurement,29fef5391716ca73df02807fa097edd6cbced991cb7cc928fe5b448f6a559e3a
+RTX 3070 A,250,7652,Kepler,41.343,49.782,20.41,dedicated,release-series development measurement,68b82604638f7799f42dca1cd75730d35aab454e24fa02e672385076b3ad9d5f
+RTX 3070 A,250,7653,TESS,674.322,699.399,3.719,dedicated,release-series development measurement,f723de228ad38c480689734a77f4ad5e6ed75b1abc8216b41edd759c06b61d20
+RTX 3070 A,250,7650,Kepler,141.412,141.701,0.204,dedicated,release-series development measurement,1e04df431956cc1767f42f7fce6f76b2f55e07fbde9c27eb487baf5a2b4c2fcf
+RTX 3070 A,250,7651,TESS,793.029,795.498,0.311,dedicated,release-series development measurement,b666304c17ba2ce17868e2d131bd52f632271a49437671f512a31d8a565709fe
+RTX 3070 B,250,7652,Kepler,41.779,49.651,18.843,dedicated,release-series development measurement,68b82604638f7799f42dca1cd75730d35aab454e24fa02e672385076b3ad9d5f
+RTX 3070 B,250,7653,TESS,697.442,710.978,1.941,dedicated,release-series development measurement,f723de228ad38c480689734a77f4ad5e6ed75b1abc8216b41edd759c06b61d20
+RTX 3070 B,250,7650,Kepler,143.725,143.522,-0.141,dedicated,release-series development measurement,1e04df431956cc1767f42f7fce6f76b2f55e07fbde9c27eb487baf5a2b4c2fcf
+RTX 3070 B,250,7651,TESS,809.91,806.271,-0.449,dedicated,release-series development measurement,b666304c17ba2ce17868e2d131bd52f632271a49437671f512a31d8a565709fe
+RTX 3070 C,240,7652,Kepler,41.156,49.811,21.029,dedicated,release-series development measurement,68b82604638f7799f42dca1cd75730d35aab454e24fa02e672385076b3ad9d5f
+RTX 3070 C,240,7653,TESS,722.164,713.306,-1.227,dedicated,release-series development measurement,f723de228ad38c480689734a77f4ad5e6ed75b1abc8216b41edd759c06b61d20
+RTX 3070 C,240,7650,Kepler,141.598,141.137,-0.325,dedicated,release-series development measurement,1e04df431956cc1767f42f7fce6f76b2f55e07fbde9c27eb487baf5a2b4c2fcf
+RTX 3070 C,240,7651,TESS,803.738,800.863,-0.358,dedicated,release-series development measurement,b666304c17ba2ce17868e2d131bd52f632271a49437671f512a31d8a565709fe
+CMP 170HX,300,7652,Kepler,57.596,57.419,-0.308,shared,brief variable-temperature development measurement,68b82604638f7799f42dca1cd75730d35aab454e24fa02e672385076b3ad9d5f
+CMP 170HX,300,7653,TESS,806.7,806.2,-0.062,shared,brief variable-temperature development measurement,f723de228ad38c480689734a77f4ad5e6ed75b1abc8216b41edd759c06b61d20
+CMP 170HX,300,7650,Kepler,152.955,152.278,-0.442,shared,brief variable-temperature development measurement,1e04df431956cc1767f42f7fce6f76b2f55e07fbde9c27eb487baf5a2b4c2fcf
+CMP 170HX,300,7651,TESS,909.686,910.452,0.084,shared,brief variable-temperature development measurement,b666304c17ba2ce17868e2d131bd52f632271a49437671f512a31d8a565709fe
+RTX 5080,400,7949,TESS,69.44,3009,4233.237,recovery,"specific model slowdown in 1.9.57, development measurement",
+RTX 5070 Ti,350,7969,TESS,52.46,2740.62,5124.209,recovery,"specific model slowdown in 1.9.57, development measurement",
+RTX 3070 A,250,7949,TESS,10.22,775.8,7490.998,recovery,"specific model slowdown in 1.9.57, development measurement",
+RTX 3070 B,250,7949,TESS,10.22,789.56,7625.636,recovery,"specific model slowdown in 1.9.57, development measurement",
