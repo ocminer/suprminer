@@ -1,5 +1,9 @@
 # NEB OpenCL in Suprminer 1.9.45
 
+**Using v1.9.59?** The current setup guide covers installation on AMD and the current download. [NEB setup](NEB_RELEASE_GUIDE.md) · [v1.9.59 AMD benchmarks](benchmarks/neb-1.9.59-amd.md)
+
+The following installation notes and measurements describe v1.9.45.
+
 Suprminer 1.9.45 adds NEB to the AMD OpenCL packages for Linux, Windows, HiveOS, mmpOS and SMOS. The historical `quantus-opencl` package names are retained for installer compatibility. NEB uses OpenCL, including in the Linux package that also offers Quantus Vulkan.
 
 Download the AMD OpenCL package from the [release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.45). It dynamically loads the system OpenCL runtime and has no CUDA or NVML dependency.
