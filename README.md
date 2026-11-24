@@ -3,6 +3,36 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
+## Suprminer v1.9.59 · Faster NEB mining on AMD
+
+Both Kepler and TESS run faster on the three AMD cards we tested. These Linux measurements compare v1.9.58 with the v1.9.59 kernels on the same card, trained model and share target. Rates are in MH/s.
+
+| GPU | Power allowance | Kepler 7652 · v1.9.58 → v1.9.59 | Gain | TESS 7653 · v1.9.58 → v1.9.59 | Gain |
+|---|---:|---:|---:|---:|---:|
+| RX 7900 XTX | 350 W | 18.86 → **30.78** | +63.21% | 982.61 → **1,085.72** | +10.49% |
+| RX 7600 XT | 165 W | 5.52 → **12.91** | +133.71% | 321.69 → **375.41** | +16.70% |
+| Instinct MI50 | 225 W | 5.61 → **9.75** | +73.62% | 342.55 → **366.35** | +6.95% |
+
+Rates vary as the chain trains its models. On a second pair at heights 7948/7949, the RX 7900 XTX reached **239.46 MH/s on Kepler (+8.83%)** and **1,377.44 MH/s on TESS (+9.97%)**. The XTX also submitted 25 accepted shares across both models on the live Suprnova pool, with zero rejects. This release updates RX 9070 XT detection. Hardware benchmarks for that card and physical Windows GPU measurements are still pending. [AMD measurements and test conditions](docs/benchmarks/neb-1.9.59-amd.md) · [CSV](docs/benchmarks/neb-1.9.59-amd.csv)
+
+### Previous NVIDIA benchmarks · v1.9.58
+
+These are the last measured Linux rates for the listed NVIDIA cards. The gain columns compare v1.9.58 with v1.9.57 on the same GPU and model.
+
+| GPU | Power allowance | Heights, Kepler / TESS | Kepler MH/s | Gain | TESS MH/s | Gain |
+|---|---:|---|---:|---:|---:|---:|
+| RTX 5090 | 600 W | 7812 / 7653 | 573.08 | +17.3% | 5,722.21 | +0.03% |
+| RTX 5080 | 400 W | 7650 / 7651 | 416.36 | +28.5% | 2,687.78 | +3.5% |
+| RTX 5070 Ti | 350 W | 7652 / 7653 | 166.70 | +46.3% | 1,953.44 | +3.5% |
+| RTX 3070 A | 250 W | 7652 / 7653 | 49.29 | +19.0% | 699.40 | +3.7% |
+| RTX 3070 B | 250 W | 7652 / 7653 | 49.41 | +18.0% | 710.98 | +1.9% |
+| RTX 3070 C | 240 W | 7652 / 7653 | 49.81 | +21.0% | 713.31 | −1.2% |
+| CMP 170HX, shared | 300 W | 7652 / 7653 | 57.42 | −0.3% | 806.20 | −0.1% |
+
+The CMP 170HX shared its GPU with a verifier. See the full fleet results for other model heights and measurement windows. [v1.9.58 fleet benchmarks](docs/benchmarks/neb-1.9.58-fleet.md) · [CSV](docs/benchmarks/neb-1.9.58-fleet.csv)
+
+**0% NEB miner fee.** Suprnova PPLNS pool fee is 1%. Linux, Windows, HiveOS, mmpOS, SMOS and Docker packages support NVIDIA CUDA and AMD OpenCL. [Download v1.9.59](https://github.com/ocminer/suprminer/releases/tag/v1.9.59) · [Setup](docs/NEB_RELEASE_GUIDE.md) · [Pool](https://neb.suprnova.cc/) · [Discord](https://discord.gg/29RHZwvVPN)
+
 ## Suprminer 1.9.58 — faster NEB mining
 
 Kepler is faster on the tested RTX cards. This release also fixes a large slowdown on certain trained TESS models and improves continuity when the pool updates a job.
