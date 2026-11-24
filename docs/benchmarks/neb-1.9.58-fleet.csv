@@ -6,7 +6,7 @@ RTX 5080,400,7650,Kepler,324.028,416.362,28.496,dedicated,"release qualification
 RTX 5080,400,7651,TESS,2596.584,2687.777,3.512,dedicated,release-series development measurement,b666304c17ba2ce17868e2d131bd52f632271a49437671f512a31d8a565709fe
 RTX 5080,400,7752,Kepler,452.947,502.607,10.964,dedicated,release-series development measurement,6c3205240cb00cac33f89b1c8d7bb9c963c5b31861d630b98c5828d335f3a20b
 RTX 5080,400,7753,TESS,2204.201,2278.331,3.363,dedicated,release-series development measurement,29fef5391716ca73df02807fa097edd6cbced991cb7cc928fe5b448f6a559e3a
-RTX 5070 Ti,350,7652,Kepler,115.208,163.103,41.573,dedicated,release-series development measurement,68b82604638f7799f42dca1cd75730d35aab454e24fa02e672385076b3ad9d5f
+RTX 5070 Ti,350,7652,Kepler,113.967,166.697,46.267,dedicated,"release qualification, 2 matched Kepler header sequences, 24–42 s",68b82604638f7799f42dca1cd75730d35aab454e24fa02e672385076b3ad9d5f
 RTX 5070 Ti,350,7653,TESS,1887.021,1953.445,3.52,dedicated,release-series development measurement,f723de228ad38c480689734a77f4ad5e6ed75b1abc8216b41edd759c06b61d20
 RTX 5070 Ti,350,7650,Kepler,266.957,345.317,29.353,dedicated,release-series development measurement,1e04df431956cc1767f42f7fce6f76b2f55e07fbde9c27eb487baf5a2b4c2fcf
 RTX 5070 Ti,350,7651,TESS,2144.655,2215.36,3.297,dedicated,release-series development measurement,b666304c17ba2ce17868e2d131bd52f632271a49437671f512a31d8a565709fe
@@ -35,3 +35,4 @@ RTX 3070 B,250,7949,TESS,10.22,789.56,7625.636,recovery,"specific model slowdown
 RTX 5080,400,7650,Kepler,324.844,415.569,27.929,dedicated,earlier release-series development measurement; repeated in release qualification,1e04df431956cc1767f42f7fce6f76b2f55e07fbde9c27eb487baf5a2b4c2fcf
 RTX 3070 A,250,7652,Kepler,41.343,49.782,20.41,dedicated,earlier release-series development measurement; repeated in release qualification,68b82604638f7799f42dca1cd75730d35aab454e24fa02e672385076b3ad9d5f
 RTX 3070 B,250,7652,Kepler,41.779,49.651,18.843,dedicated,earlier release-series development measurement; repeated in release qualification,68b82604638f7799f42dca1cd75730d35aab454e24fa02e672385076b3ad9d5f
+RTX 5070 Ti,350,7652,Kepler,115.208,163.103,41.573,dedicated,earlier release-series development measurement; repeated in release qualification,68b82604638f7799f42dca1cd75730d35aab454e24fa02e672385076b3ad9d5f

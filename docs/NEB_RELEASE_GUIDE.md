@@ -156,7 +156,7 @@ NASA Exoplanet Archive (Kepler) and Astronet-Triage-v2 (TESS, Tey et al. 2023, C
 
 ## Mainnet benchmarks
 
-Version 1.9.58 improves Kepler throughput on the tested desktop RTX cards and fixes a large slowdown on some trained TESS models. Matched Kepler runs measured +28.5% on the 400 W RTX 5080 and +19.0% / +18.0% on two 250 W RTX 3070s. Both GPUs and model weights affect the hashrate. Suprminer verifies found shares on the CPU before submission. [v1.9.58 fleet benchmarks](benchmarks/neb-1.9.58-fleet.md) · [CSV](benchmarks/neb-1.9.58-fleet.csv)
+Version 1.9.58 improves Kepler throughput on the tested desktop RTX cards and fixes a large slowdown on some trained TESS models. Matched Kepler runs measured +28.5% on the 400 W RTX 5080, +46.3% on the 350 W RTX 5070 Ti, and +19.0% / +18.0% on two 250 W RTX 3070s. Both GPUs and model weights affect the hashrate. Suprminer verifies found shares on the CPU before submission. [v1.9.58 fleet benchmarks](benchmarks/neb-1.9.58-fleet.md) · [CSV](benchmarks/neb-1.9.58-fleet.csv)
 
 The NEB miner fee is 0%. Suprnova charges a 1% PPLNS pool fee. [NEB pool](https://neb.suprnova.cc/)
 

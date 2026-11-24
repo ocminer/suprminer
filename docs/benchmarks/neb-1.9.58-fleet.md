@@ -13,7 +13,7 @@ The same physical GPU ran both versions on identical captured mainnet weights in
 | RTX 5080 | 400 W | TESS 7651 | 2,596.58 | **2,687.78** | +3.5% |
 | RTX 5080 | 400 W | Kepler 7752 | 452.95 | **502.61** | +11.0% |
 | RTX 5080 | 400 W | TESS 7753 | 2,204.20 | **2,278.33** | +3.4% |
-| RTX 5070 Ti | 350 W | Kepler 7652 | 115.21 | **163.10** | +41.6% |
+| RTX 5070 Ti | 350 W | Kepler 7652 | 113.97 | **166.70** | +46.3% |
 | RTX 5070 Ti | 350 W | TESS 7653 | 1,887.02 | **1,953.44** | +3.5% |
 | RTX 5070 Ti | 350 W | Kepler 7650 | 266.96 | **345.32** | +29.4% |
 | RTX 5070 Ti | 350 W | TESS 7651 | 2,144.66 | **2,215.36** | +3.3% |
@@ -42,13 +42,16 @@ The RTX 5080 at height 7650 and both 250 W RTX 3070s at height 7652 each ran v1.
 | RTX 3070 A | 2,349 | 2,866 | +22.0% |
 | RTX 3070 B | 2,375 | 2,868 | +20.8% |
 
+The 350 W RTX 5070 Ti ran the same h7652 weights and two header sequences in reversed version order. Its warm window covered three complete six-second jobs from seconds 24–42 of each 44-second run, or 36 measured seconds per version. At difficulty 2²⁰ it delivered **3,873 → 5,760** on-time shares (+48.7%). The original NEB CPU implementation verified all **20,906** submissions in the four runs.
+
 ## Earlier qualification
 
-The other dedicated rows, including the RTX 5070 Ti, were measured during earlier v1.9.58 development on the same card and model against published v1.9.57. The two 250 W RTX 3070s spent 36 seconds per model during that sweep. The third RTX 3070 has a 240 W board limit. Small differences can vary with GPU boost. For reference, the earlier measurements for the three repeated card/model combinations were as follows.
+The other dedicated rows were measured during earlier v1.9.58 development on the same card and model against published v1.9.57. The two 250 W RTX 3070s spent 36 seconds per model during that sweep. The third RTX 3070 has a 240 W board limit. Small differences can vary with GPU boost. For reference, the earlier measurements for the four repeated card/model combinations were as follows.
 
 | GPU | Power allowance | Mainnet model | v1.9.57 MH/s | v1.9.58 MH/s | Change |
 |---|---:|---|---:|---:|---:|
 | RTX 5080 | 400 W | Kepler 7650 | 324.84 | **415.57** | +27.9% |
+| RTX 5070 Ti | 350 W | Kepler 7652 | 115.21 | **163.10** | +41.6% |
 | RTX 3070 A | 250 W | Kepler 7652 | 41.34 | **49.78** | +20.4% |
 | RTX 3070 B | 250 W | Kepler 7652 | 41.78 | **49.65** | +18.8% |
 
