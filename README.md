@@ -3,6 +3,26 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
+## Suprminer v1.9.60 · NEB on NVIDIA and AMD
+
+Suprminer now restores Kepler tables when the RTX 5080 returns from TESS and selects a new Kepler solver on the RTX 5090. On eligible Kepler models the RX 7900 XTX checks a new OpenCL solver against its existing solver and uses the faster one. On Linux the XTX can keep more verified TESS rows in GPU memory once both models are loaded. These choices are automatic.
+
+Linux medians from ten-second windows after warm-up on recorded NEB pool jobs. The power figures are board limits. Hashrate varies with the trained model at each height. Each submitted share was checked with an independent reference implementation.
+
+| GPU | Power limit | Model | Block | MH/s |
+|---|---:|---|---:|---:|
+| RTX 5090 | 600 W | Kepler | 9266 | 1,206.30 |
+| RTX 5080 | 400 W | Kepler | 9266 | 648.47 |
+| RTX 5070 Ti | 350 W | Kepler | 9266 | 488.57 |
+| RTX 5090 | 600 W | Kepler | 10368 | 733.92 |
+| RTX 5090 | 600 W | Kepler | 10378 | 1,498.48 |
+| RTX 5070 Ti | 350 W | TESS | 9317 | 2,526.82 |
+| RTX 3070 | 250 W | TESS | 9293 | 1,319.77 |
+| RX 7900 XTX | 303 W | Kepler | 10464 | 155.49 |
+| RX 7900 XTX | 303 W | TESS | 10669 | 2,969.52 |
+
+0% NEB miner fee. [Measurements](docs/benchmarks/neb-1.9.60-fleet.md) · [CSV](docs/benchmarks/neb-1.9.60-fleet.csv) · [Setup](docs/NEB_RELEASE_GUIDE.md) · [Download v1.9.60](https://github.com/ocminer/suprminer/releases/tag/v1.9.60)
+
 ## Suprminer v1.9.59 · Faster NEB mining on AMD
 
 Both Kepler and TESS run faster on the three AMD cards we tested. These Linux measurements compare v1.9.58 with the v1.9.59 kernels on the same card, trained model and share target. Rates are in MH/s.
