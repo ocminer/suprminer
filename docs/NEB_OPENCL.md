@@ -1,6 +1,6 @@
 # NEB OpenCL in Suprminer 1.9.45
 
-The v1.9.60 setup guide covers AMD installation. [NEB setup](NEB_RELEASE_GUIDE.md) · [Current benchmarks](benchmarks/neb-1.9.60-fleet.md)
+The v1.9.61 setup guide covers AMD installation. [NEB setup](NEB_RELEASE_GUIDE.md) · [Current benchmarks](benchmarks/neb-1.9.61-fleet.md)
 
 The following installation notes and measurements describe v1.9.45.
 

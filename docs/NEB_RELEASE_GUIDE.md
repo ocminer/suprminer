@@ -1,4 +1,4 @@
-# NEB with Suprminer 1.9.60
+# NEB with Suprminer 1.9.61
 
 Suprminer mines NEB on NVIDIA and AMD GPUs. Use `-a neb` for the NEB 1.0.1 mainnet.
 
@@ -10,7 +10,7 @@ The miner follows the pool's supplied model, index and timestamp, including
 shifted timestamps on private rehearsal chains.
 
 Download the archive for your operating system from the
-[1.9.60 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.60):
+[1.9.61 release page](https://github.com/ocminer/suprminer/releases/tag/v1.9.61):
 Linux, Windows, HiveOS (Ubuntu 20.04 or 22.04 base), mmpOS or SMOS. Each archive
 holds two builds: `suprminer-neptune` for NVIDIA cards and `suprminer-neptune-amd`
 (OpenCL) for AMD cards (`miner` and `miner-amd` in the SMOS archive). Both mine NEB
@@ -39,7 +39,7 @@ AMD telemetry is read-only on Linux; unavailable Windows AMD hardware telemetry 
 
 ## Dataset file
 
-Suprminer 1.9.60 requires the **NEB 1.0.1** `neb-datasets.bin`: **16,087,037
+Suprminer 1.9.61 requires the **NEB 1.0.1** `neb-datasets.bin`: **16,087,037
 bytes**, with 13,404 Kepler samples and 7,089 TESS samples. Its BLAKE3 hash is
 `790b57fbd830f3dcbe7de9d1146aa89a0a20799118e30dd48a343a5c98f19e72`.
 
@@ -120,7 +120,7 @@ user `YOUR_NEB_ADDRESS.rig01` and password `x`.
 docker run -d --name suprminer-neb --gpus all --restart unless-stopped \
   -e COIN=NEB -e USERNAME=YOUR_NEB_ADDRESS -e WORKER=rig01 \
   -e PASSWORD=x -e STARTUP_SCRIPT_URL= \
-  ocminersupr/suprminer-base:1.9.60
+  ocminersupr/suprminer-base:1.9.61
 ```
 
 `COIN=NEB` selects `neb.suprnova.cc:7804`.
@@ -143,7 +143,7 @@ NASA Exoplanet Archive (Kepler) and Astronet-Triage-v2 (TESS, Tey et al. 2023, C
 
 ## Mainnet benchmarks
 
-Suprminer checks every found NEB share on the CPU. The v1.9.60 Linux benchmarks cover trained Kepler and TESS models on NVIDIA and AMD. [v1.9.60 measurements](benchmarks/neb-1.9.60-fleet.md) · [Previous AMD results](benchmarks/neb-1.9.59-amd.md)
+Suprminer checks every found NEB share on the CPU. The v1.9.61 Linux benchmarks cover trained Kepler and TESS models on NVIDIA and AMD. [v1.9.61 measurements](benchmarks/neb-1.9.61-fleet.md) · [Previous AMD results](benchmarks/neb-1.9.59-amd.md)
 
 The NEB miner fee is 0%. Suprnova charges a 1% PPLNS pool fee. [NEB pool](https://neb.suprnova.cc/)
 
@@ -151,7 +151,7 @@ Linux AMD OpenCL measurements are available for the RX 7600 XT, RX 7900 XTX and 
 
 ## AMD Docker
 
-The `1.9.60-amd` tag (moving alias `amd`) includes the AMD OpenCL runtime,
+The `1.9.61-amd` tag (moving alias `amd`) includes the AMD OpenCL runtime,
 NEB dataset and the same executable as the portable AMD package. The host
 needs the `amdgpu` kernel driver; the image does not install a host driver.
 NEB uses OpenCL; the container does not include a Vulkan NEB backend.
@@ -160,7 +160,7 @@ NEB uses OpenCL; the container does not include a Vulkan NEB backend.
 docker run --rm --device=/dev/kfd --device=/dev/dri \
   -e COIN=NEB -e USERNAME=YOUR_NEB_ADDRESS -e WORKER=rig01 \
   -e PASSWORD=x -e STARTUP_SCRIPT_URL= \
-  ocminersupr/suprminer-base:1.9.60-amd
+  ocminersupr/suprminer-base:1.9.61-amd
 ```
 
 Use `DEVICES=0,2` to select OpenCL ordinals. Check device enumeration before
@@ -205,9 +205,9 @@ Windows `.bat` launcher. In HiveOS put it in **Extra config arguments**.
 For Docker pass `-e EXTRA_ARGS="--disable-neb-predictions"`, or one of the
 per-model options. Both per-model options may be supplied together.
 
-## Linux hotfix for PCIe x1 rigs
+## Linux rigs with PCIe x1 risers
 
-For full NEB performance, use a fast PCIe ×16 connection. A full-length riser can negotiate ×1, and Kepler may run slower there. The Linux hotfix applies the compatibility setting automatically when the card or an upstream bridge reports ×1. Wider or unknown links keep the usual behavior. Download the Linux archive below and use its NVIDIA executable, `suprminer-neptune`. For an existing mining-OS installation, stop the miner, replace that executable, and restart it with your usual command. The separate Windows download is available on the release page.
+For full NEB performance, use a fast PCIe ×16 connection. A full-length riser can negotiate ×1, and Kepler may run slower there. The Linux NVIDIA builds of v1.9.61 apply the compatibility setting automatically when the card or an upstream bridge reports ×1 (this was the separate Linux hotfix of v1.9.60). Wider or unknown links keep the usual behavior.
 
 If Kepler is unexpectedly slow on a known ×1 riser, or Linux cannot read the link width, run this in the shell that starts the miner, then launch it with your usual command.
 
@@ -217,4 +217,3 @@ export NEB_TRIPLE_POLICY=keep
 
 The override applies to all GPUs in that miner process. On mixed rigs, launch the affected GPU separately with `-d`. Wide-link GPUs can lose Kepler performance with the override. Run `unset NEB_TRIPLE_POLICY` and restart to restore automatic selection.
 
-[Linux hotfix](https://github.com/ocminer/suprminer/releases/download/v1.9.60/suprminer-1.9.60-linux-x86_64-hotfix.1.tar.gz) · [Hotfix SHA-256](https://github.com/ocminer/suprminer/releases/download/v1.9.60/suprminer-1.9.60-linux-x86_64-hotfix.1.tar.gz.sha256)

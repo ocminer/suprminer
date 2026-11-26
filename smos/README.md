@@ -4,7 +4,7 @@ Choose **CUSTOM** in the miner configuration. Put the public ZIP URL first in
 Miner OPTIONS, followed by the usual Suprminer arguments. For Quantus, use
 
 ```text
-https://github.com/ocminer/suprminer/releases/download/v1.9.60/suprminer-neptune-1.9.60-smos.zip -a quantus -o stratum+tcp://quantus.suprnova.cc:7071 -u YOUR_QUANTUS_ADDRESS.rig1 -p x
+https://github.com/ocminer/suprminer/releases/download/v1.9.61/suprminer-neptune-1.9.61-smos.zip -a quantus -o stratum+tcp://quantus.suprnova.cc:7071 -u YOUR_QUANTUS_ADDRESS.rig1 -p x
 ```
 
 There is one SMOS ZIP. It needs glibc 2.31 or newer (Ubuntu 20.04 base and later).

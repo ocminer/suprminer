@@ -3,6 +3,42 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
+## Suprminer v1.9.61 · SVY mining, smaller PRL shares, faster NEB on RX 9070 XT
+
+**New: SVY (Solvyren).** `-a svy` mines the SMW-16/2048 proof of work on NVIDIA cards. One process
+runs every card of a rig, and each card selects its kernel at start-up.
+
+| GPU | Power limit | SVY (MH/s) |
+|---|---:|---:|
+| RTX 5090 | 600 W | 3.80–3.91 |
+| RTX 5080 | 400 W | 2.02–2.09 |
+| RTX 4070 Ti SUPER | 285 W | 1.49–1.51 |
+| RTX 3070 | 250 W | 0.74–0.75 |
+| CMP 170HX | 250 W, shared with another workload | 0.87–0.90 |
+
+Linux, 70 to 90 second pool runs on `svy.suprnova.cc`, every share checked on the CPU, 0 rejected.
+
+```sh
+./suprminer-neptune -a svy -o stratum+tcp://svy.suprnova.cc:8484 -u YOUR_SVY_ADDRESS.rig1 -p x
+```
+
+**NEB on Radeon RX 9070 XT.** At 280 W on the same recorded models, Kepler rose from 235.0 to
+**285.5 MH/s (+21.5%)** and TESS from 932.9 to **1,390.5 MH/s (+49.0%)** against v1.9.60. A pool run
+measured +31.5% on Kepler with no invalid shares. Hashrate varies with the block, and some Kepler
+models still run at the v1.9.60 rate. Other Radeon cards keep their v1.9.60 code path.
+
+**PRL.** The miner negotiates zstd or gzip proof compression with the pool: a share shrinks from
+about 177 KB to 1.4 KB (zstd) or 3.6 KB (gzip). Same-card before and after at full board power:
+
+| GPU | Power limit | Before (TH/s) | v1.9.61 (TH/s) | Change |
+|---|---:|---:|---:|---:|
+| RTX 5090 | 600 W | 381.5 | 393.5 | +3.1% |
+| RTX 5080 | 400 W | 224.3 | 226.8 | +1.1% |
+| RTX 3070 | 250 W | 76.1 | 77.8 | +2.2% |
+
+The NVIDIA Linux build also contains the PCIe ×1 handling of the v1.9.60 Linux hotfix.
+[All v1.9.61 results](docs/benchmarks/suprminer-1.9.61.md) · [CSV](docs/benchmarks/suprminer-1.9.61.csv) · [All downloads](https://github.com/ocminer/suprminer/releases/tag/v1.9.61)
+
 ## Suprminer v1.9.60 · Faster NEB on NVIDIA and AMD up to +35%
 
 - **AMD** · RX 7900 XTX · **+131.1% on Kepler 10464** and **+45.1% on TESS 10669** in 50-second tests.
@@ -891,6 +927,9 @@ Replace each placeholder with your own payout address and worker name:
 
 # NEB 1.0.1 mainnet — Kepler and TESS
 ./suprminer-neptune -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u YOUR_NEB_ADDRESS.rig1 -p x
+
+# SVY (Solvyren) — port 8484, or stratum+ssl on 8485
+./suprminer-neptune -a svy -o stratum+tcp://svy.suprnova.cc:8484 -u YOUR_SVY_ADDRESS.rig1 -p x
 ```
 
 On Windows, use `.\suprminer-neptune.exe` in PowerShell. Add `-d 0,1` to select
@@ -917,6 +956,7 @@ GPUs. Stop with Ctrl+C. Use `--help` for all supported options.
 | `noid` | `parano1d`, `poseidon2b` | NOID / Parano1d — Poseidon2b over GF(2¹²⁸) | NVIDIA sm_80 / sm_86 / sm_89 / sm_90 / sm_120; experimental sm_75 (GTX 16xx / RTX 20xx) |
 | `npt` | `neptune`, `neptune-cash` | Neptune Cash — HardforkDelta PoW, negotiated suffix search | NVIDIA sm_80+ (RTX 30xx, CMP 170HX, RTX 40xx/50xx, A100/H100, RTX PRO 6000) |
 | `neb` | `nebcoin`, `pot` | NEB 1.0.1 — KEP1 Kepler/TESS proof-of-training | NVIDIA sm_75+ / AMD OpenCL |
+| `svy` | `solvyren`, `smw`, `mx10` | Solvyren — SMW-16/2048 v1 | NVIDIA RTX 30 / 40 / 50 series and CMP 170HX |
 
 Algorithm support depends on the selected backend and GPU. The PRL/NOID guide
 lists their requirements; the NEB guide covers NEB. Saved GPU profiles are selected automatically.

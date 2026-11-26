@@ -1,0 +1,14 @@
+algorithm,gpu,power_limit_w,metric,before,after,unit,change_percent,conditions
+svy,RTX 5090,600,pool run,,3.80-3.91,MH/s,,Linux; 70-90 s on svy.suprnova.cc; 0 rejected
+svy,RTX 5080,400,pool run,,2.02-2.09,MH/s,,Linux; 70-90 s on svy.suprnova.cc; two cards; 0 rejected
+svy,RTX 4070 Ti SUPER,285,pool run,,1.49-1.51,MH/s,,Linux; 70 s on svy.suprnova.cc; 0 rejected
+svy,RTX 3070,250,pool run,,0.74-0.75,MH/s,,Linux; 70 s on svy.suprnova.cc; two cards in one process with an RTX 5080; 0 rejected
+svy,CMP 170HX,250,pool run,,0.87-0.90,MH/s,,Linux; 90 s on svy.suprnova.cc; card shared with another workload; 0 rejected
+neb,RX 9070 XT,280,Kepler,235.0,285.5,MH/s,21.5,Linux; recorded models; median of matched 60 s arms; v1.9.60 before
+neb,RX 9070 XT,280,TESS,932.9,1390.5,MH/s,49.0,Linux; recorded models; median of matched 60 s arms; v1.9.60 before
+neb,RX 9070 XT,280,Kepler pool run,204.63,269.17,MH/s,31.5,Linux; neb.suprnova.cc; no invalid shares
+prl,RTX 5090,600,A/B/B/A,381.5,393.5,TH/s,3.1,Linux; same card; pool run
+prl,RTX 5080,400,A/B/B/A,224.3,226.8,TH/s,1.1,Linux; same card; pool run
+prl,RTX 3070,250,A/B/B/A,76.1,77.8,TH/s,2.2,Linux; same card; pool run
+prl,any,,share size zstd,177000,1441,bytes,,per submitted proof on the wire
+prl,any,,share size gzip,177000,3612,bytes,,per submitted proof on the wire
