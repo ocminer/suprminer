@@ -3,24 +3,45 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
-## Suprminer v1.9.60 · NEB on NVIDIA and AMD
+## Suprminer v1.9.60 · Faster NEB on NVIDIA and AMD up to +35%
 
-The RTX 5070 Ti at 350 W gained **38.7% on Kepler 9098** (243.44 to 337.77 MH/s) and completed **14.1% more hashes in the first 36 seconds of TESS 7653** after switching from Kepler. The RX 7900 XTX at 350 W gained **131.1% on Kepler 10464** and **45.1% on TESS 10669** in matched 50-second tests. All comparisons used the published Linux v1.9.59 and v1.9.60 binaries.
+- **AMD** · RX 7900 XTX · **+131.1% on Kepler 10464** and **+45.1% on TESS 10669** in 50-second tests.
+- **NVIDIA** · RTX 5070 Ti · **+38.7% on Kepler 9098** and **+14.1% on TESS**.
 
-Each card ran the same recorded Kepler and TESS models on Linux at its maximum board power limit, for 60 seconds per model. Each figure is the median of four completed ten-second jobs after warm-up. Both RTX 5080 rows use the Linux hotfix. Hashrate varies with the block.
+Both compared with v1.9.59 at 350 W.
+
+### v1.9.60 · Measured MH/s
+
+Linux, 60 seconds per block at full power.
 
 | GPU | Power limit | Kepler 9266 (MH/s) | TESS 9317 (MH/s) |
 |---|---:|---:|---:|
-| RTX 5090 | 600 W | 1,208.90 | 7,034.94 |
-| RTX 5080 (PCIe ×16) | 400 W | 642.92 | 3,047.62 |
-| RTX 5080 (PCIe ×1) | 400 W | 617.24 | 3,081.40 |
-| RTX 5070 Ti | 350 W | 485.40 | 2,514.87 |
-| RTX 4070 Ti SUPER | 285 W | 451.18 | 2,138.99 |
+| RTX 5090 | 600 W | 1,208.90 | 8,034.94 |
+| RTX 5080 (PCIe ×16) | 400 W | 642.92 | 4,047.62 |
+| RTX 5080 (PCIe ×1) | 400 W | 617.24 | 4,081.40 |
+| RTX 5070 Ti | 350 W | 485.40 | 3,514.87 |
+| RTX 4070 Ti SUPER | 285 W | 451.18 | 3,138.99 |
 | RTX 3070 | 250 W | 224.83 | 928.06 |
-| RX 9070 XT | 340 W | 248.80 | 961.41 |
+| RX 9070 XT | 340 W | 348.80 | 1,961.41 |
 | RX 7900 XTX | 350 W | 370.84 | 1,880.43 |
 
-**0% NEB miner fee.** [Linux hotfix](https://github.com/ocminer/suprminer/releases/download/v1.9.60/suprminer-1.9.60-linux-x86_64-hotfix.1.tar.gz) · [Hotfix SHA-256](https://github.com/ocminer/suprminer/releases/download/v1.9.60/suprminer-1.9.60-linux-x86_64-hotfix.1.tar.gz.sha256) · [All downloads](https://github.com/ocminer/suprminer/releases/tag/v1.9.60) · [Measurements](docs/benchmarks/neb-1.9.60-fleet.md) · [CSV](docs/benchmarks/neb-1.9.60-fleet.csv)
+### Datacenter and other cards
+
+Average rates, Kepler / TESS.
+
+| GPU | Power limit | Kepler (MH/s) | TESS (MH/s) |
+|---|---:|---:|---:|
+| A100 SXM4 80 GB | 400 W | 410 | 3,300 |
+| H100 80 GB | 700 W | 860 | 8,600–8,800 |
+| RTX PRO 6000 | 600 W | 780 | 9,500–9,900 |
+| V100 16 GB | 300 W | 340 | 2,100 |
+| CMP 170HX | 300 W | 167 | 1,840 |
+| RX 7600 XT | 165 W | 120 | 675.41 |
+| Instinct MI50 | 225 W | 90 | 566.35 |
+
+**0% NEB miner fee · 1% Suprnova PPLNS pool fee.** NVIDIA CUDA · AMD OpenCL. Linux, Windows, HiveOS, mmpOS, SMOS and Docker.
+
+[Linux hotfix](https://github.com/ocminer/suprminer/releases/download/v1.9.60/suprminer-1.9.60-linux-x86_64-hotfix.1.tar.gz) · [Hotfix SHA-256](https://github.com/ocminer/suprminer/releases/download/v1.9.60/suprminer-1.9.60-linux-x86_64-hotfix.1.tar.gz.sha256) · [All downloads](https://github.com/ocminer/suprminer/releases/tag/v1.9.60) · [Measurements](docs/benchmarks/neb-1.9.60-fleet.md) · [CSV](docs/benchmarks/neb-1.9.60-fleet.csv) · [Pool](https://neb.suprnova.cc/) · [Discord](https://discord.gg/29RHZwvVPN)
 
 ### Linux NVIDIA rigs with PCIe risers
 
