@@ -15,6 +15,7 @@ Each card ran the same recorded Kepler and TESS models on Linux at its maximum b
 | RTX 5080 (PCIe ×16) | 400 W | 642.92 | 3,047.62 |
 | RTX 5080 (PCIe ×1) | 400 W | 617.24 | 3,081.40 |
 | RTX 5070 Ti | 350 W | 485.40 | 2,514.87 |
+| RTX 4070 Ti SUPER | 285 W | 451.18 | 2,138.99 |
 | RTX 3070 | 250 W | 224.83 | 928.06 |
 | RX 7900 XTX | 350 W | 370.84 | 1,880.43 |
 

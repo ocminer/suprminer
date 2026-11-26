@@ -8,8 +8,11 @@ Each card ran the same recorded Kepler and TESS models on Linux at its maximum b
 | RTX 5080 (PCIe ×16) | 400 W | 642.92 | 3,047.62 |
 | RTX 5080 (PCIe ×1) | 400 W | 617.24 | 3,081.40 |
 | RTX 5070 Ti | 350 W | 485.40 | 2,514.87 |
+| RTX 4070 Ti SUPER | 285 W | 451.18 | 2,138.99 |
 | RTX 3070 | 250 W | 224.83 | 928.06 |
 | RX 7900 XTX | 350 W | 370.84 | 1,880.43 |
+
+The RTX 4070 Ti SUPER started with 212 MiB of GPU memory allocated to a background process.
 
 On the ×1 RTX 5080, Kepler 9266 measured 10.21 MH/s with the original Linux v1.9.60 defaults, 589.44 MH/s with the manual override, and 617.24 MH/s with the automatic hotfix. Published v1.9.59 reached 588.24 MH/s on the same card at 400 W.
 
