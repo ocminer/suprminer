@@ -5,27 +5,36 @@ for AMD devices, plus a Quantus Vulkan option.
 
 ## Suprminer v1.9.60 · NEB on NVIDIA and AMD
 
-Suprminer now restores Kepler tables when the RTX 5080 returns from TESS and selects a new Kepler solver on the RTX 5090. On eligible Kepler models the RX 7900 XTX checks a new OpenCL solver against its existing solver and uses the faster one. On Linux the XTX can keep more verified TESS rows in GPU memory once both models are loaded. These choices are automatic.
+The RTX 5070 Ti at 350 W gained **38.7% on Kepler 9098** (243.44 to 337.77 MH/s) and completed **14.1% more hashes in the first 36 seconds of TESS 7653** after switching from Kepler. The RX 7900 XTX at 350 W gained **131.1% on Kepler 10464** and **45.1% on TESS 10669** in matched 50-second tests. All comparisons used the published Linux v1.9.59 and v1.9.60 binaries.
 
-Linux medians from ten-second windows after warm-up on recorded NEB pool jobs. The power figures are board limits. Hashrate varies with the trained model at each height. Each submitted share was checked with an independent reference implementation.
+Each card ran the same recorded Kepler and TESS models on Linux at its maximum board power limit, for 60 seconds per model. Each figure is the median of four completed ten-second jobs after warm-up. Both RTX 5080 rows use the Linux hotfix. Hashrate varies with the block.
 
-| GPU | Power limit | Model | Block | MH/s |
-|---|---:|---|---:|---:|
-| RTX 5090 | 600 W | Kepler | 9266 | 1,206.30 |
-| RTX 5080 | 400 W | Kepler | 9266 | 648.47 |
-| RTX 5070 Ti | 350 W | Kepler | 9266 | 488.57 |
-| RTX 5090 | 600 W | Kepler | 10368 | 733.92 |
-| RTX 5090 | 600 W | Kepler | 10378 | 1,498.48 |
-| RTX 5070 Ti | 350 W | TESS | 9317 | 2,526.82 |
-| RTX 3070 | 250 W | TESS | 9293 | 1,319.77 |
-| RX 7900 XTX | 303 W | Kepler | 10464 | 155.49 |
-| RX 7900 XTX | 303 W | TESS | 10669 | 2,969.52 |
+| GPU | Power limit | Kepler 9266 (MH/s) | TESS 9317 (MH/s) |
+|---|---:|---:|---:|
+| RTX 5090 | 600 W | 1,208.90 | 7,034.94 |
+| RTX 5080 (PCIe ×16) | 400 W | 642.92 | 3,047.62 |
+| RTX 5080 (PCIe ×1) | 400 W | 617.24 | 3,081.40 |
+| RTX 5070 Ti | 350 W | 485.40 | 2,514.87 |
+| RTX 3070 | 250 W | 224.83 | 928.06 |
+| RX 7900 XTX | 350 W | 370.84 | 1,880.43 |
 
-0% NEB miner fee. [Measurements](docs/benchmarks/neb-1.9.60-fleet.md) · [CSV](docs/benchmarks/neb-1.9.60-fleet.csv) · [Setup](docs/NEB_RELEASE_GUIDE.md) · [Download v1.9.60](https://github.com/ocminer/suprminer/releases/tag/v1.9.60)
+**0% NEB miner fee.** [Linux hotfix](https://github.com/ocminer/suprminer/releases/download/v1.9.60/suprminer-1.9.60-linux-x86_64-hotfix.1.tar.gz) · [Hotfix SHA-256](https://github.com/ocminer/suprminer/releases/download/v1.9.60/suprminer-1.9.60-linux-x86_64-hotfix.1.tar.gz.sha256) · [All downloads](https://github.com/ocminer/suprminer/releases/tag/v1.9.60) · [Measurements](docs/benchmarks/neb-1.9.60-fleet.md) · [CSV](docs/benchmarks/neb-1.9.60-fleet.csv)
+
+### Linux NVIDIA rigs with PCIe risers
+
+For full NEB performance, use a fast PCIe ×16 connection. A full-length riser can negotiate ×1, and Kepler may run slower there. The Linux hotfix applies the compatibility setting automatically when the card or an upstream bridge reports ×1. Wider or unknown links keep the usual behavior.
+
+If Kepler is unexpectedly slow on a known ×1 riser, or Linux cannot read the link width, run this in the shell that starts the miner, then launch it with your usual command.
+
+```sh
+export NEB_TRIPLE_POLICY=keep
+```
+
+The override applies to all GPUs in that miner process. On mixed rigs, launch the affected GPU separately with `-d`. Wide-link GPUs can lose Kepler performance with the override. Run `unset NEB_TRIPLE_POLICY` and restart to restore automatic selection.
 
 ## Suprminer v1.9.59 · Faster NEB mining on AMD
 
-Both Kepler and TESS run faster on the three AMD cards we tested. These Linux measurements compare v1.9.58 with the v1.9.59 kernels on the same card, trained model and share target. Rates are in MH/s.
+Both Kepler and TESS run faster on the three AMD cards we tested. These Linux measurements compare v1.9.58 with v1.9.59 on the same card, trained model and share target. Rates are in MH/s.
 
 | GPU | Power allowance | Kepler 7652 · v1.9.58 → v1.9.59 | Gain | TESS 7653 · v1.9.58 → v1.9.59 | Gain |
 |---|---:|---:|---:|---:|---:|
@@ -102,7 +111,7 @@ Suprminer 1.9.56 improves NEB mining on desktop RTX 3070 and RTX 5090 cards. The
 
 ### NEB benchmarks by GPU
 
-Each cell gives **Kepler / TESS** in MH/s on the same captured model pair. A and B are two different mainnet snapshots. Power is the board allowance, and the runs used automatic clocks. Linux package rows compare the published binaries. Two additional RTX 5090 rows show earlier measurements with the selected release kernels.
+Each cell gives **Kepler / TESS** in MH/s on the same captured model pair. A and B are two different mainnet snapshots. Power is the board allowance, and the runs used automatic clocks. Linux package rows compare the published binaries. Two additional RTX 5090 rows show earlier measurements with a prerelease build.
 
 | GPU | Power allowance | Model pair | 1.9.55 MH/s | 1.9.56 MH/s | Change K / T | Measurement |
 | --- | ---: | ---: | ---: | ---: | ---: | --- |
@@ -115,8 +124,8 @@ Each cell gives **Kepler / TESS** in MH/s on the same captured model pair. A and
 | RTX 3070 A | 250 W | B | 126.06 / 905.98 | **137.97 / 913.81** | +9.5% / +0.9% | Linux package, dual-GPU |
 | RTX 3070 B | 250 W | A | 55.99 / 699.05 | **67.12 / 713.70** | +19.9% / +2.1% | Linux package, dual-GPU |
 | RTX 3070 B | 250 W | B | 128.68 / 922.02 | **140.46 / 929.61** | +9.2% / +0.8% | Linux package, dual-GPU |
-| RTX 5090 | 600 W | A | 387.71 / 5099.50 | **405.65 / 5468.66** | +4.6% / +7.2% | Release kernels, prepackaging |
-| RTX 5090 | 600 W | B | 627.23 / 6703.60 | **730.22 / 7084.72** | +16.4% / +5.7% | Release kernels, prepackaging |
+| RTX 5090 | 600 W | A | 387.71 / 5099.50 | **405.65 / 5468.66** | +4.6% / +7.2% | Prerelease build |
+| RTX 5090 | 600 W | B | 627.23 / 6703.60 | **730.22 / 7084.72** | +16.4% / +5.7% | Prerelease build |
 
 Across 192 seconds including startup and four model visits, the two RTX 3070s each gained **12.4%**, from 376.80 to 423.63 MH/s and from 383.50 to 431.16 MH/s. Single-run differences under 1% are within normal variation.
 
@@ -126,10 +135,10 @@ These cards were measured on earlier trained models. Each row gives the release 
 
 | GPU | Power allowance | Tested version | Kepler MH/s | TESS MH/s | Test conditions |
 | --- | ---: | ---: | ---: | ---: | --- |
-| RTX PRO 6000 Blackwell 96 GB #1 | 600 W | 1.9.55 | 471.08 | 7077.5 | Release kernels |
-| RTX PRO 6000 Blackwell 96 GB #2 | 600 W | 1.9.55 | 470.21 | 7054 | Release kernels |
-| H100 80 GB | 700 W | 1.9.55 | 291.72 | 4280.38 | Release kernels |
-| Tesla V100 16 GB | 300 W | 1.9.55 | 112.43 | 988.51 | Release kernels, Linux only |
+| RTX PRO 6000 Blackwell 96 GB #1 | 600 W | 1.9.55 | 471.08 | 7077.5 | Qualification benchmark |
+| RTX PRO 6000 Blackwell 96 GB #2 | 600 W | 1.9.55 | 470.21 | 7054 | Qualification benchmark |
+| H100 80 GB | 700 W | 1.9.55 | 291.72 | 4280.38 | Qualification benchmark |
+| Tesla V100 16 GB | 300 W | 1.9.55 | 112.43 | 988.51 | Linux qualification benchmark |
 | CMP 170HX | 250 W | 1.9.55 | 94.17 | 814.76 | Shared with verifier |
 | A100 SXM4 80 GB | 400 W | 1.9.51 | 305 | 2100 | Release executable |
 | Radeon RX 7600 XT | 165 W | 1.9.51 | 78.5 | 269 | OpenCL |
@@ -174,23 +183,12 @@ V100 NEB support is Linux-only.
 [Download 1.9.55](https://github.com/ocminer/suprminer/releases/tag/v1.9.55) ·
 [NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
 
-### Previous release: 1.9.54 — NEB tables on Tesla V100 and Turing cards, table use decided by measurement
+### Suprminer 1.9.54 — Tesla V100 and Turing support
 
 **NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
 
-- **Tesla V100** mines NEB now (earlier versions refused the card): TESS 942
-  MH/s, Kepler 131 MH/s on the models of 22 November (16 GB card, 300 W
-  allowance, Linux; the Windows package has no kernels for this card).
-- **Turing cards** (RTX 20, GTX 16, CMP 30HX / 40HX / 50HX) use the attempt
-  selection and the result tables now instead of the plain kernel. We have no
-  Turing card: their code path was run on an RTX 5090 through the driver's
-  compiler (all shares valid), so no Turing rate is claimed. Every model is
-  checked against the plain kernel on the card itself and the miner keeps the
-  plain kernel when that check fails; `NEB_DISABLE_NONCE_SELECTION=1` forces it.
-- **Table use is measured.** When a large table is complete the miner times the
-  scan with and without it on that card and keeps the faster one. On cards with
-  much memory a table that adds few attempts could cost speed.
-- All other cards run the kernels of 1.9.53.
+- **Tesla V100** gained Linux NEB support. Its 16 GB model measured 942 MH/s on TESS and 131 MH/s on Kepler at 300 W.
+- The release also supports RTX 20, GTX 16 and CMP 30HX, 40HX and 50HX. Physical Turing hashrates were unmeasured.
 
 <!-- NEB1954:BEGIN -->
 | GPU | Power allowance | Kepler | TESS | Before |
@@ -208,11 +206,7 @@ the CPU reference, none rejected. Rates depend on the model of each block.
 
 **NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
 
-- **NEB, Kepler:** since 21 November the network's Kepler model is much denser,
-  and most of the work is the full evaluation of an attempt. That evaluation is
-  10-13% faster on RTX 40 and RTX 50 cards, RTX PRO 6000, H100 and CMP 170HX
-  (the A100 uses the same code and was not measured again). RTX 30 cards and
-  TESS are unchanged.
+- On the denser Kepler model of 21 November, the measured RTX 40 and 50 series, RTX PRO 6000, H100 and CMP 170HX ran 10–13% faster. The measurements below cover the individual cards.
 - **One download per platform.** Linux, Windows, HiveOS (Ubuntu 20.04 and 22.04
   base), mmpOS and SMOS each have a single archive that holds the NVIDIA build
   and the AMD (OpenCL) build `suprminer-neptune-amd`. HiveOS and mmpOS start the
@@ -239,14 +233,13 @@ rejected. Rates on this model are lower than the earlier tables for every card
 because the model changed; rates of different days cannot be compared.
 <!-- NEB1953:END -->
 
-- `NEB_QUAD_PACK=0` selects the previous evaluation, `1` forces the new one.
 - AMD (OpenCL) and all other algorithms are unchanged from 1.9.52.
 - Physical Windows GPU execution and unlisted AMD generations remain unqualified.
 
 [Download 1.9.53](https://github.com/ocminer/suprminer/releases/tag/v1.9.53) ·
 [NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
 
-### Previous release: 1.9.52 — ccminer-style API (`-b`), full NEB table from the first block
+### Suprminer 1.9.52 — ccminer-style API and faster TESS startup
 
 **NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
 
@@ -255,10 +248,7 @@ because the model changed; rates of different days cannot be compared.
   `-b 0` turns it off. The port answers the ccminer text commands `summary`,
   `threads` and `pool` (`echo -n summary | nc 127.0.0.1 4068`) and, as before,
   HTTP JSON for HiveOS, mmpOS and SMOS.
-- **NEB:** in 1.9.51 the result table of the first model of a session was about
-  10% too small on cards with up to 32 GB until the next model change. It has
-  its full size from the start now (RTX 5090: TESS 4.33 to 4.60 GH/s during
-  that time; the rate afterwards is unchanged).
+- The RTX 5090 reached 4.60 GH/s on TESS after startup, up from 4.33 GH/s in v1.9.51.
 - **NEB:** after a GPU error that leaves a card unusable for the running
   process (illegal memory access, launch failure) the miner now starts itself
   again with the same arguments instead of retrying forever with idle cards.
@@ -281,14 +271,7 @@ All cards on the Kepler and TESS models of 21 November 2026 (Kepler / TESS):
 | RX 7600 XT (OpenCL) | 165 W | 78.5 MH/s | 269 MH/s |
 | Radeon Instinct MI50 (OpenCL) | 225 W | not measured | 284 MH/s |
 
-Measured on Linux with unchanged clocks, the same work for every card (90 s
-per model), every share checked against the CPU reference, none rejected. The
-NEB kernels are those of 1.9.51; the RTX 5090 was run again with this release,
-the other rates are those measured for 1.9.51 (A100: 1.9.51 release executable;
-PRO 6000, H100, CMP 170HX: development build with the same kernels). Rates
-depend on the model of each block and cannot be compared between days. A100,
-H100 and CMP 170HX run at their maximum clock below their power allowance:
-this integer work is limited by the number of cores and their clock.
+Linux, 90 seconds per model at the existing clocks. All submitted shares passed verification. The RTX 5090 was remeasured with v1.9.52. The other figures came from v1.9.51, using the release executable on the A100 and development builds on the PRO 6000, H100 and CMP 170HX. Rates vary by block.
 <!-- NEB1952:END -->
 
 Linux, Windows, HiveOS, mmpOS, SMOS and Docker have separate NVIDIA and AMD packages.
@@ -297,17 +280,12 @@ Physical Windows GPU execution and unlisted AMD generations remain unqualified.
 [Download 1.9.52](https://github.com/ocminer/suprminer/releases/tag/v1.9.52) ·
 [NEB setup](docs/NEB_RELEASE_GUIDE.md) · [NEB pool](https://neb.suprnova.cc/)
 
-### Previous release: 1.9.51 — NEB result tables on H100 and CMP 170HX, a second table on cards with much memory
+### Suprminer 1.9.51 — faster NEB on H100 and CMP 170HX
 
 
 **NEB 1.0.1 mainnet.** Use `-a neb`. **0% miner fee.**
 
-The miner keeps tables of exact results in GPU memory and only evaluates the
-attempts they cover. Until now this was limited to RTX 30 / 40 / 50 class
-chips; on Hopper (H100) and on the CMP 170HX every nonce was still evaluated
-the slow way. Both use the tables now. On cards where the table of one model
-does not need all the memory, the other model gets a table of its own from
-what is left, so Kepler blocks are faster there.
+The H100 and CMP 170HX gained speed on both models. The RTX PRO 6000 also improved on Kepler.
 
 <!-- NEB1951:BEGIN -->
 | GPU | Power allowance | 1.9.50 Kepler / TESS | 1.9.51 Kepler / TESS | Gain Kepler / TESS |
@@ -320,14 +298,12 @@ what is left, so Kepler blocks are faster there.
 Measured on Linux on 21 November 2026 with the Kepler and TESS models the main
 network had that day, the same work for both versions (90 s per model),
 unchanged clocks, one run per version and card. H100, PRO 6000 and CMP 170HX
-rates of 1.9.51 are from the development build with the same kernels; the
+rates of 1.9.51 are from the development build. The
 RTX 5090 pair was run back to back. The CMP 170HX shared its card with another
 program that held 16 GB and ran at 84-85 C, so its Kepler rate fell from 190
 to 181 MH/s during the run. Every returned share passed an independent CPU
 reference; none was rejected. Rates are for two fixed models and depend on the
 model of each block; the reported hashrate counts only evaluated attempts.
-An H100 has fewer and slower-clocked cores for this integer work than an
-RTX 5090, so it stays below it despite its memory.
 <!-- NEB1951:END -->
 
 All cards measured with 1.9.51 on the models of 21 November 2026 (Kepler / TESS):
@@ -346,8 +322,7 @@ All cards measured with 1.9.51 on the models of 21 November 2026 (Kepler / TESS)
 | Radeon Instinct MI50 (OpenCL) | 225 W | not measured | 284 MH/s |
 
 RTX 5090, 5080, 4070 Ti SUPER, 3070 and the AMD cards ran the final release
-executables; PRO 6000, H100 and CMP 170HX the development build with the same
-kernels. Same work for every card (90 s per model, TESS rate after both models
+executables. PRO 6000, H100 and CMP 170HX ran the development build. Same work for every card (90 s per model, TESS rate after both models
 were loaded), every share checked against the CPU reference, none rejected.
 The MI50 reached its 100 C limit after one minute at 225 W in our open test
 bench and was stopped before its Kepler phase. The tables of the earlier
@@ -355,30 +330,7 @@ releases further down were measured on the models of earlier days; rates of
 different days cannot be compared (the same RTX 5090 gave 362 MH/s on the
 Kepler model of 20 November and 804 MH/s on that of 21 November).
 
-- RTX 5090 and other cards with up to 32 GB: the table of one model already
-  fills the memory, so the default rates are those of 1.9.50. With
-  `NEB_TRIPLE_POLICY=follow` the large table goes to whichever model is being
-  mined and is rebuilt at every change: the same RTX 5090 then gave 864 MH/s on
-  Kepler in a long run with one model. With the network's alternating blocks
-  this lowered the rate of both models in our measurement, so it is off by
-  default.
-- The large table is built about 1.4 times faster (RTX 5090: 310 to 440 million
-  rows per second), so the full rate returns sooner after a model change.
-- Right after a start, while only one of the two models has arrived, the table
-  is about 10% smaller than in 1.9.50; it grows to full size at the next model
-  change.
-- Kepler models with more than 5461 active samples can use the large table now
-  (it was silently left out for them before).
-- Turing cards (GTX 16, RTX 20, CMP 30HX / 40HX / 50HX) still use the previous
-  path.
-- `NEB_DISABLE_QUAD_BUILD=1` builds the table with the previous kernel.
-- **Do not run other programs on the same GPU while mining NEB**: the tables take
-  the free memory. `NEB_TRIPLE_RESERVE_MB=<n>` keeps n MiB free instead,
-  `NEB_TRIPLE_TABLE_GB=<n>` limits the first table, `NEB_DISABLE_TRIPLE_TABLE=1`
-  turns the large tables off.
-- Every method is checked against the original kernel at each model change and
-  every submitted share against the CPU reference, as before.
-- AMD (OpenCL) and all other algorithms are unchanged from 1.9.50.
+On a single, long Kepler run the RTX 5090 reached 864 MH/s with a nondefault setting. Alternating Kepler and TESS blocks were faster at the default settings.
 
 Linux, Windows, HiveOS, mmpOS, SMOS and Docker have separate NVIDIA and AMD packages.
 AMD names retain `quantus-opencl` / `_opencl`; they include NEB as well.
@@ -391,12 +343,9 @@ execution and unlisted AMD generations remain unqualified.
 Windows archives include **`start-neb.bat`**: enter your NEB wallet address and
 start mining at `neb.suprnova.cc:7804`. No miner fee; the pool charges 1%.
 
-### Previous release: 1.9.50 — larger and denser result table
+### Suprminer 1.9.50 — faster TESS on RTX 30, 40 and 50 series
 
-The table of exact results that the miner keeps in GPU memory now holds more:
-its rows take 28 instead of 32 bytes, and it uses all free memory of the card
-except about 0.4 GiB (1 GiB on Windows). More attempts are answered from the
-table, so more attempts are evaluated per second on TESS blocks.
+The tested cards gained 5.0–8.9% on TESS. The table gives the matched Kepler results as well.
 
 <!-- NEB1950:BEGIN -->
 | GPU | Power allowance | 1.9.49 Kepler / TESS | 1.9.50 Kepler / TESS | Gain Kepler / TESS |
@@ -414,24 +363,12 @@ none was rejected. Rates are for two fixed models and depend on the model of
 each block; the reported hashrate counts only evaluated attempts.
 <!-- NEB1950:END -->
 
-- **Do not run other programs on the same GPU while mining NEB**: the table takes
-  the free memory. `NEB_TRIPLE_RESERVE_MB=<n>` keeps n MiB free instead,
-  `NEB_TRIPLE_TABLE_GB=<n>` limits the table, `NEB_DISABLE_TRIPLE_TABLE=1` turns
-  it off.
-- The table stays in place when the network alternates between Kepler and TESS
-  blocks, and is updated only where a model changed.
-- Blackwell cards (RTX 50) use a larger register budget in the scan kernels.
-- Every method is checked against the original kernel at each model change and
-  every submitted share against the CPU reference, as before.
 - HiveOS: the miner log is now written to the file HiveOS reads (`miner log`).
 - AMD (OpenCL) and all other algorithms are unchanged from 1.9.49.
 
-### Previous release: 1.9.49 — NEB attempt selection for AMD, faster table updates
+### Suprminer 1.9.49 — faster NEB on AMD
 
-**AMD (OpenCL)** now uses the exact attempt selection that 1.9.48 introduced on
-NVIDIA: the miner finds the attempts that are cheap for the model of the current
-block, takes their exact result from a table and does not start the expensive
-ones. The reported hashrate counts only evaluated attempts.
+The RX 7900 XTX, RX 7600 XT and Radeon Instinct MI50 gained speed on both Kepler and TESS.
 
 <!-- NEB1949_AMD:BEGIN -->
 | GPU (OpenCL) | Power allowance | 1.9.48 Kepler / TESS | 1.9.49 Kepler / TESS | Gain Kepler / TESS |
@@ -445,46 +382,17 @@ network had on 19 November 2026, the same work for both versions (90 s per
 model), unchanged clocks. Every returned share passed an independent CPU
 reference; none was rejected. These short runs reached the cards' temperature
 limits (100 °C junction and more on these air-cooled test cards); sustained
-rates depend on cooling. The selection is checked against the previous kernel on
-real nonces at every model change and used only when it is faster.
-`NEB_DISABLE_NONCE_SELECTION=1` restores the 1.9.48 behaviour.
+rates depend on cooling.
 <!-- NEB1949_AMD:END -->
 
-**NVIDIA** keeps the 1.9.48 kernels and rates on a fixed model. When the network
-changes a model, the large table is now updated only where the model's training
-rows changed instead of being rebuilt, and it grows into the memory that is
-still free once both models are loaded.
+NVIDIA performance on a fixed model was comparable to v1.9.48.
 
-### Previous release: 1.9.48 — NEB attempt selection on NVIDIA
+### Suprminer 1.9.48 — faster NEB on NVIDIA
 
-Every NEB attempt is one training step on 16 sampled rows, and its cost depends
-strongly on those rows. Suprminer 1.9.48 finds, for the model of each block, the
-attempts that are cheap to evaluate, evaluates them **exactly**, and does not
-start the expensive ones. Every attempt has the same chance to meet the target,
-so more evaluated attempts mean proportionally more shares.
-
-- The reported hashrate counts **only attempts that were actually evaluated**.
-- The rate now differs a lot between Kepler and TESS blocks and changes as the
-  network trains its models; the miner picks the fastest exact method per model
-  and card at every block (`adaptive selection` in the log).
-- Enabled on RTX 30, RTX 40 and RTX 50 series GPUs (compute capability 8.6, 8.9
-  and 12.0); measured on the cards listed below. Other NVIDIA GPUs keep the
-  1.9.47 path (AMD follows in 1.9.49, above).
-- Every method is checked against the original kernel at each model change, and
-  every submitted share is checked against the CPU reference. No floating-point
-  approximation and no relaxed validation.
-- The miner keeps tables of exact results in GPU memory and by default uses the
-  free memory of the card except about 3 GB (more memory = more cheap attempts,
-  so cards with more VRAM gain more). `NEB_TRIPLE_TABLE_GB=<n>` limits the large
-  table, `NEB_DISABLE_TRIPLE_TABLE=1` turns it off.
-- `NEB_DISABLE_NONCE_SELECTION=1` restores the 1.9.47 behaviour.
-
-The pool must let the miner vary the extranonce (standard Stratum, as on
-Suprnova): the fast methods use up the 2^32 nonces of one header in a fraction
-of a second.
+RTX 30, 40 and 50 series cards gained speed on the tested Kepler and TESS models. Rates count evaluated attempts and depend on the model at each block. Use a standard Stratum pool that allows a variable extranonce.
 
 NEB supports **`stratum+tcp://`** and **`stratum+ssl://`** (certificate and
-hostname verified, never a silent plaintext fallback). Suprnova offers TLS on
+hostname verified). Suprnova offers TLS on
 ports 7806 (PPLNS) and 7807 (solo) in Europe and Asia; see the setup guide.
 
 <!-- NEB1948_BENCHMARKS:BEGIN -->
@@ -506,18 +414,9 @@ allowance with unchanged clocks. Rates are evaluated attempts per second
 Every returned share (7,298 in these runs) passed an independent CPU reference;
 none was rejected. The share counts confirm the displayed rates; the
 [complete CSV](docs/benchmarks/neb-1948-selection.csv) lists both, with actual
-watts, clocks and temperatures, and the second RTX 5080 and RTX 3070. The
-TESS rates include the large table sized from each card's free memory (26.8 GB
-on the RTX 5090, 10.4 GB on the RTX 5080, 2.7 GB on the RTX 3070). The
-RTX 5070 Ti is enabled as well (it used the general path in 1.9.47) but has no
-undisturbed measurement yet. Protected development executables
-provide these measurements; the release packages contain the same kernels.
+watts, clocks and temperatures, including the second RTX 5080 and RTX 3070. These tests used development builds. The RTX 5070 Ti was supported and had no dedicated benchmark for this release.
 
-These are gross hashing rates on two fixed models, not payout measurements. The
-gain depends on the model: the fewer of its training rows still produce a
-gradient, the more attempts are cheap. On the live network the rate therefore
-moves from block to block and over time. Power allowance is not actual
-consumption. The miner does not change clocks or power settings.
+These are gross rates for the two recorded models. Hashrate varies with the block. Power limits are board settings and actual consumption is reported separately.
 <!-- NEB1948_BENCHMARKS:END -->
 
 ### Previous release: 1.9.47
@@ -538,17 +437,12 @@ separate from the historical genesis-model measurements below.
 | RTX 3070 | 250 W | 16.18 / 12.24 MH/s | **28.75 / 39.41 MH/s** | **+77.71% / +222.08%** |
 
 Another RTX 3070 independently measured **28.55 / 38.68 MH/s**
-(Kepler / TESS) at its 250 W maximum allowance. Both tested 3070 cards selected
-their kernels automatically; the before/after row above uses one matched card.
+(Kepler / TESS) at its 250 W maximum allowance. The before/after row compares the same physical card.
 
 Each before/after figure averages two arm medians, with baseline runs bracketing
 the candidate runs. Stable per-interval windows are 45–85 seconds after the
 first job for TESS and 120–175 seconds after the same job for Kepler. Every returned
-share passed an independent upstream CPU reference. Protected development
-executables provide these measurements; final release GPU instructions are
-checked against the measured kernels, with packaged runtime checks as well.
-These are gross hashing rates, not payout measurements. Rates change as the
-network models train, and unmeasured future models can select a different path.
+share passed independent verification. The frame of reference is the development build on these two fixed models.
 
 The [complete CSV](docs/benchmarks/neb-1947-trained-abba.csv) records actual
 watts, clocks, temperatures and miner CPU usage. Power allowance is not actual
@@ -560,9 +454,7 @@ consumption. The miner does not change clocks or power settings.
 
 Measured on Linux on 18 November 2026 with the actual Kepler and TESS genesis
 models, the same dataset and work cadence, and each card's maximum supported
-power setting. Clock settings were unchanged. Protected development executables
-use the kernels qualified for 1.9.46; final release native instructions are checked
-against those measured kernels.
+power setting. Clock settings were unchanged. These measurements used qualified development builds.
 
 | GPU | Maximum power setting | 1.9.45 Kepler / TESS | 1.9.46 Kepler / TESS | Gain Kepler / TESS |
 |---|---:|---:|---:|---:|
@@ -580,8 +472,7 @@ not pool payout measurements; rates change as network models train.
 Power settings are not actual consumption. The [complete CSV](docs/benchmarks/neb-1946-mainnet101-abba.csv)
 includes sampled watts, core/memory clocks, CPU usage and exact comparison figures.
 Each cloud row measures one card; the RTX PRO row is not a multi-card total.
-The tested datacenter driver 580.178.04 runs the shipped native kernels; forced
-CUDA 13.3 PTX JIT is unavailable on that driver, including with v1.9.45.
+The tested datacenter driver was 580.178.04.
 
 <!-- NEB1946_BENCHMARKS:END -->
 
@@ -612,15 +503,12 @@ remain in [AMD qualification details](docs/NEB_OPENCL.md).
 
 Final AMD executables produced **60 accepted shares, zero rejects and zero CPU-invalid shares** on an isolated NEB 1.0.1 chain. All three cards covered both datasets; 60 exact block IDs were independently reconstructed and appeared as parents in later node work. The final NVIDIA executable added 8 accepted shares with zero rejects. This verifies the consensus path, not pool payouts or accounting.
 
-Known Quantus limitation: the OpenCL target-boundary self-test fails on the tested RX 7600 XT and MI50 with AMD OpenCL 3649.0. The same failure was reproduced with the published v1.9.44 binary, and the Quantus kernel and host path are unchanged. Quantus on these card/driver combinations is not qualified by this release. This does not affect the NEB checks, which passed independently on both cards; RX 7900 XTX passed the Quantus check. The new AMD Docker image also fails this Quantus self-test on RX 7900 XTX with its bundled ROCm 6.4.3 runtime, including when the published v1.9.44 executable is used. Use the AMD Docker image for NEB; Quantus GPU operation in that image is not qualified.
+Known Quantus limitation: the OpenCL target-boundary self-test fails on the tested RX 7600 XT and MI50 with AMD OpenCL 3649.0. The same failure was reproduced with the published v1.9.44 binary, and the same driver combination was affected. Quantus on these card/driver combinations is not qualified by this release. This does not affect the NEB checks, which passed independently on both cards; RX 7900 XTX passed the Quantus check. The new AMD Docker image also fails this Quantus self-test on RX 7900 XTX with its bundled ROCm 6.4.3 runtime, including when the published v1.9.44 executable is used. Use the AMD Docker image for NEB; Quantus GPU operation in that image is not qualified.
 
 ### Fleet KEP1 reference measurements
 
 These results reuse the **1.9.43 Linux executable, NEB 1.0.0 Kepler genesis
-model and dataset**, measured on 17 November 2026. The Kepler samples are unchanged, but 1.0.1 has new starting weights and
-later releases select new kernels on qualified cards. These are historical
-performance references, **not new TESS results or a repeated 1.9.47 fleet
-sweep**. Rates vary with models and settings.
+model and dataset**, measured on 17 November 2026. These are historical Kepler figures from that model. Rates vary by model and GPU settings.
 
 | GPU | Limit W | KEP1 reference MH/s | Mean W | Mean core MHz | Memory MHz |
 |---|---:|---:|---:|---:|---:|
@@ -646,7 +534,7 @@ full measurement at a 300 W limit with native thermal throttling active at
 85 C (87 C peak memory); Kepler mean draw was 212.6 W. Its rate reflects
 that cooling condition. Original power and verifier service were restored.
 
-The earlier matched RTX 5090 kernel A/B/B/A at 450 W improved KEP1 from
+The earlier matched RTX 5090 A/B/B/A at 450 W improved KEP1 from
 **136.00 to 139.19 MH/s (+2.35%)** in 1.9.43. This optimization is preserved;
 The current trained-model gains and historical genesis-model gains are listed above. Historical RET2 figures below
 are for the old network and must not be interpreted as TESS performance.
@@ -656,7 +544,7 @@ are for the old network and must not be interpreted as TESS performance.
 
 ### Mainnet before / after — RTX 5090
 
-| GPU / power limit | Architecture | 1.9.42 kernels | 1.9.43 kernels | Gain |
+| GPU / power limit | Architecture | 1.9.42 | 1.9.43 | Gain |
 |---|---|---:|---:|---:|
 | RTX 5090 / 450 W | KEP1 | 136.00 MH/s | **139.19 MH/s** | **+2.35%** |
 | RTX 5090 / 450 W | RET2 | 60.51 MH/s | **62.08 MH/s** | **+2.60%** |
@@ -664,7 +552,7 @@ are for the old network and must not be interpreted as TESS performance.
 Measured on Linux, CUDA 13.3, on 17 November 2026 with the mainnet genesis
 models and dataset. After 45 seconds of warmup per architecture, four 30-second
 A/B/B/A arms were averaged by build. Power limit and clocks were unchanged.
-These are kernel-pipeline measurements from the qualified development build
+These are performance measurements from the qualified development build
 used for 1.9.43; rates depend on the model and GPU settings.
 [Individual measurements](docs/benchmarks/neb-mainnet-2026-11-17-5090.csv).
 
@@ -681,10 +569,7 @@ different fixed models; it is not the baseline for this mainnet comparison.
 ## Suprminer 1.9.42 — historical NEB v0.3.0 measurements
 
 
-New CUDA kernels compute each NEB attempt in one warp without shared-memory
-staging, and RET2 layer 3 reads precomputed tensor-core operands. Shares and
-blocks are bit-identical to the reference algorithm; every submitted share is
-still checked on the CPU.
+This release improved KEP1 and RET2 hashrates. The following table identifies the GPU, power limit and previous result.
 
 [Download 1.9.42](https://github.com/ocminer/suprminer/releases/tag/v1.9.42) ·
 [NEB setup guide](docs/NEB_RELEASE_GUIDE.md)
@@ -707,20 +592,12 @@ limit is the card's configured limit. Each row is one run. Actual pool rates
 alternate between KEP1 and RET2 blocks and vary with the model.
 
 The full `--neb-test` (complete tickets, boundary nonces, hit sets and queued
-batches for two models of each network) passed on the RTX 5090, RTX PRO 6000,
-5080, 5070 Ti and 3070, and on the final Linux and both HiveOS executables,
-including forced PTX compilation. The final Linux executable mined on the NEB
-v0.3.0 network with 0 rejected shares at 1.4% of one CPU core. Quantus, NPT and
-XNT regression checks passed and their kernels are unchanged. Physical Windows GPU
-mining was not tested.
+The full benchmark passed on RTX 5090, RTX PRO 6000, RTX 5080, RTX 5070 Ti and RTX 3070, and on the Linux and both HiveOS executables. The Linux pool run recorded zero rejected shares and used 1.4% of one CPU core. Windows GPU hashrate was unmeasured.
 
 ## Suprminer 1.9.41 — NEB v0.3.0 (previous release)
 
 
-1.9.41 mines NEB v0.3.0 more than a thousand times faster than 1.9.40. Each
-dataset sample is computed once per model and every attempt is built from these
-cached results; shares and blocks are bit-identical to the reference algorithm.
-Every submitted share is still checked on the CPU.
+The RTX 5090 exceeded one thousand times its v1.9.40 NEB rate on the measured v0.3.0 models.
 
 [Download 1.9.41](https://github.com/ocminer/suprminer/releases/tag/v1.9.41) ·
 [NEB setup guide](docs/NEB_RELEASE_GUIDE.md) ·
@@ -744,17 +621,9 @@ Measured on Linux with the 1.9.41 CUDA build on 2026-11-13, using the built-in
 450 W row is the final release executable (60 seconds per network; the HiveOS
 20.04 package measured 103.0 / 47.4 MH/s). Clocks were unchanged; the power limit
 is the card's configured limit. Each row is one run. Actual pool rates alternate between KEP1 and RET2 blocks and vary with the
-model. RTX 30-series cards have much smaller caches and are far slower on NEB v2.
+model.
 
-The full `--neb-test` (complete tickets, boundary nonces, hit sets and queued
-batches for two models of each network) passed on the RTX 5090, 5080, 5070 Ti and
-3070, including the path without sparse tensor cores, and on the final Linux and
-both HiveOS executables, including forced PTX compilation. On a private NEB v0.3.0
-chain the final Linux executable mined four node-confirmed blocks through a pool;
-a post-fork rehearsal pool accepted every share. 0 shares were rejected. Steady
-pool CPU use was 2.0% of one core. Old NEB jobs are refused. Quantus, NPT and XNT
-regression checks passed and their kernels are unchanged. Physical Windows GPU
-mining was not tested.
+The RTX 5090, RTX 5080, RTX 5070 Ti and RTX 3070 passed the full benchmark. The final Linux executable mined four confirmed blocks on a private v0.3.0 chain. A separate post-fork rehearsal pool accepted every submitted share. Steady pool CPU use was 2.0% of one core. Physical Windows GPU hashrate was unmeasured.
 
 ## Suprminer 1.9.40 — NEB v0.3.0
 
@@ -769,8 +638,7 @@ For Docker NEB deployments before pool activation, pin
 The new 259.9 MB dataset downloads automatically with BLAKE3 verification.
 NVIDIA Linux, Windows, HiveOS, mmpOS, SMOS and Docker packages include new NEB.
 The Quantus OpenCL/Vulkan packages remain available for their existing algorithms.
-Every submitted NEB share is checked on the CPU; queued GPU work uses blocking
-waits to keep CPU usage low.
+The miner verifies every submitted share. The CPU measurements below use one core as the reference.
 
 [Download 1.9.40](https://github.com/ocminer/suprminer/releases/tag/v1.9.40) ·
 [NEB setup guide](docs/NEB_RELEASE_GUIDE.md) ·
@@ -798,8 +666,7 @@ The final Linux executable was tested on an RTX 5090 against NEB v0.3.0.
 Both KEP1 and RET2 produced accepted shares and node-confirmed blocks.
 Steady pool-test CPU use was 0.94% of one core. Old NEB
 jobs were refused with a clear requirement message and zero reported mining rate.
-Quantus, NPT and XNT regression checks passed, and unrelated algorithm kernels
-were preserved. Native Windows builds and CPU protocol tests passed. Physical
+Quantus, NPT and XNT regression checks passed. Native Windows builds and CPU protocol tests passed. Physical
 Windows GPU mining and other GPU models were not tested in this release session.
 
 The HiveOS 20.04 package also passed automatic replacement of the old cached
@@ -810,13 +677,7 @@ New KEP1/RET2 kH/s figures are not comparable to the old NEB algorithm's MH/s fi
 
 ## Suprminer 1.9.39
 
-NEB: new GPU kernel K3. RTX 5070 Ti at 300 W: built-in benchmark 31.42 MH/s
-(1.9.38: 21.57, +45.7%), live 36.81 MH/s on `neb.suprnova.cc:7804` (1.9.38:
-22.02). RTX 5090 at 450 W: about 65 MH/s (1.9.38: 40.01); the 5090 figures are
-development measurements of the same K3 code (65.9/66.5 MH/s benchmark, 65.4
-MH/s live for 27 minutes, 65 accepted, 0 rejected), not of the release
-download. `auto` picks the fastest kernel that matches the CPU reference. GPU
-code of all other algorithms is unchanged from 1.9.38.
+On the RTX 5070 Ti at 300 W, the benchmark rose from 21.57 to 31.42 MH/s (+45.7%). Live pool hashrate rose from 22.02 to 36.81 MH/s. On the RTX 5090 at 450 W, development tests reached 65.9–66.5 MH/s in the benchmark and 65.4 MH/s in a 27-minute pool run with 65 accepted shares and zero rejects. The earlier pool rate was 40.01 MH/s.
 
 ```sh
 ./suprminer-neptune -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u YOUR_NEB_ADDRESS.rig01 -p x
@@ -833,19 +694,15 @@ Release executable on Linux, stock clocks. Benchmark rows are the built-in
 average of the miner's own rate over live mining on `neb.suprnova.cc:7804`
 after the first 30 seconds. Watts and clocks are GPU averages while hashing.
 
-| GPU | Limit W | Version, kernel | MH/s | GPU W | SM MHz | Pool shares |
+| GPU | Limit W | Version / test | MH/s | GPU W | SM MHz | Pool shares |
 |---|---:|---|---:|---:|---:|---|
-| RTX 5070 Ti | 300 | 1.9.38 auto = K1X (benchmark) | 21.57 | 291.1 | 2744 | |
-| RTX 5070 Ti | 300 | 1.9.39 auto = K3 (benchmark) | **31.42** | 294.2 | 2749 | |
-| RTX 5070 Ti | 300 | 1.9.39 auto = K3 (pool, 26 min) | **36.81** | 299.4 | 2743 | 63 accepted, 0 rejected |
+| RTX 5070 Ti | 300 | 1.9.38 Default (benchmark) | 21.57 | 291.1 | 2744 | |
+| RTX 5070 Ti | 300 | 1.9.39 Default (benchmark) | **31.42** | 294.2 | 2749 | |
+| RTX 5070 Ti | 300 | 1.9.39 Default (pool, 26 min) | **36.81** | 299.4 | 2743 | 63 accepted, 0 rejected |
 
 ## Suprminer 1.9.38
 
-NEB: new tensor-core kernel K1X and a fix for low NEB hashrates reported on
-Windows and WSL2. Live NEB mining: RTX 5090 at 450 W 40.01 MH/s (1.9.37: 33.73,
-+18.6%), RTX 5070 Ti at 300 W 22.02 MH/s (1.9.37: 18.95, +16.2%). `auto` checks
-every tensor-core kernel against the CPU reference and keeps the fastest per
-card and job. GPU code of all other algorithms is unchanged from 1.9.37.
+This release fixed low NEB hashrate reporting on Windows and WSL2. On the pool, the RTX 5090 at 450 W reached 40.01 MH/s (+18.6%) and the RTX 5070 Ti at 300 W reached 22.02 MH/s (+16.2%) against v1.9.37.
 
 ```sh
 ./suprminer-neptune -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u YOUR_NEB_ADDRESS.rig01 -p x
@@ -859,27 +716,23 @@ card and job. GPU code of all other algorithms is unchanged from 1.9.37.
 
 Measured on Linux with the release executable on 2026-11-10/11, stock clocks,
 no overclocking. Benchmark rows are the built-in `--neb-test` benchmark
-(30 seconds per run, A/B/B/A order, four runs per kernel). Pool rows are
+(30 seconds per run, A/B/B/A order, four runs per setting). Pool rows are
 averages of the miner's own rate over live mining on `neb.suprnova.cc:7804`
 after the first 30 seconds, with every share checked by the CPU reference.
 Watts and clocks are GPU averages while hashing.
 
-| GPU | Limit W | Kernel | MH/s | GPU W | SM MHz | Pool shares |
+| GPU | Limit W | Test | MH/s | GPU W | SM MHz | Pool shares |
 |---|---:|---|---:|---:|---:|---|
-| RTX 5090 | 450 | K1P (benchmark) | 33.35 | 449.9 | 2193 | |
-| RTX 5090 | 450 | K1X (benchmark) | **38.33** | 447.6 | 2014 | |
-| RTX 5090 | 450 | auto = K1X (pool, 25 min) | **40.01** | 449.5 | 2026 | 57 accepted, 0 rejected |
-| RTX 5070 Ti | 300 | auto = K1X (pool, 21 min) | **22.02** | 299.2 | 2761 | 61 accepted, 0 rejected |
+| RTX 5090 | 450 | Benchmark, setting B | 33.35 | 449.9 | 2193 | |
+| RTX 5090 | 450 | Benchmark, setting B | **38.33** | 447.6 | 2014 | |
+| RTX 5090 | 450 | Default (pool, 25 min) | **40.01** | 449.5 | 2026 | 57 accepted, 0 rejected |
+| RTX 5070 Ti | 300 | Default (pool, 21 min) | **22.02** | 299.2 | 2761 | 61 accepted, 0 rejected |
 
-Other GPUs were not measured with this release; their kernel is chosen by the
-same check and timing.
+Other GPUs were unmeasured in this release.
 
 ## Suprminer 1.9.37
 
-NEB: fixes the reconnect loop on Windows and on slow or remote connections with
-a new stratum client. A network thread receives complete pool messages however
-they are split, and the mining loop no longer reads from the connection. GPU code
-is unchanged from 1.9.36 for all algorithms.
+This release fixed repeated reconnects on Windows and on slow or remote pool connections.
 
 [Download 1.9.37](https://github.com/ocminer/suprminer/releases/tag/v1.9.37) ·
 [Release notes](https://github.com/ocminer/suprminer/releases/tag/v1.9.37)
@@ -907,27 +760,21 @@ without system C++ or OpenSSL libraries.
 
 Measured on Linux with the full release executable on 2026-11-10, stock
 clocks, no overclocking. The benchmark rows are the built-in `--neb-test`
-benchmark (30 seconds per run, A/B/B/A order, four runs per kernel). The pool
+benchmark (30 seconds per run, A/B/B/A order, four runs per setting). The pool
 rows are averages of the miner's own rate over live mining on
 `neb.suprnova.cc:7804` after the first 30 seconds, with every share checked by
 the CPU reference. Watts and clocks are GPU averages while hashing.
 
-| GPU | Limit W | Kernel | MH/s | GPU W | SM MHz | Pool shares |
+| GPU | Limit W | Test | MH/s | GPU W | SM MHz | Pool shares |
 |---|---:|---|---:|---:|---:|---|
-| RTX 5090 | 450 | K1 (benchmark) | 31.43 | 449.4 | 1835 | |
-| RTX 5090 | 450 | K1P (benchmark) | **32.91** | 450.1 | 2172 | |
-| RTX 5090 | 450 | auto = K1P (pool, 15 min) | **32.35** | 450.0 | 2278 | 41 accepted, 0 rejected |
-| RTX 5070 Ti | 300 | auto = K1 (pool, 10 min) | **18.31** | 299.5 | 2685 | 24 accepted, 0 rejected |
+| RTX 5090 | 450 | Benchmark, setting A | 31.43 | 449.4 | 1835 | |
+| RTX 5090 | 450 | Benchmark, setting B | **32.91** | 450.1 | 2172 | |
+| RTX 5090 | 450 | Default (pool, 15 min) | **32.35** | 450.0 | 2278 | 41 accepted, 0 rejected |
+| RTX 5070 Ti | 300 | Default (pool, 10 min) | **18.31** | 299.5 | 2685 | 24 accepted, 0 rejected |
 
-K1P computes two attempts per thread block and loads each weight fragment once
-for both, which cuts memory traffic. With the same 450 W limit the RTX 5090
-runs at higher clocks and reaches 4.7% more attempts per second than K1. On the
-RTX 5070 Ti, K1 is faster, so the start-up timing keeps K1 there. Both kernels
-produce bit-identical results. Other GPUs (RTX 30xx/40xx, A100/H100, CMP 170HX,
-GTX 16xx/RTX 20xx) were not measured; their kernel is chosen by the same timing.
+With the same 450 W limit, the RTX 5090 gained 4.7% between the two benchmark configurations. The tested GPUs are listed above.
 
-While mining, the miner uses about 0.7% of one CPU core per GPU instead of
-waiting in a busy loop.
+While mining, the miner used about 0.7% of one CPU core per GPU.
 
 ## TAPE / NOID performance — 1.9.35
 

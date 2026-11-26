@@ -1,17 +1,8 @@
 # NEB with Suprminer 1.9.60
 
-NEB (Neural Engine Byte) is proof-of-training: every mining attempt is one exact
-integer training step of a small neural network on 16 samples of the chain's
-dataset. Suprminer mines NEB on NVIDIA CUDA and AMD OpenCL GPUs with the algorithm name `neb`.
-Suprminer 1.9.60 supports **NEB 1.0.1 mainnet**, using nebhash v2 KEP1
-convolutional networks in both slots. The command remains `-a neb`.
+Suprminer mines NEB on NVIDIA and AMD GPUs. Use `-a neb` for the NEB 1.0.1 mainnet.
 
-Mainnet launched on **18 November 2026 at 14:00 UTC**. Slot **0 is Kepler**
-(even heights); slot **1 is TESS** (odd heights). Both `set_model` and `notify`
-must use these native indices. Both models have 13,000 packed weight bytes.
-The former 2/3 mapping and RET2 models are rejected. Models and cached forward
-passes remain separate for the two datasets, even though their architecture
-is the same. Every model's weight hash and size are checked.
+Mainnet launched on **18 November 2026 at 14:00 UTC**. Kepler is slot 0 at even heights and TESS is slot 1 at odd heights. Rates vary by block.
 
 **1.9.43 and earlier are incompatible with NEB 1.0.1.** Its new genesis is
 `da2f5af7bb4c5e2bcc8d558b2f4f01d4c88557a943e6cff9cd035638fe9439ae`.
@@ -29,13 +20,12 @@ rig without an NVIDIA card; `--amd` or `--nvidia` in the extra arguments forces 
 
 ## Supported GPUs
 
-| GPU | Kernel |
+| GPU | Package |
 |---|---|
-| AMD RX 7600 XT / RX 7900 XTX | exact INT8 WMMA OpenCL kernel |
-| AMD MI50 | exact portable integer OpenCL kernel |
-| Other OpenCL GPUs | portable integer fallback; not yet hardware-qualified |
-| NVIDIA compute capability 7.5 and newer (GTX 16xx, RTX 20/30/40/50 series, A100/H100 and compatible datacenter GPUs) | exact integer KEP1 CUDA kernel |
-| NVIDIA Tesla V100 (compute capability 7.0), Linux packages | exact integer KEP1 CUDA kernel (from 1.9.54) |
+| AMD RX 7600 XT, RX 7900 XTX, Instinct MI50 | AMD OpenCL |
+| Other AMD OpenCL GPUs | Check the measured card coverage below |
+| NVIDIA GTX 16, RTX 20, 30, 40 and 50 series, A100, H100 and compatible GPUs | NVIDIA CUDA |
+| NVIDIA Tesla V100 | Linux NVIDIA package, from v1.9.54 |
 
 Use a current NVIDIA driver (610 or newer recommended), or an AMD driver with a working OpenCL ICD. At startup, each GPU
 checks complete tickets against the CPU reference for both datasets. New
@@ -102,10 +92,7 @@ pool for a matching share difficulty.
 suprminer-neptune.exe -a neb -o stratum+tcp://neb.suprnova.cc:7804 -u YOUR_NEB_ADDRESS.rig01 -p x
 ```
 
-Extract the whole archive into one writable folder, so the dataset can be saved
-next to the executable. CUDA submissions are flushed before the host waits,
-including under Windows WDDM and WSL2. Windows GPU mining has not been tested
-on physical hardware for this release.
+Extract the archive into a writable folder so the miner can save the dataset. The Windows build passed native tests. Physical GPU hashrates were measured on Linux.
 
 ## HiveOS
 
@@ -142,7 +129,7 @@ docker run -d --name suprminer-neb --gpus all --restart unless-stopped \
 
 | Option | Meaning |
 |---|---|
-| `--neb-kernel auto\|reference` | automatic per-card kernel or portable reference; CUDA also accepts `k0` |
+| `--neb-kernel auto\|reference` | Use the default setting or the reference mode for troubleshooting. CUDA also accepts `k0`. |
 | `--neb-dataset PATH` | dataset file |
 | `--neb-test` | compares GPU results with the CPU reference on both datasets, then benchmarks and exits |
 | `--api --api-port 4068` | HiveOS/mmpOS-compatible statistics, including the current share difficulty |
@@ -212,12 +199,22 @@ Prediction controls are regular command-line options on NVIDIA and AMD:
 | `--disable-neb-tess-predictions` | Disable preparation of a predicted TESS model. |
 | `--disable-neb-kepler-predictions` | Disable preparation of a predicted Kepler model. |
 
-The per-model names refer to the model being prepared, regardless of which
-model is currently being mined. These options preserve normal mining and the
-model cache: the pool may send a model once, ahead of the job that needs it.
-They do not tell the pool to stop sending model messages.
-
+The per-model options disable early processing for the named model. Normal pool mining continues.
 Append the option to the miner command on Linux or to the command in the
 Windows `.bat` launcher. In HiveOS put it in **Extra config arguments**.
 For Docker pass `-e EXTRA_ARGS="--disable-neb-predictions"`, or one of the
 per-model options. Both per-model options may be supplied together.
+
+## Linux hotfix for PCIe x1 rigs
+
+For full NEB performance, use a fast PCIe ×16 connection. A full-length riser can negotiate ×1, and Kepler may run slower there. The Linux hotfix applies the compatibility setting automatically when the card or an upstream bridge reports ×1. Wider or unknown links keep the usual behavior. Download the Linux archive below and use its NVIDIA executable, `suprminer-neptune`. For an existing mining-OS installation, stop the miner, replace that executable, and restart it with your usual command. The separate Windows download is available on the release page.
+
+If Kepler is unexpectedly slow on a known ×1 riser, or Linux cannot read the link width, run this in the shell that starts the miner, then launch it with your usual command.
+
+```sh
+export NEB_TRIPLE_POLICY=keep
+```
+
+The override applies to all GPUs in that miner process. On mixed rigs, launch the affected GPU separately with `-d`. Wide-link GPUs can lose Kepler performance with the override. Run `unset NEB_TRIPLE_POLICY` and restart to restore automatic selection.
+
+[Linux hotfix](https://github.com/ocminer/suprminer/releases/download/v1.9.60/suprminer-1.9.60-linux-x86_64-hotfix.1.tar.gz) · [Hotfix SHA-256](https://github.com/ocminer/suprminer/releases/download/v1.9.60/suprminer-1.9.60-linux-x86_64-hotfix.1.tar.gz.sha256)

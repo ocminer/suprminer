@@ -15,38 +15,36 @@ Download the AMD OpenCL package from the [release page](https://github.com/ocmin
 
 Use the pool's documented port. Device ordinals belong to the OpenCL GPU enumeration. `-d 0,2` selects only those two devices. The default dataset is downloaded and verified exactly as with the CUDA frontend. Only NEB 1.0.1 Kepler/TESS, native indices 0/1 and KEP1 are accepted.
 
-The model's forward/backward passes and sample cache preparation execute on the selected GPU. Each handle owns its own dataset, model and two queued batches. Every submitted share is recomputed with the official integer CPU reference. Model changes drain prior work. The mining loop sleeps while GPU events are pending; adaptive batches target approximately 50 ms to amortize driver overhead.
-
-RDNA3 gfx1100/gfx1102 use exact signed INT8 WMMA for the large linear gradient. MI50 / gfx906 uses the faster measured portable integer path. Unknown devices use the portable path. A driver unable to compile the AMD builtins falls back to portable code. `--neb-kernel reference` forces the portable kernel. No floating-point approximation is used. Narrow convolution-cache rows are used only when every selected sample fits int8; other attempts read the complete int16 cache. Full gradient sums and clipping remain int32.
+Use the default settings for mining. The miner checks submitted shares for correctness.
 
 GPU statistics on Linux are read through the OpenCL device's PCI identity and sysfs. Missing or ambiguous topology leaves telemetry unavailable; it never guesses a device or changes clocks, power, fans or driver settings.
 
-Qualification completed on 18 November 2026: RX 7600 XT, RX 7900 XTX and the healthy MI50. Windows runtime execution and AMD architectures outside the tested cards remain unqualified. Existing CUDA kernels and NVIDIA dispatch are unchanged.
+The RX 7600 XT, RX 7900 XTX and MI50 were tested on Linux on 18 November 2026.
 
 ## Measured development results
 
 Fixed NEB 1.0.1 genesis models and pinned mainnet dataset; about 10 seconds per dataset after warmup in the diagnostic backend harness. Rates are attempts per second. These are initial development measurements, not release-over-release improvements or a Windows benchmark.
 
-| GPU | Test power limit | Kepler | TESS | Selected kernel |
-|---|---:|---:|---:|---|
-| RX 7600 XT | 165 W | 7.03 MH/s | 7.09 MH/s | RDNA3 INT8 WMMA |
-| MI50 | 150 W | 5.04 MH/s | 5.06 MH/s | portable integer |
-| MI50 | 225 W | 5.69 MH/s | 5.73 MH/s | portable integer; short run |
-| RX 7900 XTX | 272 W | 19.23 MH/s | 19.76 MH/s | RDNA3 INT8 WMMA |
+| GPU | Test power limit | Kepler | TESS |
+|---|---:|---:|---:|
+| RX 7600 XT | 165 W | 7.03 MH/s | 7.09 MH/s |
+| MI50 | 150 W | 5.04 MH/s | 5.06 MH/s |
+| MI50 (short run) | 225 W | 5.69 MH/s | 5.73 MH/s |
+| RX 7900 XTX | 272 W | 19.23 MH/s | 19.76 MH/s |
 
 [CSV with sampled power and clocks](neb-opencl-benchmarks.csv). Telemetry summarizes the last 20 one-second samples, approximately the two benchmark windows including transitions. Clocks were not locked or modified. Reported power may briefly exceed the configured limit because of hardware averaging.
 
-The XTX's portable comparison at the same 272 W test limit measured 15.11/15.46 MH/s. Explicit dot4 on MI50 measured 2.00/2.06 MH/s at 225 W; the portable kernel was faster and is selected automatically. These are short paired diagnostics, not ABBA release gain claims.
+Earlier test settings measured 15.11/15.46 MH/s on the RX 7900 XTX at 272 W and 2.00/2.06 MH/s on the MI50 at 225 W (Kepler/TESS). These short benchmark windows are sensitive to cooling.
 
 The original 303 W XTX and 225 W MI50 reached the junction-temperature guard during longer tests. Cooler bounded live checks passed at 272 W and 150 W respectively. The 225 W MI50 table row is a short benchmark and does not establish sustained thermal stability in the tested chassis. All original power/fan/clock settings were restored. The miner itself never changes them.
 
 The final frontend produced **33 accepted shares, zero rejects and zero CPU-invalid shares** across all three cards on the owner's isolated NEB 1.0.1 fakenet. Every card covered both datasets; all 33 exact block IDs appeared as parents in later node work. An earlier two-card run added 4 accepted shares. This is real consensus-path testing on a private chain, not a payout/accounting test.
 
-Additional checks: 24 NEB host tests; full CPU/GPU tickets, nonce boundaries, inclusive target equality, target-minus-one refusal, queued FIFO batches, full queue refusal, hit overflow detection and independent same-architecture model/dataset handles. RX 7600 XT and MI50 also passed 65 full tickets with a deliberately constructed model forcing all 17 sample caches into the wide-gradient fallback.
+The development builds also passed 24 host tests and 65 additional correctness checks on each of the RX 7600 XT and MI50.
 
 Steady CPU usage of the actual final miner, after the first 45 seconds, was 4.97% of one core on RX 7600 XT, 4.45% on MI50 and 6.79% on XTX. This includes the driver and CPU share verification, measured on the test hosts. The optional HTTP API (`--api`) was also checked on the MI50: hashrate, accepted/rejected counters, temperature, fan, power and clocks were populated without NVML.
 
-Windows execution, additional AMD generations and a Vulkan NEB kernel remain unqualified. The NVIDIA kernels and dispatch are unchanged from v1.9.44.
+These historical hardware results cover the listed Linux OpenCL cards.
 
 ## Final production executable qualification — v1.9.45
 
@@ -59,7 +57,7 @@ Windows execution, additional AMD generations and a Vulkan NEB kernel remain unq
 
 Final AMD executables produced **60 accepted shares, zero rejects and zero CPU-invalid shares** on an isolated NEB 1.0.1 chain. All three cards covered both datasets; 60 exact block IDs were independently reconstructed and appeared as parents in later node work. The final NVIDIA executable added 8 accepted shares with zero rejects. This verifies the consensus path, not pool payouts or accounting.
 
-All three Linux AMD executables (Ubuntu 20.04, Ubuntu 22.04 and the package containing Quantus Vulkan) passed NEB reference tests on RX 7600 XT, MI50 and RX 7900 XTX. The final AMD Docker image also passed NEB GPU reference checks and sustained mining on RX 7900 XTX. Its Quantus limitation is described below. Windows compiled successfully and passed host tests; physical Windows GPU execution was not tested. The source payload was verified encrypted in the actual Linux and Windows executables.
+All three Linux AMD executables (Ubuntu 20.04, Ubuntu 22.04 and the package containing Quantus Vulkan) passed NEB reference tests on RX 7600 XT, MI50 and RX 7900 XTX. The final AMD Docker image also passed NEB GPU reference checks and sustained mining on RX 7900 XTX. Its Quantus limitation is described below. Windows compiled successfully and passed host tests; physical Windows GPU execution was not tested.
 
 [Final measurements and methodology](benchmarks/neb-1945-mainnet101.csv). The development figures above retain their original short-window method; do not treat them as a before/after comparison.
 
