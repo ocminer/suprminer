@@ -10,7 +10,10 @@ Each card ran the same recorded Kepler and TESS models on Linux at its maximum b
 | RTX 5070 Ti | 350 W | 485.40 | 2,514.87 |
 | RTX 4070 Ti SUPER | 285 W | 451.18 | 2,138.99 |
 | RTX 3070 | 250 W | 224.83 | 928.06 |
+| RX 9070 XT | 340 W | 248.80 | 961.41 |
 | RX 7900 XTX | 350 W | 370.84 | 1,880.43 |
+
+The RX 9070 XT completed both models in one run at its 340 W limit. All 96 Kepler shares and 386 TESS shares passed verification.
 
 The RTX 4070 Ti SUPER started with 212 MiB of GPU memory allocated to a background process.
 

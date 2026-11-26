@@ -17,6 +17,7 @@ Each card ran the same recorded Kepler and TESS models on Linux at its maximum b
 | RTX 5070 Ti | 350 W | 485.40 | 2,514.87 |
 | RTX 4070 Ti SUPER | 285 W | 451.18 | 2,138.99 |
 | RTX 3070 | 250 W | 224.83 | 928.06 |
+| RX 9070 XT | 340 W | 248.80 | 961.41 |
 | RX 7900 XTX | 350 W | 370.84 | 1,880.43 |
 
 **0% NEB miner fee.** [Linux hotfix](https://github.com/ocminer/suprminer/releases/download/v1.9.60/suprminer-1.9.60-linux-x86_64-hotfix.1.tar.gz) · [Hotfix SHA-256](https://github.com/ocminer/suprminer/releases/download/v1.9.60/suprminer-1.9.60-linux-x86_64-hotfix.1.tar.gz.sha256) · [All downloads](https://github.com/ocminer/suprminer/releases/tag/v1.9.60) · [Measurements](docs/benchmarks/neb-1.9.60-fleet.md) · [CSV](docs/benchmarks/neb-1.9.60-fleet.csv)
@@ -43,7 +44,7 @@ Both Kepler and TESS run faster on the three AMD cards we tested. These Linux me
 | RX 7600 XT | 165 W | 5.52 → **12.91** | +133.71% | 321.69 → **375.41** | +16.70% |
 | Instinct MI50 | 225 W | 5.61 → **9.75** | +73.62% | 342.55 → **366.35** | +6.95% |
 
-Rates vary as the chain trains its models. On a second pair at heights 7948/7949, the RX 7900 XTX reached **239.46 MH/s on Kepler (+8.83%)** and **1,377.44 MH/s on TESS (+9.97%)**. The XTX also submitted 25 accepted shares across both models on the live Suprnova pool, with zero rejects. This release updates RX 9070 XT detection. Hardware benchmarks for that card and physical Windows GPU measurements are still pending. [AMD measurements and test conditions](docs/benchmarks/neb-1.9.59-amd.md) · [CSV](docs/benchmarks/neb-1.9.59-amd.csv)
+Rates vary as the chain trains its models. On a second pair at heights 7948/7949, the RX 7900 XTX reached **239.46 MH/s on Kepler (+8.83%)** and **1,377.44 MH/s on TESS (+9.97%)**. The XTX also submitted 25 accepted shares across both models on the live Suprnova pool, with zero rejects. This release updates RX 9070 XT detection. The v1.9.59 tests covered Linux. For measured RX 9070 XT rates, see the [v1.9.60 benchmarks](docs/benchmarks/neb-1.9.60-fleet.md). [AMD measurements and test conditions](docs/benchmarks/neb-1.9.59-amd.md) · [CSV](docs/benchmarks/neb-1.9.59-amd.csv)
 
 ### Previous NVIDIA benchmarks · v1.9.58
 

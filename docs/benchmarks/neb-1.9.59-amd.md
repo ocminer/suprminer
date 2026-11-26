@@ -17,4 +17,4 @@ Kepler 7652 exercises the dense path. Other trained models on the same card can 
 
 The RX 7600 XT Kepler result uses the final protected development binary. The other rows were recorded on protected candidates that contain the same active compute kernels for those measurements. Timing and share counts are from the physical runs.
 
-The RX 9070 XT was unavailable for this hardware sweep. Its performance remains unmeasured.
+The RX 9070 XT was unavailable for this hardware sweep. The [v1.9.60 benchmarks](neb-1.9.60-fleet.md) include its full-power Kepler and TESS rates.
