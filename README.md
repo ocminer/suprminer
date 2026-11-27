@@ -3,6 +3,27 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
+## Suprminer v1.9.63 · faster NEB Kepler on RTX 50 cards and the RTX 3070
+
+**NEB.** Kepler is faster on RTX 5090, RTX 5080, RTX 5070 Ti and RTX 3070. TESS stays level. Recorded pool
+models of 27 November 2026 were replayed on Linux at each card's maximum board power limit, 45 s of Kepler
+followed by 15 s of TESS; every share was verified on the CPU.
+
+| GPU | Power limit | Kepler 13038 (MH/s) | TESS 13039 (GH/s) |
+|---|---:|---:|---:|
+| RTX 5090 | 600 W | 512.7 → 643.2 (+25.5%) | 10.77 → 10.73 (-0.4%) |
+| RTX 5080 (PCIe ×16) | 400 W | 356.8 → 397.2 (+11.3%) | 5.68 → 5.66 (-0.4%) |
+| RTX 5080 (PCIe ×1 riser) | 400 W | 366.7 → 402.8 (+9.8%) | 5.66 → 5.71 (+0.9%) |
+| RTX 5070 Ti | 350 W | 297.5 → 334.3 (+12.4%) | 4.46 → 4.47 (+0.3%) |
+| RTX 3070 | 250 W | 85.2 → 95.0 (+11.5%) | 1.49 → 1.50 (+0.2%) |
+
+Left of each arrow is v1.9.62, right is v1.9.63, on the same card. The Kepler hashrate depends on the model of
+the block, and so does the gain: [29 more Kepler models](docs/benchmarks/neb-1.9.63-fleet.md) of the same day
+range from no change to +23%. Other cards run the same NEB code as v1.9.62.
+On the RTX 5090 part of the gain on lighter Kepler models needs about 20 GiB of free system memory and a
+PCIe link of ×8 or wider. The work in the first seconds of a TESS block can differ by up to about 3% between
+runs, as in v1.9.62. The figures are from Linux.
+
 ## Suprminer v1.9.62 · faster NEB block starts on RTX 50 cards, faster PRL on the RTX 5090
 
 **NEB.** On Linux, RTX 5090, RTX 5080 and RTX 5070 Ti now prepare an announced TESS model during the

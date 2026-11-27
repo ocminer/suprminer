@@ -1,6 +1,6 @@
 # PRL + NOCK merged mining — Suprminer 1.9.45
 
-This guide documents the earlier integer PRL scheme. For v1.9.62, use the versioned NVIDIA image `ocminersupr/suprminer-base:1.9.62` and select `-a prlold` for a pool still serving that scheme. [Current PRL setup](docs/PRL_NOID_RELEASE_GUIDE.md)
+This guide documents the earlier integer PRL scheme. For v1.9.63, use the versioned NVIDIA image `ocminersupr/suprminer-base:1.9.63` and select `-a prlold` for a pool still serving that scheme. [Current PRL setup](docs/PRL_NOID_RELEASE_GUIDE.md)
 
 On a compatible pool, Suprminer can mine PRL and also submit NOCK proofs from
 the same GPU work. Ordinary PRL share submission continues while an auxiliary
