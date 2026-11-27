@@ -1,0 +1,16 @@
+gpu,power_limit_w,metric,v1_9_61,v1_9_62,unit,change_percent,conditions
+RTX 5090,600,first 5 s of new TESS models 12353+12357+12359,1406,1941,shares,38.1,Linux; replay of pool blocks 12352-12359 with original announcement times; fixed difficulty 67108864; CPU-verified
+RTX 5090,600,TESS work in the history,538.31,572.82,Ghash,6.4,same
+RTX 5090,600,Kepler work in the history,57.345,57.331,Ghash,0.0,same
+RTX 5090,600,Kepler 12358 after six blocks,458.82,513.17,MH/s,11.8,same
+RTX 5090,600,all shares 12352-12359,8833,9334,shares,5.7,same
+RTX 5080 (PCIe x16),400,first 5 s of new TESS models 12353+12357+12359,358,1017,shares,184.1,same
+RTX 5080 (PCIe x16),400,TESS work in the history,239.42,310.46,Ghash,29.7,same
+RTX 5080 (PCIe x16),400,Kepler work in the history,22.291,31.216,Ghash,40.0,same
+RTX 5080 (PCIe x16),400,Kepler 12358 after six blocks,266.25,345.66,MH/s,29.8,same
+RTX 5080 (PCIe x16),400,all shares 12352-12359,3803,5147,shares,35.3,same
+RTX 5070 Ti,350,first 5 s of new TESS models 12353+12357+12359,300,796,shares,165.3,same
+RTX 5070 Ti,350,TESS work in the history,200.48,255.57,Ghash,27.5,same
+RTX 5070 Ti,350,Kepler work in the history,23.900,26.229,Ghash,9.7,same
+RTX 5070 Ti,350,Kepler 12358 after six blocks,224.03,291.73,MH/s,30.2,same
+RTX 5070 Ti,350,all shares 12352-12359,3281,4161,shares,26.8,same

@@ -3,6 +3,27 @@
 A multi-algorithm miner for NVIDIA GPUs, with separate NEB/Quantus OpenCL packages
 for AMD devices, plus a Quantus Vulkan option.
 
+## Suprminer v1.9.62 · faster NEB block starts on RTX 50 cards, faster PRL on the RTX 5090
+
+**NEB.** On Linux, RTX 5090, RTX 5080 and RTX 5070 Ti now prepare an announced TESS model during the
+preceding Kepler block and start the TESS block with it. RTX 5080 and RTX 5070 Ti also keep their fast
+Kepler path after a TESS block. Eight recorded pool blocks (12352 to 12359) were replayed with their
+original announcement times; shares were counted at a fixed difficulty and each one was verified on the CPU.
+
+| GPU | Power limit | First 5 s of three new TESS models (shares) | TESS work (Ghash) | Kepler work (Ghash) | All shares, Kepler + TESS |
+|---|---:|---:|---:|---:|---:|
+| RTX 5090 | 600 W | 1,406 → 1,941 (+38.1%) | 538.3 → 572.8 (+6.4%) | 57.35 → 57.33 (0.0%) | 8,833 → 9,334 (+5.7%) |
+| RTX 5080 (PCIe ×16) | 400 W | 358 → 1,017 (+184.1%) | 239.4 → 310.5 (+29.7%) | 22.29 → 31.22 (+40.0%) | 3,803 → 5,147 (+35.3%) |
+| RTX 5070 Ti | 350 W | 300 → 796 (+165.3%) | 200.5 → 255.6 (+27.5%) | 23.90 → 26.23 (+9.7%) | 3,281 → 4,161 (+26.8%) |
+
+Left of each arrow is v1.9.61, right is v1.9.62. Hashrate varies with the block; [per-block figures](docs/benchmarks/neb-1.9.62-fleet.md).
+Other cards run the same NEB code as v1.9.61. `--disable-neb-tess-predictions` turns the advance
+preparation of TESS models off.
+The Windows build keeps the v1.9.61 NEB behaviour on these cards, apart from one RTX 5080 change that has not been measured on Windows.
+
+**PRL (old scheme).** A larger tile in the RTX 5090 kernel: same-card A/B/B/A on the pool at 600 W,
+395.8 to 409.7 TH/s (+3.5%), 123 accepted shares, none rejected.
+
 ## Suprminer v1.9.61 · SVY mining, smaller PRL shares, faster NEB on RX 9070 XT
 
 **New: SVY (Solvyren).** `-a svy` mines the SMW-16/2048 proof of work on NVIDIA cards. One process
